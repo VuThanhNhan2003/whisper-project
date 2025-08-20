@@ -8,7 +8,7 @@
   "task": "transcribe",
   "initial_prompt": "Đây là một video học thuật tiếng Việt.",
   "subtitle_options": {
-    "max_chars": 80,
+    "max_chars": 75,
     "min_duration_per_segment": 4
   }
 }

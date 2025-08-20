@@ -1,4 +1,5 @@
 # Ignore Python cache files
+File vtt/
 __pycache__/
 *.pyc
 *.pyo
