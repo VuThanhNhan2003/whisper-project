@@ -120,19 +120,19 @@ def clean_repetitive_text(text: str) -> str:
 def validate_segment_quality(segment, min_duration=0.5, max_duration=30.0) -> bool:
     """Kiểm tra chất lượng segment"""
     duration = segment.end - segment.start
-    
+
     # Segment quá ngắn hoặc quá dài
     if duration < min_duration or duration > max_duration:
         return False
-    
+
     # Text quá ngắn cho segment dài
     if duration > 10 and len(segment.text.strip()) < 20:
         return False
-    
+
     # Kiểm tra hallucination
     if detect_hallucination_patterns(segment.text):
         return False
-    
+
     return True
 
 # --- Enhanced Helpers ---
@@ -208,47 +208,6 @@ def check_ffmpeg():
 def is_m3u8_url(url: str) -> bool:
     return url.lower().endswith('.m3u8') or 'm3u8' in url.lower()
 
-def download_m3u8_stream(url: str) -> str:
-    print(f"⬇️ Processing M3U8 stream from {url}...")
-    
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
-    temp_file.close()
-    
-    try:
-        cmd = [
-            "ffmpeg",
-            "-i", url,
-            "-c", "copy",
-            "-bsf:a", "aac_adtstoasc",
-            "-avoid_negative_ts", "make_zero",  # Tránh timestamp âm
-            "-y",
-            temp_file.name
-        ]
-        
-        print(f"🔧 Running ffmpeg command: {' '.join(cmd)}")
-        
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=1800
-        )
-        
-        if result.returncode != 0:
-            raise Exception(f"FFmpeg failed with error: {result.stderr}")
-        
-        if not os.path.exists(temp_file.name) or os.path.getsize(temp_file.name) == 0:
-            raise Exception("Downloaded file is empty or doesn't exist")
-        
-        print(f"✅ M3U8 stream downloaded successfully: {temp_file.name}")
-        return temp_file.name
-        
-    except subprocess.TimeoutExpired:
-        raise Exception("Download timeout - stream took too long to process")
-    except Exception as e:
-        if os.path.exists(temp_file.name):
-            os.remove(temp_file.name)
-        raise Exception(f"Failed to download M3U8 stream: {str(e)}")
 
 def download_temp_file(url: str) -> str:
     if is_m3u8_url(url):
