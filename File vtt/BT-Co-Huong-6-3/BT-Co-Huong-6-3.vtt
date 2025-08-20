@@ -1,0 +1,332 @@
+WEBVTT
+
+00:00:34.320 --> 00:00:46.979
+Chào các em, ở video này chúng ta sẽ áp dụng các định luật của Raul và Vanhoef để tính áp suất hơi bão hòa, nhiệt độ sôi, nhiệt độ nông đặc, áp suất thẩm thấu của các dung dịch phân tử
+
+00:00:48.020 --> 00:00:58.759
+Ở bài tập đầu tiên thì chúng ta sẽ tính áp suất hơi của dung dịch chứa 50ml glycerin tan trong 500ml nước
+
+00:00:58.759 --> 00:01:03.019
+Biết rằng ở 25 độ C thì áp suất hơi bão hòa của nước nguyên
+
+00:01:03.019 --> 00:01:07.280
+chất là 23,8mm thủy ngân
+
+00:01:09.019 --> 00:01:15.000
+Glycerin lỏng sẽ có khối lượng riêng là 1,26g trên ml
+
+00:01:15.000 --> 00:01:19.859
+Và phân tử gam của glycerin là 63g trên môn
+
+00:01:21.540 --> 00:01:24.210
+Để giải bài này thì đầu tiên chúng ta sẽ tính số môn
+
+00:01:24.210 --> 00:01:26.879
+glycerin N2
+
+00:01:26.879 --> 00:01:29.439
+được tính bằng khối lượng của glycerin chia cho phân tử gam
+
+00:01:29.439 --> 00:01:32.000
+của nó
+
+00:01:32.000 --> 00:01:36.740
+Trong khi đó thì khối lượng của glycerin được tính bằng thể
+
+00:01:36.740 --> 00:01:41.480
+tích của glycerin nhân với cả khối lượng riêng của nó
+
+00:01:42.280 --> 00:01:47.939
+Thể tích của glycerin là 50ml nhân với cả khối lượng riêng
+
+00:01:47.939 --> 00:01:53.599
+là 1,26g trên ml
+
+00:01:53.599 --> 00:01:58.599
+chia cho 63 là phân tử gam của glycerin
+
+00:01:58.599 --> 00:02:00.939
+đơn vị là gam trên môn
+
+00:02:00.939 --> 00:02:04.019
+thì chúng ta được là 1 môn glycerin
+
+00:02:04.019 --> 00:02:06.799
+Thế còn số môn nước thì cũng tương tự như vậy
+
+00:02:06.799 --> 00:02:09.460
+chúng ta sẽ được tính bằng thể tích nước
+
+00:02:09.460 --> 00:02:12.159
+nhân với cả khối lượng riêng của nước
+
+00:02:12.159 --> 00:02:13.819
+chia cho phân tử gam của nước
+
+00:02:13.819 --> 00:02:16.360
+thể tích của nước là 500ml
+
+00:02:17.599 --> 00:02:22.020
+khối lượng riêng của nước là 1 gam trên ml
+
+00:02:22.020 --> 00:02:28.120
+Và phân từ gam của nước là 18 gam trên môn
+
+00:02:28.120 --> 00:02:31.860
+Chúng ta tính được là 27,78 môn nước
+
+00:02:33.139 --> 00:02:35.520
+Từ đây suy ra nồng độ phần môn của nước
+
+00:02:35.520 --> 00:02:37.800
+Sẽ là số môn nước chia cho tổng số môn nước và glycerin có
+
+00:02:37.800 --> 00:02:40.080
+trong dung dịch
+
+00:02:40.080 --> 00:02:43.639
+Trong đó thì số môn của nước là 27,78
+
+00:02:43.639 --> 00:02:45.740
+Còn số môn của glycerin là 1
+
+00:02:45.740 --> 00:02:48.350
+Chúng ta tính ra nồng độ phần môn của nước trong dung dịch
+
+00:02:48.350 --> 00:02:50.960
+là 0,965
+
+00:02:52.539 --> 00:02:54.719
+áp dụng định luật Raul 1
+
+00:02:54.719 --> 00:02:58.800
+chúng ta có áp suất hơi bão hòa của dung dịch P1
+
+00:02:58.800 --> 00:03:01.620
+bằng áp suất hơi bão hòa của dung môi nguyên chất P0
+
+00:03:01.620 --> 00:03:06.520
+nhân nồng độ phần môn của dung môi trong dung dịch N1
+
+00:03:06.520 --> 00:03:11.360
+thế P0 bằng 23,8
+
+00:03:11.360 --> 00:03:15.419
+và N1 bằng 0,965
+
+00:03:15.419 --> 00:03:21.379
+Chúng ta tính được P1 bằng 22,973 mm thủy ngân
+
+00:03:21.379 --> 00:03:28.539
+Như vậy áp suất hơi của dung dịch chứa 50ml glicerine
+
+00:03:28.539 --> 00:03:36.780
+tan trong 500ml nước có áp suất hơi là 22,973 mm thủy ngân
+
+00:03:36.780 --> 00:03:40.479
+Như các em đã biết ở các nước ôn nới mùa đông
+
+00:03:40.479 --> 00:03:45.659
+nhiệt độ có thể xuống dưới nhiệt độ âm rất là nhiều
+
+00:03:45.659 --> 00:03:49.560
+do đó để đảm bảo là nước làm mát
+
+00:03:49.560 --> 00:03:53.360
+ở trong cái bộ tản nhiệt của ô tô không bị đông đặc
+
+00:03:53.360 --> 00:03:57.620
+thì người ta cho vào trong cái bộ tản nhiệt này
+
+00:03:57.620 --> 00:04:00.620
+cái chất chống đông là ethylene glycol
+
+00:04:00.620 --> 00:04:03.919
+bây giờ chúng ta sẽ thử tính cái nhiệt độ sôi
+
+00:04:03.919 --> 00:04:06.840
+và nhiệt độ đông đặc của dung dịch nước
+
+00:04:06.840 --> 00:04:09.219
+chứa ethylene glycol 25%
+
+00:04:09.219 --> 00:04:12.860
+Biết rằng ethylene glycol có khối lượng gam là 62 gam trên
+
+00:04:12.860 --> 00:04:16.500
+môn
+
+00:04:16.500 --> 00:04:21.620
+Hệ số nghiệm sôi của nước là 0,51 độ trên môn lan
+
+00:04:21.620 --> 00:04:28.180
+Còn hệ số nghiệm đông của nước là 1,86 độ trên môn lan
+
+00:04:29.100 --> 00:04:34.519
+Giải bài tập này chúng ta có là nồng độ của dung dịch là 25%
+
+00:04:34.519 --> 00:04:38.659
+Có nghĩa là chúng ta có 25 gram ethylene glycol hóa tan
+
+00:04:38.659 --> 00:04:42.800
+trong 100 là khối lượng của dung dịch
+
+00:04:42.800 --> 00:04:45.789
+Trừ đi 25 là khối lượng của ethylene glycol thì chúng ta sẽ
+
+00:04:45.789 --> 00:04:48.779
+còn là 75 gram nước
+
+00:04:48.779 --> 00:04:52.679
+Như vậy trong dung dịch 25% chúng ta sẽ có 25 gram chất tan
+
+00:04:52.679 --> 00:04:56.579
+hóa tan trong 75 gram nước
+
+00:04:56.579 --> 00:05:01.366
+Như vậy chúng ta sẽ tính được số gam chất tan có trong 1
+
+00:05:01.366 --> 00:05:06.153
+000 gam nước sẽ bằng là 25 gam ethylene glycone nhân với 1
+
+00:05:06.153 --> 00:05:10.939
+000 gam nước chia cho 75 gam nước
+
+00:05:11.680 --> 00:05:17.069
+Sau đó chúng ta chia cho 62 là khối lượng môn của ethylene glycone thì chúng ta sẽ tính được ra số môn của ethylene glycone là 5
+
+00:05:17.069 --> 00:05:22.459
+4 môn
+
+00:05:22.980 --> 00:05:25.990
+Như vậy chúng ta có 5,4 mol ethylene glycone tan trong 1
+
+00:05:25.990 --> 00:05:29.000
+000 gram nước
+
+00:05:29.000 --> 00:05:33.939
+Có nghĩa là nồng độ molan của dung dịch là 5,4 molan
+
+00:05:35.259 --> 00:05:38.860
+Áp dụng định luật RAUN2 chúng ta có delta T sôi
+
+00:05:38.860 --> 00:05:41.019
+Được tính bằng nhiệt độ sôi của dung dịch trừ đi nhiệt độ
+
+00:05:41.019 --> 00:05:43.180
+sôi của dung môi nguyên chất
+
+00:05:43.819 --> 00:05:47.639
+Ở điều kiện bình thường của chúng ta thì nước sôi ở 100 độ C
+
+00:05:47.639 --> 00:05:51.049
+Sẽ được tính bằng ca sôi là hệ số nghiệm sôi của nước nhân
+
+00:05:51.049 --> 00:05:54.459
+với cả nồng độ molan của dung dịch
+
+00:05:54.459 --> 00:06:00.639
+Trong đó thì hệ số nghiệm sôi của nước là 0.51 độ trên molan
+
+00:06:00.639 --> 00:06:03.759
+Còn nồng độ của dung dịch là 5.4 molan
+
+00:06:03.759 --> 00:06:08.199
+Thì chúng ta tính được delta T sôi này là bằng 2.75 độ
+
+00:06:08.199 --> 00:06:15.000
+Từ đây suy ra nhiệt độ sôi của dung dịch sẽ là 102.75 độ C
+
+00:06:17.079 --> 00:06:19.159
+Còn cũng theo định luật RAUN2 thì chúng ta có delta T đông
+
+00:06:19.159 --> 00:06:21.240
+đặc
+
+00:06:21.240 --> 00:06:24.500
+được tính bằng nhiệt độ đông đặc của dung môi là 0 độ C
+
+00:06:25.120 --> 00:06:27.160
+trừ đi nhiệt độ đông đặc của dung dịch
+
+00:06:27.160 --> 00:06:30.600
+thì bằng ca đông đặc nhân với cả nồng độ mô lan
+
+00:06:30.600 --> 00:06:35.560
+thì ca đông đặc của nước là 1,86 độ trên mô lan
+
+00:06:35.560 --> 00:06:38.540
+nồng độ mô lan của chúng ta là 5,4 mô lan
+
+00:06:38.540 --> 00:06:41.379
+thì chúng ta tính được là bằng 10,04 độ
+
+00:06:41.379 --> 00:06:47.399
+Như vậy nhiệt độ đông đặc của dung dịch sẽ là âm 10,04 độ C
+
+00:06:48.560 --> 00:06:52.259
+Như vậy khi chúng ta cho dung dịch ethylene glycol 25% vào
+
+00:06:52.259 --> 00:06:55.959
+trong bộ tản nhiệt
+
+00:06:55.959 --> 00:06:59.639
+thì chắc chắn là nước này, dung dịch này sẽ bị đóng băng ở
+
+00:06:59.639 --> 00:07:03.319
+nhiệt độ âm 10 độ
+
+00:07:03.920 --> 00:07:06.110
+Ở bài tập thứ 3 chúng ta sẽ tính áp suất thẩm thấu trung
+
+00:07:06.110 --> 00:07:08.300
+bình của máu
+
+00:07:08.300 --> 00:07:11.039
+Biết rằng là thân nhiệt của con người là 37 độ C tức là 310
+
+00:07:11.039 --> 00:07:13.779
+Kelvin
+
+00:07:14.480 --> 00:07:20.160
+Nồng độ đường ở trong máu là 0,35 môn trên lít
+
+00:07:20.160 --> 00:07:25.459
+Và phân tử gam của đường sẽ là 180 gam trên môn
+
+00:07:26.319 --> 00:07:28.449
+Để giải bài này thì chúng ta sẽ áp dụng cái tịnh luật
+
+00:07:28.449 --> 00:07:30.579
+Vanhoek
+
+00:07:30.579 --> 00:07:33.769
+Áp suất thẩm thấu bằng RT nhân nồng độ môn của chất tan ở
+
+00:07:33.769 --> 00:07:36.959
+trong vùng dịch
+
+00:07:36.959 --> 00:07:41.199
+thì chúng ta thay ER bằng 0,082 lít atmosphere trên môn độ
+
+00:07:41.199 --> 00:07:43.720
+nhiệt độ là 310 Kelvin
+
+00:07:43.720 --> 00:07:47.959
+và nồng độ môn của chất tan là 0,35 môn trên lít
+
+00:07:47.959 --> 00:07:49.740
+thì chúng ta sẽ được áp suất thẩm thấu của máu là 8
+
+00:07:49.740 --> 00:07:51.519
+atmosphere
+
+00:07:53.339 --> 00:07:55.480
+Video bài tập này đến đây là hết
+
+00:07:55.480 --> 00:07:57.139
+Chúc các em học tốt
+
+00:07:57.139 --> 00:07:58.300
+Chào các em
+

@@ -1,0 +1,1781 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:04.120
+Em là Long, là chủ nhiệm của cái đề tài Chatbot AI
+
+00:00:04.120 --> 00:00:08.240
+Chắc là em xin phép được bắt đầu luôn được không ạ
+
+00:00:10.289 --> 00:00:20.004
+Dạ, dạ. Long bắt đầu luôn. Dạ, dạ vâng ạ
+
+00:00:20.004 --> 00:00:29.719
+Các thầy thấy slide rồi đúng không ạ
+
+00:00:34.659 --> 00:00:45.094
+Dạ, thấy đề lắm ạ. Dạ, kính chào các thầy
+
+00:00:45.094 --> 00:00:55.530
+Hôm nay em xin báo cáo về đề tài là nghiên cứu và thực hiện AI Chatbot
+
+00:00:55.530 --> 00:00:59.939
+học hỗ trợ người học trong các khóa học MOC móc của công
+
+00:00:59.939 --> 00:01:04.349
+nghệ phần mềm đây là đề tài bài xe của đại
+
+00:01:04.349 --> 00:01:08.549
+học quốc gia thì dựa trên cái đề tài đó thì em có 5 phần
+
+00:01:08.549 --> 00:01:12.750
+trong buổi trình bày hôm nay nhưng em
+
+00:01:12.750 --> 00:01:15.759
+sẽ trình bày 5 phần sự cần thiết về thách thức giải pháp
+
+00:01:15.759 --> 00:01:18.769
+cũng như mục tiêu nội dung và kế hoạch
+
+00:01:18.769 --> 00:01:21.489
+thực hiện và kinh phí kết quả dự kiếm mà em sẽ mong muốn đạt
+
+00:01:21.489 --> 00:01:24.209
+được trong cái đại án lần này
+
+00:01:26.230 --> 00:01:30.250
+thì đối với chính lược của Đại học Quốc gia từ 2021 đến 2030
+
+00:01:30.250 --> 00:01:34.269
+2045 thì cần đầy mạnh ứng dụng công
+
+00:01:34.269 --> 00:01:37.310
+nghiệp thông tin vào xây dựng những cái hệ sinh thái giáo
+
+00:01:37.310 --> 00:01:40.349
+dục số hiện đại thì việc thích hợp những
+
+00:01:40.349 --> 00:01:43.930
+công cụ AI chatbot và hệ thống MOC mà Đại học Quốc gia đang
+
+00:01:43.930 --> 00:01:47.510
+xây dựng sẽ là một công cụ hỗ trợ rất là
+
+00:01:47.510 --> 00:01:51.719
+cũng cần thiết cùng với đó là chủ trương xây mặt để mặt
+
+00:01:51.719 --> 00:01:55.930
+chuyển đổi số của chính phủ cũng như cái sự
+
+00:01:55.930 --> 00:01:58.920
+phát triển của các mạng công nghiệp 4
+
+00:01:58.920 --> 00:02:01.909
+0 tác động rất là nhiều vào giáo dục nên việc xây dựng cái
+
+00:02:01.909 --> 00:02:05.239
+mô hình chatbot ai sẽ đóng vai trò rất là quan trọng trong
+
+00:02:05.239 --> 00:02:08.569
+việc phát triển chuyển đổi số của Đại
+
+00:02:08.569 --> 00:02:13.449
+quốc gia cũng như là chuyện của chuyển đổi số của chính phủ
+
+00:02:13.449 --> 00:02:18.330
+thì cái hệ sinh thái MOC hiện tại thì đang
+
+00:02:18.330 --> 00:02:21.879
+phát triển với khoảng 10 khoảng 20 khóa học rồi và đang dự
+
+00:02:21.879 --> 00:02:25.430
+kiến sẽ đẩy mạnh để phát triển thêm
+
+00:02:25.430 --> 00:02:29.430
+nhiều khóa học nữa vấn đấu khoảng 026 207 là có khoảng 60
+
+00:02:29.430 --> 00:02:33.430
+tới có thể là trên 100 khóa học để
+
+00:02:33.430 --> 00:02:37.730
+sẽ hỗ trợ cho học viên của cố đồng quốc gia thì những cái
+
+00:02:37.730 --> 00:02:42.030
+thách thức rất là lớn của cái xây dựng
+
+00:02:42.030 --> 00:02:44.139
+hệ thống mắc này đó là những cái khó khăn của người học
+
+00:02:44.139 --> 00:02:46.250
+người học sẽ gặp rất nhiều khó khăn trong việc
+
+00:02:46.250 --> 00:02:48.920
+tiếp trận giáo viên tại vì đây là những hệ thống trực tuyến
+
+00:02:48.920 --> 00:02:51.590
+rồi giáo viên giảng viên cũng sẽ gặp
+
+00:02:51.590 --> 00:02:54.259
+những cái vấn đề về những câu hỏi liên tục lập lại của những
+
+00:02:54.259 --> 00:02:56.930
+cái học viên đến tham gia các khoa
+
+00:02:56.930 --> 00:03:00.129
+của khóa học của mình chính vì thế những cái công cụ như AI
+
+00:03:00.129 --> 00:03:03.330
+chatbot nó sẽ hỗ trợ cho chuyên
+
+00:03:03.330 --> 00:03:06.900
+số thông tin cũng như là những cái hỗ trợ phản hồi nó sẽ tự
+
+00:03:06.900 --> 00:03:10.469
+nhiên hơn đóng góp những cái hỗ trợ rất
+
+00:03:10.469 --> 00:03:14.180
+là nhiều cho sinh viên cũng như là giảng viên trong cái việc
+
+00:03:14.180 --> 00:03:17.889
+mà xây dựng chuyển đổi số trong khoa
+
+00:03:17.889 --> 00:03:21.469
+học bóc chính vì thế nên đề tài của em là hướng tới là
+
+00:03:21.469 --> 00:03:25.050
+nghiên cứu xây dựng thử nghiệm một cái
+
+00:03:25.050 --> 00:03:28.280
+cái hệ thống AI chatbot tích hợp vào cái nền tảng OpenIDAC,
+
+00:03:28.280 --> 00:03:31.509
+OpenIDAC là cái nền tảng mà hiện tại là đang
+
+00:03:31.509 --> 00:03:34.769
+xây dựng đến các khóa học MOP của Đại học Quốc gia để nâng
+
+00:03:34.769 --> 00:03:38.030
+cao trạng nghiệp học học thực tuyến cho học
+
+00:03:38.030 --> 00:03:42.550
+sinh sinh viên của Đại học Quốc gia thành phố thì đối với về
+
+00:03:42.550 --> 00:03:47.069
+mặt kỹ thuật thì sẽ xây dựng một cái nền
+
+00:03:47.069 --> 00:03:51.280
+đề tảng file I write Retreat Admin generation để hoàn chỉnh
+
+00:03:51.280 --> 00:03:55.490
+cái dữ liệu giáo dục và tích hợp
+
+00:03:55.490 --> 00:03:59.090
+một cách xuyên suốt vào cái hệ thống OpenEDX MOOC thì có để
+
+00:03:59.090 --> 00:04:02.689
+đạt đến độ chính xác khoảng trên 80 phần
+
+00:04:02.689 --> 00:04:05.769
+trăm còn đối với người dùng thì sẽ giảm thiểu được những cái
+
+00:04:05.769 --> 00:04:08.849
+thời gian tìm kiếm ví dụ tìm kiếm
+
+00:04:08.849 --> 00:04:12.550
+tính khoa học tìm kiếm thông tin và nâng cao cái mức độ phản
+
+00:04:12.550 --> 00:04:16.250
+hồi để cho người dùng người ta cảm
+
+00:04:16.250 --> 00:04:19.199
+thấy hài lòng cũng như là hỗ trợ nhiều ngôn ngữ đối với
+
+00:04:19.199 --> 00:04:22.149
+những sinh viên quốc tế các thứ và giảm
+
+00:04:22.149 --> 00:04:25.049
+những cái vấn đề đối với giáo viên như là những câu hỏi lập
+
+00:04:25.049 --> 00:04:27.949
+lại hoặc là tự động hóa một số cái
+
+00:04:27.949 --> 00:04:31.569
+quy trình nâng cao cái mức độ trải nghiệm cho giảng viên
+
+00:04:31.569 --> 00:04:35.189
+cũng như là học viên chính vì những cái đó
+
+00:04:35.189 --> 00:04:38.779
+thì xây dựng nên một số nội dung của cái đề án này bước đầu
+
+00:04:38.779 --> 00:04:42.370
+là sẽ xây dựng thu thập dữ liệu
+
+00:04:42.370 --> 00:04:45.850
+tiền xử lý dữ liệu trên dựa trên cái nền tảng OpenIDX chúng
+
+00:04:45.850 --> 00:04:49.329
+ta sẽ có những cái tài liệu về PDF
+
+00:04:49.329 --> 00:04:53.090
+về video các thứ thì chúng ta sẽ sử dụng nó để chúng ta phân
+
+00:04:53.090 --> 00:04:56.850
+tích từ đó sẽ embedding và tạo những
+
+00:04:56.850 --> 00:05:01.100
+những cơ sở dữ liệu truy soát vector database và dựa trên
+
+00:05:01.100 --> 00:05:05.350
+Zoom server này là của UIT Đại học công
+
+00:05:05.350 --> 00:05:10.460
+nghệ thông tin chia sẻ cho các thành viên trong đảng quốc
+
+00:05:10.460 --> 00:05:15.569
+gia để sử dụng để thao tác trên những
+
+00:05:15.569 --> 00:05:19.120
+cái dữ liệu lớn như thế thì chúng ta sẽ xây dựng được những
+
+00:05:19.120 --> 00:05:22.670
+cái index database từ đó thì đây là
+
+00:05:22.670 --> 00:05:27.490
+là một cái quá trình tiền xử lý PDF
+
+00:05:27.490 --> 00:05:32.310
+Từ PDF chúng ta sẽ tiền xử lý qua những cái công
+
+00:05:32.310 --> 00:05:36.159
+cụ sẵn có để chúng ta có thể là sau đó là chúng ta sẽ vector
+
+00:05:36.159 --> 00:05:40.009
+database để lưu trữ những cái PDF này
+
+00:05:40.009 --> 00:05:43.049
+dạng tắc PDF tư tắc thành những cái vector database để lưu trữ lại
+
+00:05:43.049 --> 00:05:46.089
+Những cái video cũng
+
+00:05:46.089 --> 00:05:50.579
+cũng hoặc từ video streaming trên hệ thống MOC là dạng M3U8
+
+00:05:50.579 --> 00:05:55.069
+thì chúng ta sẽ phân tích và chúng ta sẽ
+
+00:05:55.069 --> 00:05:58.579
+chuyển chúng ta sẽ sử dụng để file VTT là những cái file
+
+00:05:58.579 --> 00:06:02.089
+caption từ M3U8 chúng ta sẽ chuyển thành
+
+00:06:02.089 --> 00:06:05.250
+những file caption chứa những cái nội dung tách của cái file
+
+00:06:05.250 --> 00:06:08.410
+video đấy và từ đó chúng ta cũng sẽ
+
+00:06:08.410 --> 00:06:11.580
+chúng ta sẽ vector hóa nó để lưu vào database dựa trên nó
+
+00:06:11.580 --> 00:06:14.750
+thì những cái bước tiếp theo là chúng ta sẽ
+
+00:06:14.750 --> 00:06:17.819
+xây dựng cái file graph để truy xuất và phát sinh cho những
+
+00:06:17.819 --> 00:06:20.889
+cái phản hồi sử dụng những cái
+
+00:06:20.889 --> 00:06:24.009
+lắp lên được model để tạo ra những cái câu trả lời cho nó
+
+00:06:24.009 --> 00:06:27.129
+phù hợp và mình sử dụng những cái form
+
+00:06:27.490 --> 00:06:31.269
+engineering để điều hướng những cái câu trả lời cho nó phù
+
+00:06:31.269 --> 00:06:35.050
+hợp với ngựa cảnh các thứ sau đó khi mà
+
+00:06:35.050 --> 00:06:39.509
+các bạn xây dựng xong những cái này rồi thì ta sẽ thích hợp
+
+00:06:39.509 --> 00:06:43.970
+và cái hệ thống MOC là nền tảng Open
+
+00:06:43.970 --> 00:06:48.080
+ETS từ đó thì tiếp tục là sẽ tối ưu và mở rộng ra bằng cách
+
+00:06:48.080 --> 00:06:52.189
+là chúng ta kiểm chứng cái độ chính
+
+00:06:52.189 --> 00:06:55.689
+xác của AI chatbot file tên link nó trên những cái dữ liệu
+
+00:06:55.689 --> 00:06:59.189
+mới và chúng ta nhận những khoản
+
+00:06:59.189 --> 00:07:02.159
+bản hồi từ người học cũng như giáo viên để cho cái hệ thống
+
+00:07:02.159 --> 00:07:05.129
+này nó được chính xác và tối ưu hơn
+
+00:07:06.829 --> 00:07:11.019
+một cái mô hình drag file I'm in the generation file I nó sẽ
+
+00:07:11.019 --> 00:07:15.209
+là từ người người dùng người ta sẽ
+
+00:07:15.209 --> 00:07:19.759
+đặt câu hỏi và từ những cái câu hỏi này sẽ sinh ra những cái
+
+00:07:19.759 --> 00:07:24.310
+index tìm trong tình tác sẽ ra được
+
+00:07:24.310 --> 00:07:27.970
+được những cái document tương ứng và từ những cái document
+
+00:07:27.970 --> 00:07:31.629
+này sẽ sử dụng Luxe Language Model để
+
+00:07:31.629 --> 00:07:34.949
+chúng ta phân tích và đưa ra câu trả lời phù hợp tự nhiên
+
+00:07:34.949 --> 00:07:38.269
+rồi phù hợp với cái nội dung mong muốn
+
+00:07:38.269 --> 00:07:42.924
+của người dùng chính vì những cái nội dung đó thì em có xây
+
+00:07:42.924 --> 00:07:47.579
+dựng lên kế hoạch để thực hiện thì
+
+00:07:47.579 --> 00:07:50.740
+bước đầu tiên chính là phải thu hợp dữ liệu thì dữ liệu thì
+
+00:07:50.740 --> 00:07:53.899
+có sẵn từ hệ thống OpenETX đang hoạt
+
+00:07:53.899 --> 00:07:58.579
+có nguồn PDF có nguồn Word Excel và cả video các thứ và từ
+
+00:07:58.579 --> 00:08:03.259
+đó thì ta sẽ xử lý dữ liệu để chúng
+
+00:08:03.259 --> 00:08:07.819
+ta tạo ra những cái index data từ video và từ những cái tài
+
+00:08:07.819 --> 00:08:12.379
+liệu chủ yếu là từ PDF sau đó thì
+
+00:08:12.379 --> 00:08:16.120
+sẽ là tạo cơ sở dữ liệu truy xuất mà em có nói ở trên là
+
+00:08:16.120 --> 00:08:19.860
+chúng ta sẽ xử dụng Slim để chúng ta
+
+00:08:19.860 --> 00:08:23.500
+chúng ta phân tích những cái dữ liệu đó để chúng ta index
+
+00:08:23.500 --> 00:08:27.139
+vào tạo ra những cái factor database và từ
+
+00:08:27.139 --> 00:08:31.689
+đó thì sử dụng những cái đó để làm căn cứ để truy xuất và
+
+00:08:31.689 --> 00:08:36.240
+lưu trữ những cái thông tin của dữ liệu
+
+00:08:36.240 --> 00:08:41.190
+và xây dựng cái track byline để truy xuất nó truy xuất nó và
+
+00:08:41.190 --> 00:08:46.139
+sử dụng LLM là em sẽ tìm kiếm những cái mà
+
+00:08:46.139 --> 00:08:50.259
+và mô hình Luxor Language Model mà phù hợp nhất cho cái MOC,
+
+00:08:50.259 --> 00:08:54.379
+những video học liệu
+
+00:08:54.379 --> 00:08:57.870
+để có thể là sinh ra những cái câu trả lời mà phù hợp nhất
+
+00:08:57.870 --> 00:09:01.360
+cũng như là nghiên cứu những cái cấu trúc
+
+00:09:01.360 --> 00:09:07.470
+của PROM Engineering để có thể là sinh ra những cái câu PROM
+
+00:09:07.470 --> 00:09:13.580
+mà phù hợp nhất cho cái học liệu tương tác
+
+00:09:13.580 --> 00:09:16.059
+và những cái hoạt động trên MOC
+
+00:09:16.059 --> 00:09:20.750
+sau đó là sẽ tích hợp
+
+00:09:20.750 --> 00:09:22.870
+sau khi mà hoàn thành được cái
+
+00:09:22.870 --> 00:09:24.070
+pipeline Rack rồi
+
+00:09:24.070 --> 00:09:26.389
+thì cái chatbot AI này
+
+00:09:26.389 --> 00:09:27.950
+sẽ được tích hợp vào cái nền tảng
+
+00:09:27.950 --> 00:09:30.929
+OpenEDX MOC hiện tại đang chạy
+
+00:09:31.690 --> 00:09:32.990
+thì có nhiều cách
+
+00:09:32.990 --> 00:09:34.789
+như dự kiến là
+
+00:09:35.429 --> 00:09:36.570
+sẽ triển khai
+
+00:09:36.570 --> 00:09:37.990
+trên những cái như
+
+00:09:37.990 --> 00:09:39.370
+iFrame hoặc Xplug
+
+00:09:39.370 --> 00:09:41.850
+và kết nối với trực tiếp với lại
+
+00:09:41.850 --> 00:09:43.809
+bắt kèm của OpenEDX
+
+00:09:43.809 --> 00:09:45.529
+để đồng bộ dữ liệu người dùng
+
+00:09:45.529 --> 00:09:49.339
+dùng mỗi người dùng sẽ có một cái chất sẽ có một cái môi
+
+00:09:49.339 --> 00:09:53.149
+trường riêng tức là người dùng chúng ta sẽ
+
+00:09:53.149 --> 00:09:56.059
+cá nhân hóa người dùng đối với từng từng chatbot người dùng
+
+00:09:56.059 --> 00:09:58.970
+A và người dùng B người dùng C sẽ có
+
+00:09:58.970 --> 00:10:01.730
+những cái chatbot riêng và nó sẽ có những cái dòng câu
+
+00:10:01.730 --> 00:10:04.490
+chuyện riêng của những cái người dùng đáy và
+
+00:10:04.490 --> 00:10:07.289
+sẽ không liên quan đến những người dùng khác cùng với đó là
+
+00:10:07.289 --> 00:10:10.090
+sau đó là khi mà cái hệ thống đã được
+
+00:10:10.090 --> 00:10:13.309
+tích hợp hoành trình OpenIDX rồi thì sẽ có những cái bước
+
+00:10:13.309 --> 00:10:16.529
+kiểm thử và những câu hỏi chuẩn cũng như
+
+00:10:16.529 --> 00:10:19.860
+pha tinh ninh các thứ để cho nó phù hợp cũng như là tự động
+
+00:10:19.860 --> 00:10:23.190
+cập nhật những cái nội dung bài giảng
+
+00:10:23.190 --> 00:10:26.650
+từ OpenIDX vào ví dụ như là giảng viên liên tục sẽ lên những
+
+00:10:26.650 --> 00:10:30.110
+cái khoa học mới và từ những cái khoa
+
+00:10:30.110 --> 00:10:34.190
+học đó hệ thống sẽ tự động sinh ra những cái cấp sần những
+
+00:10:34.190 --> 00:10:38.269
+cái PDF cũng sẽ tự động là PDF
+
+00:10:38.269 --> 00:10:42.329
+để ra những cái đoạn văn bản và để từ đó chúng ta có thể
+
+00:10:42.329 --> 00:10:46.389
+index trực tiếp vào database và từ đó là
+
+00:10:46.389 --> 00:10:49.399
+truy soát ngược ra cho người dùng là có những cái thông tin
+
+00:10:49.399 --> 00:10:52.409
+cụ thể như thế nào đáp ứng được nhu cầu
+
+00:10:52.409 --> 00:10:57.654
+người dùng về kinh phí và kết quả dự kiến thì kinh phí sẽ
+
+00:10:57.654 --> 00:11:02.899
+phù hợp với cái đề tài các bạn quốc gia
+
+00:11:02.899 --> 00:11:06.610
+loại C là 200 triệu thì chủ yếu nó sẽ rơi vào khoảng công
+
+00:11:06.610 --> 00:11:10.320
+lao động trực tiếp chiếm khoảng trên
+
+00:11:10.320 --> 00:11:14.490
+90 phần trăm có những cái chi phí khác như là im ấn tài liệu
+
+00:11:14.490 --> 00:11:18.659
+gửi thư các thứ thì sẽ rơi vào khoảng
+
+00:11:18.659 --> 00:11:22.019
+2 phần trăm và những cái chi phí quản lý chung và mong muốn
+
+00:11:22.019 --> 00:11:25.379
+là cái kết quả dự kiến mà xây dựng được
+
+00:11:25.379 --> 00:11:28.370
+của cái đề án loại C này sẽ hi vọng sẽ xây dựng được một cái
+
+00:11:28.370 --> 00:11:31.360
+chatbot AI tích hợp hoàn chỉnh vào
+
+00:11:31.360 --> 00:11:35.450
+vào cái hệ thống OpenIDX để có thể là cũng như là có thể là
+
+00:11:35.450 --> 00:11:39.539
+scaleable mở rộng và tái sử dụng
+
+00:11:39.539 --> 00:11:42.769
+phát triển thêm những cái tính năng mới cho AI chatbot và
+
+00:11:42.769 --> 00:11:46.000
+mong muốn là đủ chính xác có thể là đạt
+
+00:11:46.000 --> 00:11:49.000
+được trên 80 phần trăm cũng như thời gian phản hồi của
+
+00:11:49.000 --> 00:11:52.000
+chatbot đối với người dùng có thể là dưới
+
+00:11:52.000 --> 00:11:56.940
+1-2 giây và hệ thống trên 90 phần trăm 100 phần trăm để đáp
+
+00:11:56.940 --> 00:12:01.879
+ứng nhu cầu của người dùng mức độ
+
+00:12:01.879 --> 00:12:05.639
+hài lòng của người dùng thì hi vọng là kết quả này sẽ tác
+
+00:12:05.639 --> 00:12:09.399
+động đối với sinh viên thì sẽ có thể
+
+00:12:09.399 --> 00:12:12.710
+là hỗ trợ sinh viên để nâng cao cái chất lượng cũng như trải
+
+00:12:12.710 --> 00:12:16.019
+nghiệm học tập của sinh viên cá nhân
+
+00:12:16.019 --> 00:12:18.610
+học sinh hóa cũng như là tiết kiệm thời gian để sinh viên
+
+00:12:18.610 --> 00:12:21.200
+tìm kiếm sinh viên có thể là tìm kiếm
+
+00:12:21.200 --> 00:12:24.940
+nhiều quá học và có những trường hợp mà không biết là cái
+
+00:12:24.940 --> 00:12:28.679
+nhu cầu của mình như thế nào thì hy vọng
+
+00:12:28.679 --> 00:12:31.669
+là ai chắc bó sẽ hỗ trợ được sinh viên trả lời những cái câu
+
+00:12:31.669 --> 00:12:34.659
+hỏi mà sinh viên quan tâm còn đối
+
+00:12:34.659 --> 00:12:37.789
+với dạng viên thì hi vọng là ai chắc có sẽ hỗ trợ được cho
+
+00:12:37.789 --> 00:12:40.919
+dạng viên trở thành một cái cộng sự trong
+
+00:12:40.919 --> 00:12:44.569
+trong cái việc mà vừa hỗ trợ cho sinh viên học viên vừa tập
+
+00:12:44.569 --> 00:12:48.220
+trung là xây dựng những cái khóa học mà
+
+00:12:48.960 --> 00:12:52.440
+cho những cái khóa học nó chất lượng cao hơn đáp ứng được
+
+00:12:52.440 --> 00:12:55.919
+những cái nhu cầu của học viên thì đó là
+
+00:12:55.919 --> 00:13:00.759
+bài trình bày của em về mô hình chatbot ai đề tài loại C của
+
+00:13:00.759 --> 00:13:05.600
+Đại học quốc gia em xin hết ạ
+
+00:13:07.500 --> 00:13:11.759
+Cảm ơn Lâm đã truyền bài cũng thấy được một số cái nội dung
+
+00:13:11.759 --> 00:13:16.019
+của đề tài có vẻ rõ hơn là trong
+
+00:13:16.019 --> 00:13:20.190
+cái phần thiết minh xin mời thầy quý viên một và tiến sĩ Lê
+
+00:13:20.190 --> 00:13:24.360
+Duy Tân từ trường Đại học quốc tế
+
+00:13:32.820 --> 00:13:36.009
+Thật ra là cái vấn đề đầu tiên là bạn Long khi mà bạn Long
+
+00:13:36.009 --> 00:13:39.200
+truyền bài ở đây thì cơ bản rất rõ ràng
+
+00:13:39.200 --> 00:13:41.420
+nhưng mà tại sao chấm quý địa cương các bạn không có thông
+
+00:13:41.420 --> 00:13:43.639
+tin gì hết nên thật sự khi đọc địa cương
+
+00:13:43.639 --> 00:13:47.159
+không biết đánh giá như thế nào luôn nên chắc chắn là lòng
+
+00:13:47.159 --> 00:13:50.679
+mà phải update lại cái địa cương nha
+
+00:13:50.679 --> 00:13:52.899
+Cái Robo Show tại vì trong Robo Show của bạn hiện tại là
+
+00:13:52.899 --> 00:13:55.120
+không hề có những cái thông tin mà bạn đang trình bày tại
+
+00:13:55.120 --> 00:13:57.340
+đây
+
+00:13:58.379 --> 00:14:02.620
+Nãy giờ bạn nhắc tới những cái phương pháp, hệ thống và các
+
+00:14:02.620 --> 00:14:06.860
+kiểu mà trong cái đề cương cái Robo Show là không hề có
+
+00:14:08.220 --> 00:14:10.686
+Nên cái Robo Show của bạn nếu mà nhìn vô đọc Robo Show mà để
+
+00:14:10.686 --> 00:14:13.153
+đánh giá thì hoàn toàn không thể đánh giá được cái đề tài
+
+00:14:13.153 --> 00:14:15.620
+của bạn được
+
+00:14:17.580 --> 00:14:18.899
+trong phần Robo Show
+
+00:14:18.899 --> 00:14:19.799
+thì cái phương pháp
+
+00:14:21.799 --> 00:14:23.759
+chứ cũng không có mô tả được chi tiết
+
+00:14:23.759 --> 00:14:24.940
+giống như là cách bạn trình bày
+
+00:14:32.029 --> 00:14:33.769
+các chỉ số kỹ thuật như RAS
+
+00:14:35.009 --> 00:14:36.350
+IOSF được đưa tên
+
+00:14:36.350 --> 00:14:38.490
+nhưng chưa giải thích rõ cơ chế áp dụng
+
+00:14:38.490 --> 00:14:39.470
+đối với móc
+
+00:14:39.889 --> 00:14:42.070
+và cách thu thập xử lý phân hội của người dùng
+
+00:14:42.929 --> 00:14:45.789
+hay tích hợp vào nền tảng hiện có cũng không có luôn
+
+00:14:47.389 --> 00:14:51.829
+nên cơ bản là nếu mà bạn trình bày bạn bạn tiếp thu và bạn
+
+00:14:51.829 --> 00:14:56.269
+chỉnh sửa lại cái rồi bộ sổ theo
+
+00:14:56.269 --> 00:14:58.470
+cái nội dung mà trình bày hôm nay thì cơ bản đâu đó thì cái
+
+00:14:58.470 --> 00:15:00.669
+cái đề tài của bạn có hướng khả thi
+
+00:15:00.669 --> 00:15:03.889
+và có khả năng thực hiện được rồi yếu tố đầu tiên yếu tố thứ
+
+00:15:03.889 --> 00:15:07.110
+hai là về KPI bạn có thể quay lại cái
+
+00:15:07.110 --> 00:15:16.980
+slide KPI thì là bạn không có slide KPI đúng không nhỉ cái
+
+00:15:16.980 --> 00:15:26.850
+KPI khi bạn thực hiện cái đề tài này là
+
+00:15:26.850 --> 00:15:31.289
+này là gì đó em em chưa đưa KPI vào cái slide em chỉ nói về
+
+00:15:31.289 --> 00:15:35.730
+nội dung với lại cái mục tiêu thôi
+
+00:15:36.889 --> 00:15:39.129
+thì KPI của bạn khi thực hiện đề tài này là gì
+
+00:15:44.809 --> 00:15:48.569
+ở đây để em mở lại là thuyết minh là thuyết minh của bạn ghi
+
+00:15:48.569 --> 00:15:52.330
+cái KPI của bạn là một bài báo hội
+
+00:15:52.330 --> 00:15:55.200
+hội nghị scobert dạ vâng và đào tạo thành công một sinh viên
+
+00:15:55.200 --> 00:15:58.070
+đại học đúng không Dạ về bạn là là
+
+00:15:58.070 --> 00:16:00.950
+thạch sĩ mà bạn chỉ đào tạo đại học thôi theo các quy định
+
+00:16:00.950 --> 00:16:03.830
+hiện tại thì nó đâu có đủ 200 triệu
+
+00:16:03.830 --> 00:16:08.265
+đâu Nó đâu có đủ 200 triệu giống như bạn mô tả đâu không
+
+00:16:08.265 --> 00:16:12.700
+biết cái này là bên bên ITB mình có quy
+
+00:16:12.700 --> 00:16:14.460
+định như thế nào thì không biết nhưng mà nếu ta quy định của
+
+00:16:14.460 --> 00:16:16.220
+nào quốc gia thì rõ ràng làm là đâu
+
+00:16:16.220 --> 00:16:19.200
+không có đủ. Tại vì theo quy định
+
+00:16:19.860 --> 00:16:21.899
+cái quy định thì ít nhất là cũng phải
+
+00:16:21.899 --> 00:16:24.460
+làm một bài báo hội nghị
+
+00:16:29.620 --> 00:16:32.279
+một hội nghị scobert nè. Một journal scobert
+
+00:16:32.279 --> 00:16:33.940
+và đào tạo ít nhất thành công là 2 sinh
+
+00:16:33.940 --> 00:16:36.360
+nguyên đại học. Đó là đề tại C. Còn nếu
+
+00:16:36.360 --> 00:16:39.440
+mà bạn làm cái qua đăng ký giải pháp
+
+00:16:39.440 --> 00:16:41.399
+hữu ích nữa hay là đăng ký phát minh
+
+00:16:43.259 --> 00:16:45.360
+TBI này chứ. Nhưng nếu mà thật sự cái
+
+00:16:50.700 --> 00:16:52.940
+Đề án cấp đại hội quốc gia mà để đăng ký
+
+00:16:53.799 --> 00:16:55.220
+Đó là lời cháy góp ý
+
+00:16:55.220 --> 00:16:58.740
+Dạ, chắc em hết góp ý thì chúng ta hội đồng
+
+00:17:00.100 --> 00:17:02.899
+Rồi, cảm ơn Thầy Tân
+
+00:17:04.039 --> 00:17:06.339
+Xin mời vĩ viên tiếp theo
+
+00:17:06.339 --> 00:17:07.900
+Tiến sĩ Lê Hải Dương
+
+00:17:18.470 --> 00:17:22.670
+Thì cũng như Tân nãy anh ta cũng đã nói
+
+00:17:22.670 --> 00:17:26.619
+mình thấy hầu hết cái ý là trong cái cuốn thuyết minh thì nó
+
+00:17:26.619 --> 00:17:30.569
+còn sơ sài quá nhưng mà ở đây sau khi mà
+
+00:17:30.569 --> 00:17:36.750
+xem cái cái tiết trình thì đã hiểu rõ hơn về cái đề tài này
+
+00:17:36.750 --> 00:17:42.930
+và đúng là cái mình phải xem lại cái
+
+00:17:42.930 --> 00:17:47.000
+phần cái cái yêu cầu KPI nha nếu mình muốn đạt được cái mức
+
+00:17:47.000 --> 00:17:51.069
+200 triệu đó ngoài ra thì tôi không
+
+00:18:10.079 --> 00:18:12.829
+thì cũng như thầy Dương Thầy Dương Thầy Tân có nói rồi thì
+
+00:18:12.829 --> 00:18:15.579
+ngoài những cái việc mà chắc
+
+00:18:15.579 --> 00:18:19.630
+được chắc là mà Tài Long là phải cập nhật lại với cái này
+
+00:18:19.630 --> 00:18:23.680
+thì mọi thứ nó có đạt nó rất nhiều
+
+00:18:24.160 --> 00:18:28.539
+và cũng chắc chắc cũng cũng xem lại với cái phần thì nó phù
+
+00:18:28.539 --> 00:18:32.920
+hợp theo đóng góp ý kiến của đề tài
+
+00:18:32.920 --> 00:18:35.789
+này thì em nghĩ rằng là nói chung là nếu mà thực hiện được
+
+00:18:35.789 --> 00:18:38.660
+như cái cái slide mà mục tiêu ở đây thì
+
+00:18:38.660 --> 00:18:42.889
+đề tài cũng có rất là tìm đang để phát triển vì là cái hệ
+
+00:18:42.889 --> 00:18:47.119
+thống chatbot rồi cái thống áp dụng cho
+
+00:18:47.119 --> 00:18:50.400
+cái thống online thì hiện thời đang rất là hot trong cái bối
+
+00:18:50.400 --> 00:18:53.680
+cảnh mà mà cái đào tạo online ngày
+
+00:18:53.680 --> 00:18:56.070
+càng phát triển và đồng thời là đề tài cũng đã cũng sẽ em
+
+00:18:56.070 --> 00:18:58.460
+nhớ thiếu theo như cái thiết minh này
+
+00:18:58.460 --> 00:19:02.750
+cái này thì cũng sẽ kết hợp các công nghệ tiên tím như em
+
+00:19:02.750 --> 00:19:07.039
+hay là rồi các em thì rất là tốt mà
+
+00:19:07.519 --> 00:19:11.670
+phù hợp với cái hướng công nghệ mới chỉ cần theo nghĩa thì
+
+00:19:11.670 --> 00:19:15.819
+chỉ cần lòng bổ sung cho nó hoàn
+
+00:19:15.819 --> 00:19:21.505
+chỉnh hơn thì cái việc là tài không qua và được thực hiện
+
+00:19:21.505 --> 00:19:27.190
+được hoàn toàn có cơ sở rồi Cảm ơn
+
+00:19:27.190 --> 00:19:31.820
+Cảm ơn thầy Sơn
+
+00:19:31.820 --> 00:19:36.450
+Mời thành viên cuối cùng và biết thầy Lê Nhật Quang có ý kiến gì không
+
+00:19:40.210 --> 00:19:44.789
+Xin chào các thầy
+
+00:19:44.789 --> 00:19:49.369
+Về đề tài thì hiện tại ITB cũng đang triển khai các hệ thống
+
+00:19:49.369 --> 00:19:54.930
+Học hệ thống mod cho đoàn quốc gia
+
+00:19:54.930 --> 00:19:57.570
+Nó cũng là phần lợi để đề tài này mang tính chất thực tiễn
+
+00:19:57.570 --> 00:20:00.210
+và ứng dụng
+
+00:20:00.210 --> 00:20:06.569
+Vô trong hỗ trợ thêm cho việc làm hệ thống mod đó
+
+00:20:06.569 --> 00:20:12.329
+Và nó cũng rất là tốt cho những người học
+
+00:20:12.329 --> 00:20:17.250
+Người ta cũng có thể tham gia vào để hỗ trợ cho việc học
+
+00:20:17.250 --> 00:20:30.970
+Cái thứ hai liên quan đến câu chuyện trong thuyết minh, liên quan đến nội dung 3, nhóm có đưa ra về nhân hóa trải nghiệm học tập thì cái này là đúng
+
+00:20:30.970 --> 00:20:34.269
+Nhưng mà mình xem lại coi thử là
+
+00:20:35.190 --> 00:20:36.750
+Tức là trong cái thời gian mình thực hiện cái đề tài này của
+
+00:20:36.750 --> 00:20:38.309
+mình
+
+00:20:38.309 --> 00:20:42.410
+Thì mình có đủ, tức là cái người học
+
+00:20:42.410 --> 00:20:48.009
+Cái số lượng như nãy chủ nhiệm đề tài chủ Long có nói
+
+00:20:48.009 --> 00:20:50.390
+Là cái số lượng của các khó hợp mốt
+
+00:20:50.390 --> 00:20:53.190
+Nhưng mà cái người học là nó có đủ
+
+00:20:53.849 --> 00:20:59.269
+Nó đủ nhiều để mình có thể là phân tích được
+
+00:20:59.269 --> 00:21:01.269
+Tức là mình phải giữ vô dữ liệu để mình phân tích được các
+
+00:21:01.269 --> 00:21:03.269
+cái hành vi người học
+
+00:21:05.170 --> 00:21:07.690
+Rồi áp dụng AI để cá nhân hóa nội dung
+
+00:21:08.170 --> 00:21:10.789
+Thì những cái mục mà mình ghi ra này nè
+
+00:21:10.789 --> 00:21:13.549
+Thì mình cân nhắc thêm, coi thử là mình có
+
+00:21:13.549 --> 00:21:15.230
+Có là cái thời gian của mình làm và cái thời gian chuyển
+
+00:21:15.230 --> 00:21:16.910
+khai mốt
+
+00:21:16.910 --> 00:21:21.109
+Là nó có đủ cái dữ liệu để mình ra cái nội dung này không
+
+00:21:21.109 --> 00:21:23.750
+Tại vì sau nếu mà mình để vô dạy
+
+00:21:23.750 --> 00:21:26.589
+Lúc mà nghiệm thu cái đề tài này
+
+00:21:26.589 --> 00:21:31.609
+Thì hội đồng cũng sẽ hỏi liên quan đến câu chuyện là số liệu
+
+00:21:32.230 --> 00:21:34.049
+Anh có thể chứng minh được số liệu và phân tích dữ liệu
+
+00:21:34.049 --> 00:21:35.869
+thành vi người học
+
+00:21:35.869 --> 00:21:37.549
+Trong này có phương pháp
+
+00:21:37.549 --> 00:21:43.430
+Nhưng mà mình lúc đó nếu mà số lượng khóa học mà nó ít quá
+
+00:21:43.430 --> 00:21:46.650
+Hoặc là người học nó chưa đủ với dữ liệu
+
+00:21:48.230 --> 00:21:54.450
+Thì số liệu, thông tin đưa ra nó không được chính xác lắm
+
+00:21:54.450 --> 00:21:56.639
+Cho nên cái này nhóm đề tải cũng nghiên cứu mình có nên để
+
+00:21:56.639 --> 00:21:58.829
+vô hay không
+
+00:21:58.829 --> 00:22:01.599
+Hay là mình chỉ là đến cái phần chỉ cần là mình tích hợp vô
+
+00:22:01.599 --> 00:22:04.369
+trước đó
+
+00:22:04.369 --> 00:22:07.839
+Rồi sau đó là cái phần mà đánh giá hoặc là cái phần mà
+
+00:22:07.839 --> 00:22:11.309
+nghiên cứu dữ liệu hành vi sau
+
+00:22:11.309 --> 00:22:13.869
+Thì mình có thể làm một cái đề tải khác v.v
+
+00:22:13.869 --> 00:22:18.699
+Thì cái này nhóm cũng cân nhắc thêm trong cái việc là đề
+
+00:22:18.699 --> 00:22:23.529
+xuất cái nội dung
+
+00:22:23.529 --> 00:22:27.340
+cho nó phù hợp thì cũng như các thầy trước có nói liên quan
+
+00:22:27.340 --> 00:22:31.150
+đến cái điều kiện của loại C của mình
+
+00:22:31.150 --> 00:22:34.519
+thì mình chỉ cần đúng những cái điều kiện loại C là được rồi
+
+00:22:34.519 --> 00:22:37.890
+thì mình cũng những cái mà mình muốn
+
+00:22:37.890 --> 00:22:40.140
+hay có thể những cái mình mong muốn thì đương nhiên là lúc
+
+00:22:40.140 --> 00:22:42.390
+nào mình mong muốn nó tốt Tuy nhiên là
+
+00:22:42.390 --> 00:22:45.869
+thực tế lúc mình kiểm tra thì nó mình coi thử nó phù hợp
+
+00:22:45.869 --> 00:22:49.349
+không để cái kết quả thì thu dễ dàng không
+
+00:22:51.710 --> 00:22:58.980
+Còn một cái ý nữa thì nhóm cũng nên có một cái, tức là mình cũng có thể trình bày phía trước để mình bắt đầu cái nghiên cứu này liên quan đến câu chuyện và nó phù hợp với sưu thướng và v
+
+00:22:58.980 --> 00:23:06.250
+v
+
+00:23:06.250 --> 00:23:10.372
+Thì mình coi thử là những cái, tức là mình nên có cái so
+
+00:23:10.372 --> 00:23:14.495
+sánh, những cái con mà nó đang chạy trên những cái nền tảng
+
+00:23:14.495 --> 00:23:18.618
+mà học trực tuyến bây giờ nó liên quan đến hỗ trợ cá nhân
+
+00:23:18.618 --> 00:23:22.741
+hóa hoặc là hỗ trợ người học thì mình nên có những cái thông
+
+00:23:22.741 --> 00:23:26.864
+tin để mình nói à những cái con đó nó cũng đang chạy cái mô
+
+00:23:26.864 --> 00:23:30.987
+hình này nó cũng hữu quả nhưng mà của mình thì nó sẽ có cái
+
+00:23:30.987 --> 00:23:35.109
+gì đó nó khác
+
+00:23:35.109 --> 00:23:38.730
+Nó có cái gì đó nó tối ưu hơn cho cái hệ thống mốc của mình
+
+00:23:40.130 --> 00:23:41.609
+Đầu đó nó sẽ thiết phục hơn
+
+00:23:42.130 --> 00:23:43.890
+Trong cái việc là mình làm cái
+
+00:23:45.210 --> 00:23:46.210
+Cái câu này
+
+00:23:48.309 --> 00:23:49.750
+Chỗ cái góp ý
+
+00:23:49.750 --> 00:23:51.650
+Cho ngón cụ đề tài
+
+00:23:55.230 --> 00:23:56.569
+Rồi, cảm ơn thầy Quang
+
+00:23:56.569 --> 00:23:58.849
+Thì là chắc tất cả các thành viên
+
+00:23:58.849 --> 00:24:00.210
+Thì cũng đã có góp ý rồi
+
+00:24:02.490 --> 00:24:03.630
+Tổng kết lại tôi cũng
+
+00:24:03.630 --> 00:24:06.720
+tôi cũng nói ngay từ đầu là cái phần trình bày của bạn thì
+
+00:24:06.720 --> 00:24:09.809
+nó sẽ tốt hơn cái phần viết trong cái
+
+00:24:09.809 --> 00:24:14.579
+thiết minh tuy nhiên thì vẫn cần thêm cái một số cái điều
+
+00:24:14.579 --> 00:24:19.349
+kiện điều kiện là phải mổ sung chi tiết về
+
+00:24:19.349 --> 00:24:25.490
+cái sản phẩm để đáp ứng được cái KPI của đề tài loại C tự
+
+00:24:25.490 --> 00:24:31.630
+nói thì cái đề tài này là tôi cũng đã
+
+00:24:31.630 --> 00:24:34.579
+chúng ta tham gia một số hội đồng liên quan đến chương trình
+
+00:24:34.579 --> 00:24:37.529
+MOC
+
+00:24:38.849 --> 00:24:41.940
+thì thấy là cái đề tài này là rất cần thiết để hỗ trợ cho
+
+00:24:41.940 --> 00:24:45.029
+người học
+
+00:24:45.029 --> 00:24:47.250
+để tăng tính hiệu quả của việc học trực tuyến trên môi
+
+00:24:47.250 --> 00:24:49.470
+trường MOC
+
+00:24:49.470 --> 00:24:51.930
+cho nên là tôi rất là ủng hộ cái đề tài này về cái tính thực
+
+00:24:51.930 --> 00:24:54.390
+tế của nó
+
+00:24:55.430 --> 00:24:58.470
+Tuy nhiên thì điều kiện của đề tài Nam Quốc gia C
+
+00:24:58.470 --> 00:25:01.329
+thì nó lại có một số cái yêu cầu về sản phẩm.
+
+00:25:01.730 --> 00:25:06.289
+Hiện tại cân nhắc các cái điều kiện sản phẩm ở đây.
+
+00:25:06.829 --> 00:25:09.609
+Thứ nhất là mình đang hướng tới đề tài ứng dụng.
+
+00:25:09.910 --> 00:25:13.420
+Thì trong cái đề tài thì ở đây nếu mình chỉ cân nhắc theo
+
+00:25:13.420 --> 00:25:16.930
+các KPI
+
+00:25:16.930 --> 00:25:21.730
+về các loại bài báo về sản phẩm đào tạo
+
+00:25:22.230 --> 00:25:25.029
+tuy nhiên thì mình phải có thêm cái sản phẩm phần mềm.
+
+00:25:25.829 --> 00:25:30.599
+ở đây ngay cái slide trang 17 quay lòng quay lại 17 thì đây
+
+00:25:30.599 --> 00:25:35.369
+là kết quả dự kiến đúng không thì đây
+
+00:25:35.369 --> 00:25:38.299
+là giống như là một sản phẩm của mình đây thì mình có thể
+
+00:25:38.299 --> 00:25:41.230
+cân nhắc mình đưa cái kết quả này đưa vào
+
+00:25:41.230 --> 00:25:45.389
+trong cái phần sản phẩm mềm của mình chứ trong trong cái
+
+00:25:45.389 --> 00:25:49.549
+thuyết minh thì là không có ghi gì tới
+
+00:25:49.549 --> 00:25:53.179
+cái sản phẩm mềm không ghi gì sản phẩm mềm hết như vậy thì
+
+00:25:53.179 --> 00:25:56.809
+nó không có không có phù hợp lắm với
+
+00:25:56.809 --> 00:26:00.670
+đề tài mang tính ứng dụng trong khi mình đang làm một cái đề
+
+00:26:00.670 --> 00:26:04.529
+tài mang tính ứng dụng mà nên là mình
+
+00:26:04.529 --> 00:26:07.389
+đưa cái dạng sản phẩm mềm vào đây chỉ khi mỗi là cái báo cáo
+
+00:26:07.389 --> 00:26:10.250
+tổng kết đề tài có vẻ như là không
+
+00:26:10.250 --> 00:26:13.880
+có phù hợp lắm trong khi mình trình bày đây là khá là chi
+
+00:26:13.880 --> 00:26:17.509
+tiết và các kết quả dự kiến đó thì thầy
+
+00:26:17.509 --> 00:26:20.320
+quan thì cũng có nói về một số cái yêu cầu mình có thể được
+
+00:26:20.320 --> 00:26:23.130
+bớt Tuy nhiên thì ít nhất mình có
+
+00:26:23.130 --> 00:26:25.329
+có sản phẩm hay ai, chatbox có thể
+
+00:26:27.369 --> 00:26:28.450
+một số tính năng cơ bản vào đó
+
+00:26:28.450 --> 00:26:30.349
+thì mình cũng phải khai báo vào trong cái
+
+00:26:31.769 --> 00:26:32.849
+cái dạng một
+
+00:26:32.849 --> 00:26:33.829
+các sản phẩm mềm
+
+00:26:33.829 --> 00:26:36.910
+mình đề xuất là bổ sung cái đó
+
+00:26:37.869 --> 00:26:38.809
+thứ hai nữa
+
+00:26:38.809 --> 00:26:41.250
+thì dù gì thì để đạt được kinh phí
+
+00:26:42.089 --> 00:26:43.289
+là 200 triệu
+
+00:26:43.289 --> 00:26:44.930
+thì chúng ta cũng thấy là
+
+00:26:45.710 --> 00:26:46.849
+cần phải có
+
+00:26:48.869 --> 00:26:50.029
+danh mục là
+
+00:26:51.089 --> 00:26:52.230
+chỉ một bài báo
+
+00:26:53.490 --> 00:26:55.809
+thì có vẻ là chưa đủ kinh phí
+
+00:26:57.789 --> 00:26:58.809
+thì không biết là
+
+00:26:58.809 --> 00:27:00.869
+bên tổ thư ký
+
+00:27:00.869 --> 00:27:01.470
+chúng ta có
+
+00:27:02.710 --> 00:27:04.670
+trên đây cũng không đưa một cái bám theo
+
+00:27:04.670 --> 00:27:06.150
+một cái quyết định nào về cấp
+
+00:27:07.349 --> 00:27:09.029
+KPI của các cái đề tài
+
+00:27:10.710 --> 00:27:12.609
+thì tôi thấy là theo
+
+00:27:13.970 --> 00:27:15.049
+như các cái
+
+00:27:16.230 --> 00:27:17.470
+cái tài liệu tôi có
+
+00:27:18.369 --> 00:27:20.390
+thì căn cứ trên một cái quyết định
+
+00:27:21.789 --> 00:27:23.269
+Của Đại học quốc gia
+
+00:27:25.509 --> 00:27:26.849
+1593 đã quyết định 1593
+
+00:27:27.990 --> 00:27:28.990
+Thì với cái KPI
+
+00:27:28.990 --> 00:27:30.970
+Mà một bài báo scoreboard
+
+00:27:30.970 --> 00:27:31.710
+Mà một đào tạo
+
+00:27:32.849 --> 00:27:34.730
+Một sinh viên thì có vẻ nó chưa đủ
+
+00:27:34.730 --> 00:27:35.730
+Kinh phí 200 triệu
+
+00:27:36.430 --> 00:27:37.509
+Cho nên là
+
+00:27:38.309 --> 00:27:40.569
+Nếu chúng ta có được duyệt thì cuối cùng
+
+00:27:40.569 --> 00:27:42.349
+Tôi sợ tới lúc dòng tài chánh
+
+00:27:42.349 --> 00:27:44.309
+Thì cũng sẽ bị cắt cái kinh phí của mình đi
+
+00:27:44.309 --> 00:27:45.569
+Nó cũng rất là tiếc
+
+00:27:45.569 --> 00:27:47.930
+Tại vì cái đề tài của mình cũng mang tính ứng dụng khác cao
+
+00:27:47.930 --> 00:27:52.030
+thì có thể mình bổ sung thêm cái nhất là cái sản phẩm mềm
+
+00:27:52.030 --> 00:27:56.130
+thứ hai là thêm một cái bài báo nữa hoặc
+
+00:27:56.130 --> 00:28:03.235
+là một cái đăng ký cho trải đó là các ý kiến của tôi như vậy
+
+00:28:03.235 --> 00:28:10.339
+đi chứ anh không em cảm ơn thầy góp ý
+
+00:28:10.339 --> 00:28:14.309
+thì em cũng xin nói thêm là về cái proposal lúc đầu thì nó
+
+00:28:14.309 --> 00:28:18.279
+hơi khác so với cái slide quyết
+
+00:28:18.279 --> 00:28:22.429
+trình của em cũng cách đây mấy tháng rồi cái đó cũng lâu
+
+00:28:22.429 --> 00:28:26.579
+trong quá trình là bọn em cũng bắt tay
+
+00:28:26.579 --> 00:28:29.490
+vào bọn em nghiên cứu chúng em cũng nghiên cứu và chúng em
+
+00:28:29.490 --> 00:28:32.400
+cũng phát triển nên có một cái phần nhỏ
+
+00:28:32.400 --> 00:28:34.910
+là cái proposal nó cũng tương đối khác so với cái là trình
+
+00:28:34.910 --> 00:28:37.420
+chiếu ngày hôm nay thì em sẽ ghi nhận
+
+00:28:38.059 --> 00:28:41.769
+cho nó phù hợp đúng hơn so với cái bắt đầu tức là mua con
+
+00:28:41.769 --> 00:28:45.480
+sầu là cái ý tưởng bắt đầu của chúng
+
+00:28:45.480 --> 00:28:48.869
+em Nhưng mà tới giờ này thì em nhìn thấy cái đường nó rõ hơn
+
+00:28:48.869 --> 00:28:52.259
+rồi các thứ thì bọn em nó xây
+
+00:28:52.259 --> 00:28:56.190
+dựng được những cái thuyết minh cho nó cụ thể hơn là như thế
+
+00:28:56.190 --> 00:29:00.119
+này còn về kpi thì giờ em em chưa rõ
+
+00:29:00.640 --> 00:29:04.070
+lắm về cái yêu cầu của đề tài loại C mà thật sự là em chỉ
+
+00:29:04.070 --> 00:29:07.500
+đăng ký trên cái hệ thống PMS và thấy
+
+00:29:08.660 --> 00:29:12.769
+được cấp kinh phí như thế nên có thể là em sẽ liên hệ lại
+
+00:29:12.769 --> 00:29:16.880
+với bên cái hệ thống PMS đó để
+
+00:29:16.880 --> 00:29:20.890
+yêu cầu chỉnh sửa lại cái KPI cho phù hợp hiện tại là cũng
+
+00:29:20.890 --> 00:29:24.900
+đang có hai sinh viên em cũng đang làm
+
+00:29:24.900 --> 00:29:28.000
+làm việc với hai sinh viên cho cái đề tài này chứ không phải
+
+00:29:28.000 --> 00:29:31.099
+là một sinh viên nên có thể là về các
+
+00:29:31.099 --> 00:29:34.759
+KPI thì em nghĩ là có thể sẽ tiến tới là phù hợp được cho
+
+00:29:34.759 --> 00:29:38.420
+cái yêu cầu của đề tài lại C nên em sẽ
+
+00:29:38.420 --> 00:29:41.700
+cũng sẽ xem xét chỉnh sửa lại KPI cho phù hợp luôn với yêu
+
+00:29:41.700 --> 00:29:44.980
+cầu của các thầy còn đối với ý kiến
+
+00:29:44.980 --> 00:30:06.039
+Thầy Quang về những cái dữ liệu, những cái sản phẩm thì đây như đã nói từ đầu đây là một cái nghiên cứu ứng dụng Chatbot AI vào nên có thể là những cái bước đầu tiên là những cái expectation nó hơi rộng quá
+
+00:30:06.039 --> 00:30:10.150
+khác
+
+00:30:10.150 --> 00:30:14.259
+Mục tiêu chính của cái đề án này là trước mắt là nghiên cứu ứng dụng để có một cái chất
+
+00:30:14.259 --> 00:30:17.599
+body ai chạy được trên cái hệ thống MOC của Đại học Quốc gia
+
+00:30:17.599 --> 00:30:20.940
+Còn mình có thể là mình mở rộng,
+
+00:30:21.059 --> 00:30:23.880
+mình nghiên cứu sâu hơn về cái thứ thì mình có thể có những
+
+00:30:23.880 --> 00:30:26.700
+cái đề tài mới về những cái vấn đề
+
+00:30:26.700 --> 00:30:29.809
+cụ thể như dữ liệu hành vi của người dùng
+
+00:30:29.809 --> 00:30:32.920
+Thì em sẽ cân nhắc là em có thể là em để đó là những
+
+00:30:32.920 --> 00:30:36.470
+là một cái suy trụ quốc hoặc là những cái và sau nếu mà còn
+
+00:30:36.470 --> 00:30:40.019
+thời gian nhìn chung thì em sẽ chỉnh
+
+00:30:40.019 --> 00:30:45.204
+sửa lại cái vô sầu và những cái PPI theo như đề nghị của các
+
+00:30:45.204 --> 00:30:50.390
+thầy ạ Dạ em xin hết rồi Cảm ơn
+
+00:30:50.869 --> 00:30:57.804
+lòng thì có không biết cái quyết định 1593 các bạn tư ký
+
+00:30:57.804 --> 00:31:04.740
+không biết có tư ký ở đây không hoặc là
+
+00:31:05.240 --> 00:31:10.250
+thầy hoàng có thầy quang thầy quang có có nắm được cái thông
+
+00:31:10.250 --> 00:31:15.259
+tin và quyết định 15930
+
+00:31:17.779 --> 00:31:22.440
+dạ thì theo biết thì cái cái này thì để tại loại c của mình
+
+00:31:22.440 --> 00:31:27.099
+200 thì nó có 3 cái nhóm chính liên
+
+00:31:27.099 --> 00:31:29.849
+quan đến được ám phẩm ám phẩm khoa học thì ít nhất một cái
+
+00:31:29.849 --> 00:31:32.599
+bài báo khoa học nhà một bài báo khoa học
+
+00:31:32.599 --> 00:31:37.079
+được rồi
+
+00:31:37.079 --> 00:31:41.559
+Nó có thể là tạp trí, phò hợp trong nước, mã ISM, do một hội đồng giáo sư nhà nước hoặc là một quốc tế thuộc
+
+00:31:41.559 --> 00:31:45.119
+là Scorber 3. 4, một phần nguyện quốc tế
+
+00:31:45.119 --> 00:31:48.680
+Còn cái sản phẩm nghiên cứu á, quan trọng là do cái đề tài này để lại ứng dụng
+
+00:31:48.900 --> 00:31:56.940
+Nên cái sản phẩm nghiên cứu nó sẽ là cái sản phẩm mềm, bao gồm là báo cáo, mô hình, quy trình, cơ sở dữ liệu và phần mềm
+
+00:31:56.940 --> 00:32:01.940
+Thì như nãy thầy có nói là đúng là phải ra của phần mềm là nó đúng như đó
+
+00:32:02.359 --> 00:32:06.839
+Còn nếu là sản phẩm mà vàng có một số cái,
+
+00:32:07.680 --> 00:32:09.630
+tức là mình minh chứng được cái việc ứng dụng cái sản phẩm
+
+00:32:09.630 --> 00:32:11.579
+đó vô trong thực tế,
+
+00:32:11.779 --> 00:32:13.380
+là mình đã thích hợp lên trên thầy sóng mod và nó chạy trên
+
+00:32:13.380 --> 00:32:14.980
+đó,
+
+00:32:15.220 --> 00:32:19.880
+thì cũng là một cái sản phẩm mà mình thấy được.
+
+00:32:21.000 --> 00:32:24.579
+Và các cái chỉ tiêu định lượng liên quan,
+
+00:32:24.579 --> 00:32:32.079
+Các chỉ tiêu định lượng thì nãy ở trong phai trình bày của chỗ Anh Long thì cũng đã có
+
+00:32:33.099 --> 00:32:39.880
+Rồi về đào tạo thì đúng là nó chỉ là ít nhất, ghi là ít nhất một sinh viên tốt nghiệp
+
+00:32:40.799 --> 00:32:50.140
+Thì cái này chỗ một sinh viên, có thể là sinh viên hoặc là cao học thì nó cũng có ghi vậy
+
+00:32:50.500 --> 00:32:52.839
+Thì mình cũng có đáp ứng bổ tiểu rồi.
+
+00:32:53.680 --> 00:32:58.506
+Còn cái mà đối với đề tản dụng người ta khuyến khích bổ sung
+
+00:32:58.506 --> 00:33:03.333
+thì có đăng ký sở chính tệ nếu mà mình thấy là nó tốt thì nó
+
+00:33:03.333 --> 00:33:08.160
+là khuyến khích bổ sung hoặc là chuyển giao công nghệ
+
+00:33:09.480 --> 00:33:13.809
+Thì hoặc là một số cái khác như là mình tham vưu kiến đại số
+
+00:33:13.809 --> 00:33:18.140
+chính sách liên quan hoặc là mình đồng góp vô những hội thảo
+
+00:33:18.619 --> 00:33:20.460
+Mình minh chứng được cái đó là cũng được
+
+00:33:21.380 --> 00:33:23.800
+Thì đó là một số cái mà đầu ra của cái đề tài ứng dụng và C
+
+00:33:23.800 --> 00:33:26.220
+thôi
+
+00:33:27.619 --> 00:33:31.119
+Thì nhóm đề tài chắc chứng nhắc thêm một số cái gọi là kiến
+
+00:33:31.119 --> 00:33:34.619
+sách bổ sung để mình đưa vào
+
+00:33:34.619 --> 00:33:40.179
+và một số phí cứng thì mình phải tuân thủ đúng thu được chắc
+
+00:33:40.179 --> 00:33:45.740
+Long tắt cái slide để tôi mở cái
+
+00:33:45.740 --> 00:33:50.095
+quyết định 1593 lên để mọi người xem xem cái nào tôi cũng
+
+00:33:50.095 --> 00:33:54.450
+không rõ là mọi người đã nắm được chưa
+
+00:33:54.450 --> 00:33:59.360
+chứ còn theo như là các cái đề tài được việc bắt đầu sơ
+
+00:33:59.360 --> 00:34:04.269
+tuyển vào năm nay là phải căn cứ trên cái
+
+00:34:04.269 --> 00:34:12.449
+mọi người thấy cái quyết định 1593 mọi người thấy cái quyết
+
+00:34:12.449 --> 00:34:20.630
+định 1593 quá à à Ừ thì mình lướt qua
+
+00:34:20.630 --> 00:34:23.279
+hết mình để vào cái phụ đục sản phẩm mà giờ yêu cầu thì nãy
+
+00:34:23.279 --> 00:34:25.929
+giờ cũng đã có nói là trình bày thì
+
+00:34:25.929 --> 00:34:29.689
+rồi là để tài xe thì chỉ cần thạc sĩ đúng đứng là được không
+
+00:34:29.689 --> 00:34:33.449
+có vấn đề gì cả Tuy nhiên thì cái
+
+00:34:33.449 --> 00:34:37.789
+cái KPI để đạt được cái cái sản phẩm thì nó sẽ tính KPI cho
+
+00:34:37.789 --> 00:34:42.130
+nên là mình phải chọn cái KPI nó
+
+00:34:42.130 --> 00:34:45.800
+phù hợp với các thầy cũng đã ý kiến rồi đó thì phụ lực và
+
+00:34:45.800 --> 00:34:49.469
+sản phẩm ví dụ như là nó có cái ở cái
+
+00:34:49.469 --> 00:34:55.300
+trang 28 có phụ lực 1 kinh phí khái toán và kinh phí thì có
+
+00:34:55.300 --> 00:35:01.130
+nó có kinh phí tối đa ở đây nó có khoáng
+
+00:35:01.130 --> 00:35:04.630
+khoáng chi và không khoáng chi thì kinh phí mà nếu mà không
+
+00:35:04.630 --> 00:35:08.130
+khoáng chi có một phần có một phần
+
+00:35:08.130 --> 00:35:15.735
+không khoáng chi thì nó sẽ được cao hơn thì cái cái của Long
+
+00:35:15.735 --> 00:35:23.340
+đăng ký đây thì nó sẽ là cái K4 K4 thì
+
+00:35:23.340 --> 00:35:28.329
+bài báo tạp chí trong danh mục Scopus thì nó chỉ khoảng là
+
+00:35:28.329 --> 00:35:33.320
+đâu đó từ 70 đến 90 triệu này thì ta
+
+00:35:33.320 --> 00:35:36.779
+chúng ta chú ý cho nên là ít nhất ta phải có hai bài chứ một
+
+00:35:36.779 --> 00:35:40.239
+bài thì nó rất là khó hoặc là chúng ta
+
+00:35:41.400 --> 00:35:47.059
+có thể đăng ký thêm cái ca sáu hoặc là ca 7 thì nếu mà như
+
+00:35:47.059 --> 00:35:52.719
+là nếu ta đăng ký ngay ca 7 thì hoặc là ca
+
+00:35:52.719 --> 00:35:57.550
+sáu thôi là một cái thôi là cũng đủ rồi đó nhưng mà cái này
+
+00:35:57.550 --> 00:36:02.380
+là phải có văn bằng còn nếu mà chúng ta
+
+00:36:02.380 --> 00:36:04.829
+giải pháp hữu ích mà chỉ có quyết định chấp nhận đơn thì
+
+00:36:04.829 --> 00:36:07.280
+chúng ta cũng đang gần đạt được một cái sản
+
+00:36:07.280 --> 00:36:13.159
+phẩm về nghiên cứu ứng dụng rồi và thật ra thì nếu định
+
+00:36:13.159 --> 00:36:19.039
+chúng ta có tính là mới không cần phải là
+
+00:36:19.039 --> 00:36:21.319
+quá xuất sắc thì chúng ta có thể đăng ký được ngay một cái
+
+00:36:21.319 --> 00:36:23.599
+giải pháp hữu ích thậm chí là không cần
+
+00:36:23.599 --> 00:36:25.480
+bài báo luôn chỉ cần đăng ký một cái giải pháp hữu ích mà có
+
+00:36:25.480 --> 00:36:27.360
+quyết định chấp nhận đơn hợp lại
+
+00:36:27.360 --> 00:36:31.750
+đề tài thôi
+
+00:36:31.750 --> 00:36:36.139
+Để anh ta đạt được cái yêu cầu của một cái K7 đó là anh ta đạt được yêu cầu của một cái
+
+00:36:36.139 --> 00:36:40.340
+đề tài C đó
+
+00:36:40.340 --> 00:36:44.539
+Nếu mà theo hướng nghiên cứu ứng dụng anh ta chú ý thì ta chỉnh lại sản phẩm cho
+
+00:36:44.539 --> 00:36:48.220
+phù hợp
+
+00:36:48.220 --> 00:36:51.900
+Chứ còn nếu mà chúng ta để chỉ một bài báo ở đây thì sẽ không đạt yêu cầu 200 triệu
+
+00:36:52.400 --> 00:36:53.360
+còn nếu ta để
+
+00:36:53.360 --> 00:36:55.079
+cái sản phẩm K7 đây
+
+00:36:55.539 --> 00:36:56.460
+thì ta có thể
+
+00:36:57.400 --> 00:36:59.519
+dễ dàng đọc từ 150
+
+00:36:59.519 --> 00:37:00.400
+đến 200 triệu
+
+00:37:01.059 --> 00:37:02.260
+thì đó là một số cái
+
+00:37:05.340 --> 00:37:07.079
+còn không biết là có cái ngoại lệ
+
+00:37:07.079 --> 00:37:08.900
+hoặc là có cái đặc thù nào khác hay không
+
+00:37:11.099 --> 00:37:13.139
+để bên mình chỗ đại học
+
+00:37:13.139 --> 00:37:14.639
+đại học bạch khoa xét
+
+00:37:14.639 --> 00:37:15.780
+các cái đề tài C
+
+00:37:15.780 --> 00:37:17.219
+thì căn cứ hiện giờ
+
+00:37:17.219 --> 00:37:18.579
+căn cứ theo cái quyết định này
+
+00:37:20.500 --> 00:37:24.720
+Còn có khác biệt gì thì cái đó là lưu ý của bên chỗ ITP xem
+
+00:37:24.720 --> 00:37:28.940
+xét lại nhưng mà mình đề xuất như vậy
+
+00:37:33.239 --> 00:37:36.590
+Dạ Văn chắc để em xem xét lại cái KPI này rồi tinh chỉnh lại
+
+00:37:36.590 --> 00:37:39.940
+cho nó phù hợp với cái kinh phí 200 triệu
+
+00:37:39.940 --> 00:37:47.350
+theo như hướng dẫn của thầy đó thì cách mọi người cần phải
+
+00:37:47.350 --> 00:37:54.760
+học riêng lâm các thành viên hội
+
+00:37:54.760 --> 00:37:58.829
+đồng thành viên đề tài có thể tạm thời ra lát thầy biết làm
+
+00:37:58.829 --> 00:38:02.900
+sao lát sẽ nhắn lại sao vậy vậy em em
+
+00:38:02.900 --> 00:38:06.340
+xin phép kết thúc cuộc họp ở đây em xin rồi cuộc họp em cảm
+
+00:38:06.340 --> 00:38:09.780
+ơn các thầy đã tham gia cái buổi ngày
+
+00:38:09.780 --> 00:38:21.559
+Cảm ơn các bạn đã theo dõi.
+

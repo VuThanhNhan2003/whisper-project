@@ -1,0 +1,1055 @@
+WEBVTT
+
+00:00:20.429 --> 00:00:30.370
+Xin chào các anh chị học viên, sau đây tôi sẽ đi tiếp về nội dung tiếp theo của phần học của chúng ta liên quan đến các bài toán thường cập trong học dữ liệu
+
+00:00:30.890 --> 00:00:34.189
+Trong bài học trước, chúng ta đã đi qua bài toán về hội quy.
+
+00:00:34.429 --> 00:00:47.409
+Các anh chị cũng thấy một số dụng liên quan trong việc mình có thể áp dụng bài toán hội quy trong việc dự đoán định giá căn nhà cũng như áp dụng cho bài toán làm sao dự đoán cân nặng, dựa trên chiều cao của một người
+
+00:00:47.409 --> 00:00:49.810
+Thì như vậy thì mặc dù cái ví dụ rất là đơn giản
+
+00:00:49.810 --> 00:00:52.229
+Nhưng mà cũng rất hy vọng anh chị có thể hiểu sâu hơn
+
+00:00:52.869 --> 00:00:53.990
+Về cái bài trắng về hồi quy
+
+00:00:53.990 --> 00:00:56.170
+Thì như vậy là khác với bài trắng về phân loại
+
+00:00:56.170 --> 00:00:57.409
+Thì bài trắng hồi quy là chúng ta
+
+00:00:57.409 --> 00:00:59.789
+Sẽ dự đoán một cái giá trị cụ thể dựa trên
+
+00:01:00.969 --> 00:01:01.829
+Cái thông tin
+
+00:01:02.289 --> 00:01:03.990
+Và những cái đặc trưng đầu vào
+
+00:01:03.990 --> 00:01:06.010
+Thì đó là cái sự phát biệt đó bài trắng phân loại
+
+00:01:06.010 --> 00:01:07.730
+Bài trắng phân loại thì chúng ta sẽ dự đoán về
+
+00:01:08.109 --> 00:01:09.810
+Cái nhãn, cái lớp liên quan
+
+00:01:10.569 --> 00:01:11.870
+Thì như vậy trong khoa học tiếp theo
+
+00:01:11.870 --> 00:01:14.109
+Thì chúng ta sẽ đi tiếp về những cái nội dung liên quan
+
+00:01:14.109 --> 00:01:15.129
+Về cái bài trắng hồi quy
+
+00:01:17.409 --> 00:01:34.209
+Thì như vậy thì ở đây khi các anh chị sẽ thấy là chúng ta sẽ biết rằng là cái bài toán về hội quy là cái bài toán là chúng ta sẽ dự đoán một cái giá trị dựa trên những cái đặc trưng mình được cung cấp tại thời điểm ban đầu
+
+00:01:34.409 --> 00:01:47.129
+Rồi từ đó mình đưa ra được một cái công thức mà trong đó là chúng ta thể hiện được cái sự tương quan giữa cái giá trị đầu vào và cái kết quả đầu ra chính là cái giá trị mình dự đoán
+
+00:01:47.409 --> 00:01:53.950
+Thì như vậy là ở hai cái ví dụ vừa rồi thì chúng ta xét cái bài tráng hậu nguyên rất là đơn giản là đơn biến thôi, đúng không
+
+00:01:54.310 --> 00:01:57.430
+Ví dụ bài tráng về dự đoán về giá trị cân nhà thì chúng ta
+
+00:01:57.430 --> 00:02:00.549
+sẽ xét là cái mối linh quan hài tương quan giữa cái diện tức
+
+00:02:00.549 --> 00:02:03.670
+căn nhà và cái giá trị của nó
+
+00:02:03.670 --> 00:02:07.489
+hay là chúng ta dự đoán cân nặng dự trên chiều cao của một người, đúng không
+
+00:02:07.609 --> 00:02:13.969
+Nhưng mà thực tế có thể là cái mô hình này nó không thực sự chứng xác lắm, đúng không
+
+00:02:14.909 --> 00:02:16.629
+Thực tế là có rất nhiều thông tin khác
+
+00:02:16.629 --> 00:02:17.969
+Có rất nhiều trình độc nhân khác
+
+00:02:17.969 --> 00:02:19.449
+Để chúng ta cần được sử dụng
+
+00:02:19.909 --> 00:02:21.650
+Nhưng mà ở đây chúng ta chỉ có xét là
+
+00:02:21.650 --> 00:02:23.750
+Như vậy cái tính tương quan giữa một cái biến
+
+00:02:24.689 --> 00:02:25.930
+Là giá trị cân nhà
+
+00:02:25.930 --> 00:02:27.530
+Và trình tích cân nhà nó như thế nào
+
+00:02:27.530 --> 00:02:30.469
+Tự chắn đã thể hiện được một cái mẫu hệ tiến tính
+
+00:02:30.909 --> 00:02:32.590
+Giữa sử dụng linear reaction hay không
+
+00:02:32.590 --> 00:02:34.349
+Hay là giữa cái chiều cân nặng
+
+00:02:34.349 --> 00:02:35.090
+Và chiều cao
+
+00:02:35.090 --> 00:02:37.250
+Nhưng mà ở đây là một bài đọc ví dụ trình thú
+
+00:02:37.250 --> 00:02:39.449
+Đến chỉ có thể nắm thêm cái thông tin liên quan
+
+00:02:40.889 --> 00:02:41.870
+Và như vậy
+
+00:02:41.870 --> 00:02:43.289
+Thì chúng ta sẽ thấy rằng
+
+00:02:43.289 --> 00:02:44.409
+là nếu trường hợp
+
+00:02:44.409 --> 00:02:47.490
+mà chúng ta có những đặc trưng
+
+00:02:47.490 --> 00:02:49.169
+tương quan nhiều hơn
+
+00:02:49.969 --> 00:02:51.169
+vậy chúng ta sẽ có
+
+00:02:52.050 --> 00:02:53.129
+cái bài toán là
+
+00:02:53.129 --> 00:02:54.310
+chúng ta sẽ có n
+
+00:02:54.310 --> 00:02:56.650
+cái thuộc tính, n cái đặc trưng
+
+00:02:56.650 --> 00:02:59.009
+là sẽ mình dự đoán
+
+00:02:59.009 --> 00:02:59.669
+một cái giá trị
+
+00:03:00.310 --> 00:03:01.710
+thì như vậy giống như là bài toán
+
+00:03:02.189 --> 00:03:04.090
+định giá về căn nhà đi
+
+00:03:04.090 --> 00:03:06.050
+các anh chị mở rộng thêm những thông tin khác
+
+00:03:06.050 --> 00:03:07.229
+thay vì diện tích
+
+00:03:07.229 --> 00:03:09.750
+mình sẽ có những thuộc tính khác như là
+
+00:03:09.750 --> 00:03:10.830
+số lượng phòng ngủ
+
+00:03:12.449 --> 00:03:31.509
+Nhà hướng nào, hướng Bắc, hướng Đông, hướng Tây, hướng Nam, nhà có bao nhiêu lầu, hoặc là những tiện ích xung quanh, có gần chợ hay không, có gần đường lớn hay không, hay là nhà trong hẻm, hoặc là những thông tin khác
+
+00:03:31.509 --> 00:03:32.870
+Thì anh chị sẽ thấy là
+
+00:03:32.870 --> 00:03:34.370
+Thực tế nó có nhiều cái thông tin
+
+00:03:34.789 --> 00:03:35.990
+Rất nhiều cái biến số
+
+00:03:35.990 --> 00:03:37.189
+Rất nhiều cái thuộc tính
+
+00:03:37.189 --> 00:03:39.909
+Mà chúng ta cần phải sử dụng
+
+00:03:39.909 --> 00:03:41.870
+Để mình đưa ra được một cái
+
+00:03:42.969 --> 00:03:44.949
+Ước luận chính xác về cái giá trị cân nhà
+
+00:03:44.949 --> 00:03:45.629
+Đồng ý chưa
+
+00:03:46.550 --> 00:03:47.750
+Thì nó dẫn đến bà tráng là
+
+00:03:47.750 --> 00:03:49.830
+Thực tế là chúng ta sẽ cập những bà tráng
+
+00:03:49.830 --> 00:03:50.990
+Vì hội quy đa biến rất là nhiều
+
+00:03:50.990 --> 00:03:52.210
+Nó không chỉ là một biến
+
+00:03:53.789 --> 00:03:56.009
+Thì như vậy thì nó dẫn đến câu chuyện
+
+00:03:56.009 --> 00:03:57.069
+Của chúng ta là
+
+00:03:57.069 --> 00:03:59.550
+À như vậy là giả sử đi
+
+00:03:59.550 --> 00:04:01.069
+chúng ta cần
+
+00:04:01.469 --> 00:04:03.150
+một cái ước lượng đúng không
+
+00:04:03.150 --> 00:04:05.250
+cho một cái giá trị dựa trên n
+
+00:04:05.889 --> 00:04:07.129
+cái biến số đầu vào
+
+00:04:07.129 --> 00:04:09.069
+thì như vậy lúc đó chúng ta sẽ dựa đến như thế nào
+
+00:04:09.069 --> 00:04:10.729
+lúc đó thì các anh chị sẽ thấy là
+
+00:04:10.729 --> 00:04:12.930
+mô hình một cái bài toán của chúng ta
+
+00:04:12.930 --> 00:04:14.990
+thay vì là y bằng ax cộng b
+
+00:04:14.990 --> 00:04:17.430
+thì nó sẽ có thể là một cái mô hình như sau
+
+00:04:17.430 --> 00:04:19.089
+ví dụ y bằng w0
+
+00:04:19.089 --> 00:04:21.050
+cộng w1 x1
+
+00:04:21.050 --> 00:04:22.790
+cộng w2 x2
+
+00:04:24.069 --> 00:04:26.569
+cộng wn xn
+
+00:04:26.569 --> 00:04:29.149
+như vậy mình sẽ có n cái biến số đầu vào
+
+00:04:29.149 --> 00:04:30.589
+và mình dự đoán kết quả được ra
+
+00:04:30.589 --> 00:04:33.170
+thì đó là cái ví dụ cho chúng ta canh trì
+
+00:04:33.170 --> 00:04:34.370
+trong bài tráng hồi quyết đa biến
+
+00:04:36.639 --> 00:04:38.660
+thì như vậy là để mà giải quyết
+
+00:04:38.660 --> 00:04:39.759
+cái bài tráng đó đúng không
+
+00:04:39.759 --> 00:04:41.740
+thì bây giờ chúng ta không thể nào dừng lại
+
+00:04:41.740 --> 00:04:43.259
+một biến rồi đúng không
+
+00:04:43.259 --> 00:04:46.180
+thì như vậy chúng ta sẽ có một cái hàm
+
+00:04:46.180 --> 00:04:46.920
+để mình ước lượng
+
+00:04:47.300 --> 00:04:48.720
+sử dụng để mình ước lượng
+
+00:04:50.579 --> 00:04:52.100
+cái giá trị phù hợp
+
+00:04:52.100 --> 00:04:53.620
+cho những cái trọng số
+
+00:04:53.620 --> 00:04:56.019
+ví dụ là W0, W1, W2, WN
+
+00:04:56.819 --> 00:04:58.339
+thì như thế này chúng ta thường sẽ sử dụng
+
+00:04:58.339 --> 00:04:59.060
+một hàm mắc mát
+
+00:04:59.060 --> 00:05:00.139
+Nó gọi là Hamloss
+
+00:05:01.040 --> 00:05:02.860
+Thì như vậy Hamloss ở đây
+
+00:05:02.860 --> 00:05:04.620
+Thì nó có thể được sử dụng
+
+00:05:04.620 --> 00:05:05.579
+Để mình có thể
+
+00:05:06.079 --> 00:05:07.439
+Mình giải quyết cái bài toán
+
+00:05:07.439 --> 00:05:09.800
+Là sao mình ước luận những cái
+
+00:05:11.160 --> 00:05:12.199
+Những cái trọng số
+
+00:05:12.199 --> 00:05:13.399
+Của cái mô hình của chúng ta
+
+00:05:13.939 --> 00:05:16.360
+Để mình đưa ra được cái kết quả
+
+00:05:16.360 --> 00:05:17.379
+Tốt nhất về hiệu năng
+
+00:05:17.379 --> 00:05:18.779
+Thì như vậy nó dẫn đến bài toán là anh chị có một cái tập
+
+00:05:18.779 --> 00:05:20.180
+huấn luyện đúng không
+
+00:05:20.180 --> 00:05:22.000
+Giả sử là mình có một tập huấn luyện
+
+00:05:22.000 --> 00:05:23.680
+Là mình có khoảng 1 ngàn cái
+
+00:05:24.920 --> 00:05:26.480
+Cái bất đồn sạn khác nhau
+
+00:05:26.480 --> 00:05:28.379
+Thì như vậy cũng là rút chích được rất nhiều thông tin
+
+00:05:28.379 --> 00:05:30.439
+Rồi sau mình dự đoán được cái mô hình
+
+00:05:30.920 --> 00:05:32.660
+Dự đoán được cái giá trị căn nhà
+
+00:05:32.660 --> 00:05:33.899
+Thì như vậy chúng ta sẽ thấy là
+
+00:05:33.899 --> 00:05:36.000
+Chúng ta sẽ giải quyết bài trán là
+
+00:05:36.000 --> 00:05:37.199
+Vẫn là bài trán đó đúng không
+
+00:05:37.199 --> 00:05:38.500
+Nhưng nó nhiều biến số hơn
+
+00:05:38.500 --> 00:05:41.120
+Và tôi phải dự đoán được
+
+00:05:42.040 --> 00:05:43.779
+Cái giá trị căn nhà
+
+00:05:43.779 --> 00:05:45.079
+Càng chính xác càng tốt
+
+00:05:45.079 --> 00:05:46.379
+Chứ như vậy thì có nghĩa là sao
+
+00:05:46.379 --> 00:05:47.800
+Xét trên toàn bộ
+
+00:05:48.899 --> 00:05:50.540
+Những cái bất đồng sản chúng ta có
+
+00:05:50.540 --> 00:05:52.399
+Thì chúng ta làm sao là đảm bảo
+
+00:05:52.399 --> 00:05:54.300
+Xây số trung bình nó thấp nhất
+
+00:05:54.300 --> 00:05:55.560
+Có thể nhận hàng như vậy
+
+00:05:56.040 --> 00:05:58.399
+thì như vậy đó là một trong những cái
+
+00:05:58.399 --> 00:06:00.360
+mà chúng ta có thể tiếp cận và xây dựng hàm loss
+
+00:06:00.360 --> 00:06:01.980
+để mình có thể ước lượng
+
+00:06:01.980 --> 00:06:04.220
+sự chênh lệch giữa mô hình dự đoán, mô hình thực tế là sao
+
+00:06:04.220 --> 00:06:06.259
+thì như vậy chúng ta có thể áp dụng
+
+00:06:06.259 --> 00:06:07.699
+và khi chúng ta đã áp dụng rồi
+
+00:06:07.699 --> 00:06:10.199
+thì các anh chị sẽ thấy là cái vấn đề tiếp theo
+
+00:06:10.199 --> 00:06:12.100
+là làm sao mình đưa ra được thuật toán
+
+00:06:12.879 --> 00:06:14.220
+về trối ưu để mình giải quyết
+
+00:06:14.220 --> 00:06:16.379
+vấn đề này, thì như vậy anh chị sẽ thấy là
+
+00:06:17.620 --> 00:06:18.420
+chúng ta sẽ
+
+00:06:19.300 --> 00:06:20.180
+làm một cái bài toán
+
+00:06:20.180 --> 00:06:21.160
+mà trong đó là một hàm loss
+
+00:06:21.639 --> 00:06:22.819
+giả sử là một hàm liên tục đi
+
+00:06:23.500 --> 00:06:24.620
+với những cái biến số
+
+00:06:24.620 --> 00:06:26.019
+chúng ta cần quan tâm
+
+00:06:26.019 --> 00:06:27.379
+làm sao chúng ta tìm được
+
+00:06:28.560 --> 00:06:30.540
+một cái bộ trọng số tối u
+
+00:06:32.199 --> 00:06:34.300
+W0, W1, W2, WN tối u
+
+00:06:34.300 --> 00:06:36.399
+để làm sao mình tối thiệu hỏa
+
+00:06:36.399 --> 00:06:37.519
+cái hàm mức mát đó
+
+00:06:37.519 --> 00:06:39.500
+thì đó là cái tôi sẽ tiếp cận
+
+00:06:39.500 --> 00:06:42.000
+và dĩ nhiên trong cái học phần chúng ta
+
+00:06:42.000 --> 00:06:43.220
+tôi sẽ không đi sâu vô
+
+00:06:43.939 --> 00:06:44.779
+cái vấn đề này
+
+00:06:44.779 --> 00:06:47.480
+tại vì nó sẽ liên quan rất nhiều kiến thức
+
+00:06:47.480 --> 00:06:49.339
+anh chị sẽ học trong những học phần tiếp theo
+
+00:06:49.339 --> 00:06:51.139
+nhưng mà ở đây chỉ nhắc lại cho anh chị
+
+00:06:51.139 --> 00:06:53.100
+chúng ta hoàn toàn áp dụng những mô hình
+
+00:06:53.100 --> 00:06:55.019
+hướng tiếp cận trong lĩnh vực
+
+00:06:55.019 --> 00:06:56.399
+về toán ứng dụng
+
+00:06:56.399 --> 00:06:58.600
+chúng ta có thể sử dụng những phương pháp số
+
+00:06:58.600 --> 00:07:00.160
+để giải quyết những bản thân này
+
+00:07:00.639 --> 00:07:02.300
+như vậy đó là những cái mà anh chị
+
+00:07:02.300 --> 00:07:03.620
+có thể xem xét
+
+00:07:03.620 --> 00:07:06.120
+trong cái ví dụ này
+
+00:07:08.930 --> 00:07:10.730
+thì ở đây thì chúng ta sẽ thấy
+
+00:07:10.730 --> 00:07:12.129
+là nếu mình xét
+
+00:07:12.129 --> 00:07:14.509
+cái hàm mất mát trong trường hợp một biến đi
+
+00:07:14.509 --> 00:07:15.230
+cho đơn giản
+
+00:07:15.230 --> 00:07:18.050
+thì như vậy là cái bức độ chính là cái đường màu xanh
+
+00:07:18.050 --> 00:07:18.870
+chúng ta vẽ ở đây
+
+00:07:18.870 --> 00:07:22.230
+và cái hàm mất mát
+
+00:07:22.230 --> 00:07:23.689
+chính là tổng, chung bình tổng
+
+00:07:23.689 --> 00:07:25.009
+của các đại đường xe lệch ở đây
+
+00:07:25.009 --> 00:07:27.029
+thì như vậy em chị sẽ thấy là chúng ta làm sao
+
+00:07:27.610 --> 00:07:29.509
+trên toàn bộ những cái điểm dữ liệu
+
+00:07:29.509 --> 00:07:30.170
+chúng ta có
+
+00:07:30.170 --> 00:07:33.649
+thì chúng ta sẽ cố gắng làm sao
+
+00:07:33.649 --> 00:07:34.810
+mình xây dựng một cái đường
+
+00:07:34.810 --> 00:07:36.550
+ví dụ trường hợp một biến
+
+00:07:36.550 --> 00:07:37.790
+một đường thẳng
+
+00:07:38.589 --> 00:07:40.410
+đảm bảo rằng là cái hàm loss
+
+00:07:40.790 --> 00:07:41.829
+hàm mất máy của chúng ta
+
+00:07:41.829 --> 00:07:45.209
+thì cái độ trung bình tổng của các đại đường xe lệch
+
+00:07:45.209 --> 00:07:46.389
+nó càng thấp càng tốt
+
+00:07:46.389 --> 00:07:48.370
+thì như vậy chúng ta sẽ giúp vào tướng này
+
+00:07:52.980 --> 00:07:55.040
+rồi, thì ngoài ra
+
+00:07:55.040 --> 00:07:56.300
+thì các anh chị sẽ thấy rằng
+
+00:07:57.639 --> 00:07:59.279
+khi chúng ta làm việc với
+
+00:08:01.480 --> 00:08:03.699
+nhiều hơn, số biến số nhiều hơn
+
+00:08:04.079 --> 00:08:05.160
+thì cái bức độ trên lệch
+
+00:08:05.160 --> 00:08:06.860
+chính là ở đây
+
+00:08:06.860 --> 00:08:08.240
+chính là đường màu xanh
+
+00:08:08.240 --> 00:08:11.139
+thì chúng ta sẽ cố gắng làm sao mình mô hình hóa
+
+00:08:11.139 --> 00:08:12.300
+cái độ trên lệch này
+
+00:08:12.300 --> 00:08:14.579
+thì như vậy lúc đó anh chị sẽ thấy là mình sẽ có
+
+00:08:14.579 --> 00:08:15.899
+một cái hem
+
+00:08:15.899 --> 00:08:18.139
+trong đó mình đã hiện được
+
+00:08:18.139 --> 00:08:20.519
+hem loss với các biến số
+
+00:08:20.519 --> 00:08:21.899
+chính là cái trọng số của cái mô hình
+
+00:08:21.899 --> 00:08:23.160
+mình xem xét ở đây
+
+00:08:23.160 --> 00:08:25.540
+và chúng ta sẽ làm sao mình tối hiệu hóa
+
+00:08:25.540 --> 00:08:27.079
+cái kết quả dự đoán của chúng ta
+
+00:08:27.079 --> 00:08:29.019
+thì chúng ta đưa ra
+
+00:08:30.720 --> 00:08:32.480
+một cái hàm loss
+
+00:08:32.480 --> 00:08:34.559
+và trong đó ax ở đây là một cái mai trần đặc trưng
+
+00:08:34.559 --> 00:08:35.960
+có kích thước m nhân n
+
+00:08:35.960 --> 00:08:37.200
+trong đó m là số dòng
+
+00:08:37.200 --> 00:08:38.440
+m là số feature
+
+00:08:38.440 --> 00:08:41.019
+m là số lượng sample người chúng ta có
+
+00:08:41.019 --> 00:08:42.620
+số lượng điểm chúng ta có
+
+00:08:42.620 --> 00:08:44.500
+để nối lượng hội quy
+
+00:08:44.500 --> 00:08:46.000
+n là số feature
+
+00:08:46.000 --> 00:08:47.080
+là số đặc trưng
+
+00:08:48.379 --> 00:08:51.259
+y là một cái vector giá trị thật
+
+00:08:51.259 --> 00:08:53.360
+có kích thước m, như vậy là nó thể hiện được
+
+00:08:53.360 --> 00:08:54.799
+cái kết quả thật
+
+00:08:54.799 --> 00:08:56.879
+về thực tế
+
+00:08:57.539 --> 00:08:59.220
+tương ứng với m
+
+00:08:59.220 --> 00:09:00.080
+sample mình có
+
+00:09:00.080 --> 00:09:03.299
+và cái theta này nếu mà xét cho
+
+00:09:03.299 --> 00:09:05.019
+cái bài tráng mình nói là hội hộp
+
+00:09:05.019 --> 00:09:06.340
+video biến, thì theta này chính là gì?
+
+00:09:06.740 --> 00:09:08.799
+chính là cái bộ
+
+00:09:08.799 --> 00:09:11.559
+w0, w1, w2
+
+00:09:12.840 --> 00:09:14.919
+mà chúng ta cần phải tìm
+
+00:09:14.919 --> 00:09:16.639
+để mình tối thiểu hóa
+
+00:09:16.639 --> 00:09:18.600
+cái hàm mất mát
+
+00:09:18.600 --> 00:09:20.000
+mà chúng ta thấy ở trên slide này
+
+00:09:20.000 --> 00:09:22.000
+Thì đó là cái anh chị cần nắm
+
+00:09:22.000 --> 00:09:22.919
+Trong cái ví dụ này
+
+00:09:24.860 --> 00:09:27.379
+Và như vậy thì ở đây là bên cạnh cái thành phần
+
+00:09:27.379 --> 00:09:28.299
+Trung bình
+
+00:09:29.559 --> 00:09:31.019
+Tổng cái đại lượng xe lệch
+
+00:09:31.019 --> 00:09:32.740
+Tương ứng theo từng cái điểm dữ liệu
+
+00:09:32.740 --> 00:09:33.500
+Thì hà mặt mát
+
+00:09:34.000 --> 00:09:36.080
+Còn chia cho cái số lượng
+
+00:09:36.080 --> 00:09:37.480
+Điểm dữ liệu để giảm
+
+00:09:38.460 --> 00:09:39.740
+Còn là cái thành phần BAS
+
+00:09:40.419 --> 00:09:41.840
+Trong cái lượng dữ liệu
+
+00:09:41.840 --> 00:09:43.059
+Chúng là mình chỉ cho M ở đây
+
+00:09:43.879 --> 00:09:45.980
+Rồi thì như vậy là cái công thức tính tổng
+
+00:09:48.919 --> 00:09:51.139
+Thì nó sẽ là tổng bình phương
+
+00:09:51.139 --> 00:09:53.580
+sai số giữa cái giá trị dự đoán với giá trị thực tế
+
+00:09:54.360 --> 00:09:55.620
+và mô hình tốt nhất
+
+00:09:55.620 --> 00:09:57.279
+là mô hình sẽ có
+
+00:09:58.320 --> 00:10:00.879
+như vậy chúng ta cần tìm cái theta sao
+
+00:10:00.879 --> 00:10:02.179
+chứ là cái theta tối u
+
+00:10:02.179 --> 00:10:05.679
+chính là cái bộ rồng số W0, W1, WN tối u
+
+00:10:05.679 --> 00:10:07.779
+để mình có thể làm sao mình cực tiểu hóa
+
+00:10:07.779 --> 00:10:09.080
+cái hàm mắc mắc này
+
+00:10:11.179 --> 00:10:11.919
+thì như vậy
+
+00:10:11.919 --> 00:10:14.320
+ở đây là đối với bài trang hội quy
+
+00:10:14.320 --> 00:10:16.679
+thì có một số cái hạn chế
+
+00:10:16.679 --> 00:10:17.879
+mà tôi muốn nhấn mạnh ở đây
+
+00:10:18.559 --> 00:10:20.639
+ở đây thì nó liên quan đến phần
+
+00:10:20.639 --> 00:10:22.379
+gọi là hội quy tiến tính
+
+00:10:24.139 --> 00:10:25.440
+thì một cái hạn chế
+
+00:10:25.440 --> 00:10:26.960
+của cái linearization ở đây
+
+00:10:26.960 --> 00:10:29.360
+thì nó dễ bị ảnh hưởng bởi cái dương liệu nhiễu
+
+00:10:30.039 --> 00:10:32.879
+ví dụ điểm dương liệu nhiễu dưới đây
+
+00:10:32.879 --> 00:10:34.480
+thường thường sẽ làm cho mô hình
+
+00:10:34.480 --> 00:10:36.940
+xa rất nhiều so với cái ví dụ này
+
+00:10:36.940 --> 00:10:38.820
+thì cái điểm này, cái điểm mà mọi người thấy
+
+00:10:38.820 --> 00:10:40.080
+ở trên cùng này nè
+
+00:10:40.080 --> 00:10:41.840
+nó có thể xem như là một điểm outlayer
+
+00:10:41.840 --> 00:10:44.600
+như vậy thường là nếu trường hợp chúng ta
+
+00:10:45.159 --> 00:10:46.759
+khi chúng ta giải quyết bài tráng về hội quy
+
+00:10:46.759 --> 00:10:48.679
+chúng ta phải xem xét kỹ nếu trường hợp có những cái
+
+00:10:48.679 --> 00:10:50.039
+giá trị mà outlayer
+
+00:10:50.039 --> 00:10:52.720
+nó có gây sự ảnh hưởng
+
+00:10:53.320 --> 00:10:54.159
+lớn đối với
+
+00:10:54.159 --> 00:10:56.500
+cái việc mình ước lượng về hồi quy
+
+00:10:56.500 --> 00:10:58.259
+tiến tính chúng ta thì các bạn hãy xem xét
+
+00:10:58.259 --> 00:11:00.240
+lại bỏ cái audio này
+
+00:11:01.120 --> 00:11:02.460
+rồi cái hạn chế
+
+00:11:02.460 --> 00:11:04.860
+của cái linear action
+
+00:11:04.860 --> 00:11:06.779
+là nó sẽ không có
+
+00:11:06.779 --> 00:11:08.659
+phù hợp cho cái bài toán của mô hình phức tạp
+
+00:11:09.200 --> 00:11:10.360
+nhất là khi outcome
+
+00:11:10.360 --> 00:11:12.559
+và cái kết quả đầu ra
+
+00:11:12.559 --> 00:11:14.500
+và cái đầu vào nó không có quan hệ
+
+00:11:14.500 --> 00:11:15.700
+tiến tính được chứ
+
+00:11:16.340 --> 00:11:18.779
+chả sử là mình có một bài toán
+
+00:11:18.779 --> 00:11:20.779
+mà trong đó mình biết là cái kết quả đầu ra
+
+00:11:21.159 --> 00:11:22.659
+có mối quan hệ phi tuyến
+
+00:11:22.659 --> 00:11:25.200
+đối với cả đầu vào thì chắc chắn là nếu các anh chị
+
+00:11:25.200 --> 00:11:27.019
+ép sử dụng
+
+00:11:27.019 --> 00:11:28.639
+cái mô hình linearization
+
+00:11:28.639 --> 00:11:30.919
+thì có thể kết quả mình không đủ kinh xác, không cao
+
+00:11:30.919 --> 00:11:32.580
+và sai số rất là lớn
+
+00:11:32.580 --> 00:11:34.840
+thì còn ưu điểm ở đây là cái linearization
+
+00:11:34.840 --> 00:11:36.159
+thì nó có một số ưu điểm
+
+00:11:36.159 --> 00:11:38.639
+tôi muốn nhấn mạnh, thứ nhất là nó đơn giản
+
+00:11:38.639 --> 00:11:40.919
+dễ triển khai đúng không, bài tráng rất là đơn giản
+
+00:11:40.919 --> 00:11:42.580
+triển khai, rất hiệu quả cho
+
+00:11:42.580 --> 00:11:44.720
+bài tráng quan hệ triển tính, nếu trường hợp chúng ta thấy
+
+00:11:44.720 --> 00:11:46.700
+là chúng ta nhìn cái dữ liệu
+
+00:11:47.360 --> 00:11:48.840
+Như vậy là với dữ liệu này
+
+00:11:48.840 --> 00:11:50.080
+Có mối quan hệ tiên tính
+
+00:11:50.080 --> 00:11:51.120
+Chúng ta hoàn toàn có thể áp dụng được
+
+00:11:51.960 --> 00:11:54.039
+Đó là phần mà tôi cũng muốn nhấn mạnh
+
+00:11:54.039 --> 00:11:54.940
+Trong cái ví dụ này
+
+00:12:02.000 --> 00:12:02.679
+Thì như vậy
+
+00:12:02.679 --> 00:12:05.179
+Chúng ta đã kết thúc bài học
+
+00:12:07.679 --> 00:12:08.539
+Tại video này
+
+00:12:10.200 --> 00:12:11.480
+Tôi cũng rất là hy vọng
+
+00:12:11.480 --> 00:12:13.340
+Các anh chị có thể thấu hiểu thêm
+
+00:12:13.340 --> 00:12:14.980
+Thứ nhất là về
+
+00:12:15.539 --> 00:12:17.639
+Ý nghĩa của bài trắng hồi quy
+
+00:12:17.639 --> 00:12:18.919
+Chúng ta đã đi qua
+
+00:12:18.919 --> 00:12:21.080
+Rất nhiều ví dụ liên quan bài trắng hồi quy
+
+00:12:21.879 --> 00:12:23.299
+kể cả trường hợp mình xem xét
+
+00:12:23.299 --> 00:12:25.299
+trường hợp là đơn biến và đa biến
+
+00:12:25.299 --> 00:12:27.379
+và như vậy thì các anh chị
+
+00:12:27.379 --> 00:12:29.159
+cũng sẽ phải chú ý
+
+00:12:30.399 --> 00:12:31.139
+trong quá trình
+
+00:12:31.139 --> 00:12:33.299
+mình học hoặc mình nghe cái video này
+
+00:12:33.299 --> 00:12:34.779
+thì anh chị cũng sẽ cố gắng làm bài tập
+
+00:12:35.299 --> 00:12:37.159
+mà chúng tôi đã giao cho anh chị
+
+00:12:37.159 --> 00:12:37.879
+trên cái hệ thống
+
+00:12:37.879 --> 00:12:39.430
+như vậy là thông qua cái bài tập thì anh chị cũng sẽ hiểu
+
+00:12:39.430 --> 00:12:40.980
+hỏa hơn
+
+00:12:41.379 --> 00:12:43.440
+cho các bài toán mà chúng ta nhắc tới
+
+00:12:43.440 --> 00:12:45.059
+trong cái bài học ở đây
+
+00:12:45.059 --> 00:12:46.940
+thì như vậy thì cũng rất hy vọng
+
+00:12:46.940 --> 00:12:49.259
+các anh chị sau khi mà hoàn thành
+
+00:12:50.799 --> 00:12:51.679
+Phần học về lý truyết
+
+00:12:51.679 --> 00:12:53.299
+Thì chúng ta sẽ làm những bài tập tình huống
+
+00:12:54.360 --> 00:12:56.019
+Thì như vậy thì chúng ta sẽ thấy rằng
+
+00:12:56.399 --> 00:12:58.720
+Đối với bài trắng học có giám sát
+
+00:12:58.720 --> 00:13:00.620
+Thì chúng ta đã đi qua
+
+00:13:00.620 --> 00:13:01.659
+Hai cái bài trắng chính
+
+00:13:01.659 --> 00:13:04.320
+Bài trắng về phân loại và bài trắng về hồi quy
+
+00:13:04.679 --> 00:13:06.519
+Thì ở đây mặc dù là
+
+00:13:07.440 --> 00:13:08.679
+Cái bài giảng của chúng ta
+
+00:13:08.679 --> 00:13:09.679
+Không đi quá sâu
+
+00:13:09.679 --> 00:13:12.080
+Cho từng cái hướng tiếp cận về kỹ thuật
+
+00:13:12.080 --> 00:13:13.320
+Cho hai bài trắng này
+
+00:13:13.320 --> 00:13:15.000
+Nhưng cũng rất hy vọng là các anh chị
+
+00:13:15.000 --> 00:13:16.139
+Nếu mà sự quan tâm
+
+00:13:16.500 --> 00:13:18.799
+Về những cái mô hình học liên quan
+
+00:13:18.799 --> 00:13:21.659
+thì anh chị có thể xem xét, mình có thể đọc thêm những kiến
+
+00:13:21.659 --> 00:13:24.519
+thức liên quan đến người học máy
+
+00:13:24.519 --> 00:13:26.769
+và có thể mình làm thêm những bài tập liên quan trong những
+
+00:13:26.769 --> 00:13:29.019
+môn học sâu
+
+00:13:29.019 --> 00:13:33.679
+thì như vậy các anh chị sẽ bẩn hơn những kiến thức liên quan trong phần này
+
+00:13:35.960 --> 00:13:40.539
+Như vậy thì trong sẽ kết thúc video ở đây thì tôi sẽ quay lại các anh chị trong video khác
+
+00:13:40.799 --> 00:13:41.399
+Cảm ơn anh chị.
+
