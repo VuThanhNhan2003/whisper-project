@@ -515,6 +515,30 @@ async def download_file(filename: str):
         media_type=media_type
     )
 
+
+@app.delete("/delete/{filename}")
+async def delete_file(filename: str):
+    vtt_dir = "File vtt"
+    file_path = None
+    folder_to_check = None
+
+    for folder_name in os.listdir(vtt_dir):
+        folder_path = os.path.join(vtt_dir, folder_name)
+        if os.path.isdir(folder_path):
+            potential_path = os.path.join(folder_path, filename)
+            if os.path.exists(potential_path):
+                file_path = potential_path
+                folder_to_check = folder_path
+                break
+
+    if file_path:
+        os.remove(file_path)
+        # Remove folder if empty
+        if folder_to_check and not os.listdir(folder_to_check):
+            os.rmdir(folder_to_check)
+        return {"message": "Xóa " + filename + " thành công"}
+    else:
+        raise HTTPException(status_code=404, detail="Không tim thấy file")
 @app.delete("/jobs/{job_id}")
 async def delete_job(job_id: str):
     if job_id not in jobs_status:
