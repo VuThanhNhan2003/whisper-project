@@ -209,6 +209,49 @@ def is_m3u8_url(url: str) -> bool:
     return url.lower().endswith('.m3u8') or 'm3u8' in url.lower()
 
 
+def download_m3u8_stream(url: str) -> str:
+    print(f"⬇️ Processing M3U8 stream from {url}...")
+
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+    temp_file.close()
+
+    try:
+        cmd = [
+            "ffmpeg",
+            "-i", url,
+            "-c", "copy",
+            "-bsf:a", "aac_adtstoasc",
+            "-avoid_negative_ts", "make_zero",  # Tránh timestamp âm
+            "-y",
+            temp_file.name
+        ]
+
+        print(f"🔧 Running ffmpeg command: {' '.join(cmd)}")
+
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=1800
+        )
+
+        if result.returncode != 0:
+            raise Exception(f"FFmpeg failed with error: {result.stderr}")
+
+        if not os.path.exists(temp_file.name) or os.path.getsize(temp_file.name) == 0:
+            raise Exception("Downloaded file is empty or doesn't exist")
+
+        print(f"✅ M3U8 stream downloaded successfully: {temp_file.name}")
+        return temp_file.name
+
+    except subprocess.TimeoutExpired:
+        raise Exception("Download timeout - stream took too long to process")
+    except Exception as e:
+        if os.path.exists(temp_file.name):
+            os.remove(temp_file.name)
+        raise Exception(f"Failed to download M3U8 stream: {str(e)}")
+
+
 def download_temp_file(url: str) -> str:
     if is_m3u8_url(url):
         return download_m3u8_stream(url)
@@ -248,7 +291,7 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
         input_file = download_temp_file(video_url)
         base_name = get_filename_from_url(video_url)
         
-        output_dir = os.path.join("File vtt", base_name)
+        output_dir = os.path.join("../File vtt", base_name)
         os.makedirs(output_dir, exist_ok=True)
         output_file = os.path.join(output_dir, f"{base_name}.vtt")
         # Thêm file TXT output
@@ -370,6 +413,143 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
         jobs_status[job_id].error = str(e)
         print(f"❌ Job {job_id} failed: {e}")
 
+
+def process_video_transcription_v2(job_id: str, video_url: str, language: str, request: VideoConvertRequest):
+    """Enhanced background task với anti-hallucination"""
+    try:
+        jobs_status[job_id].status = "processing"
+
+        if is_m3u8_url(video_url):
+            jobs_status[job_id].progress = "Processing M3U8 stream..."
+        else:
+            jobs_status[job_id].progress = "Downloading video..."
+
+        input_file = download_temp_file(video_url)
+        base_name = get_filename_from_url(video_url)
+
+        output_dir = os.path.join("../File vtt", base_name)
+        os.makedirs(output_dir, exist_ok=True)
+        output_file = os.path.join(output_dir, f"{base_name}.vtt")
+        # Thêm file TXT output
+        txt_output_file = os.path.join(output_dir, f"{base_name}.txt")
+
+        jobs_status[job_id].progress = "Loading Whisper model..."
+
+        # Load model với cấu hình tối ưu cho CPU
+        model = WhisperModel(
+            request.model,
+            device="cpu",  # Force CPU vì server không có GPU
+            compute_type="int8",  # Tối ưu cho CPU
+            num_workers=4  # Sử dụng 4 cores
+        )
+
+        # Cấu hình VAD nếu được bật
+        vad_parameters = None
+        if request.enable_vad:
+            vad_parameters = {
+                "threshold": 0.5,
+                "min_speech_duration_ms": 250,
+                "min_silence_duration_ms": 2000,
+                "speech_pad_ms": 400
+            }
+
+        jobs_status[job_id].progress = "Transcribing audio with anti-hallucination..."
+
+        # Transcribe với các tham số chống hallucination
+        segments, info = model.transcribe(
+            input_file,
+            language=language,
+            task="transcribe",
+            beam_size=request.beam_size,
+            patience=request.patience,
+            length_penalty=request.length_penalty,
+            repetition_penalty=request.repetition_penalty,
+            no_repeat_ngram_size=request.no_repeat_ngram_size,
+            temperature=request.temperature,
+            compression_ratio_threshold=request.compression_ratio_threshold,
+            log_prob_threshold=request.log_prob_threshold,
+            no_speech_threshold=request.no_speech_threshold,
+            condition_on_previous_text=request.condition_on_previous_text,
+            initial_prompt="Đây là một video học thuật tiếng Việt về khoa học." if language == "vi" else None,
+            vad_filter=request.enable_vad,
+            vad_parameters=vad_parameters,
+            word_timestamps=True  # Enable để có thể phân tích tốt hơn
+        )
+
+        jobs_status[job_id].progress = "Processing and filtering segments..."
+
+        # Filter và clean segments
+        valid_segments = []
+        hallucination_count = 0
+
+        for segment in segments:
+            if validate_segment_quality(segment):
+                # Clean text trước khi thêm
+                cleaned_text = clean_repetitive_text(segment.text)
+                if cleaned_text.strip():
+                    segment.text = cleaned_text
+                    valid_segments.append(segment)
+            else:
+                hallucination_count += 1
+                print(f"⚠️ Filtered hallucination: {segment.text[:50]}...")
+
+        jobs_status[job_id].progress = "Generating optimized VTT and TXT files..."
+
+        # Generate VTT với smart splitting
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write("WEBVTT\n\n")
+            for segment in valid_segments:
+                sub_segments = smart_segment_split(segment, max_chars=60)
+                for sub_start, sub_end, sub_text in sub_segments:
+                    if sub_text.strip():  # Chỉ ghi segment có nội dung
+                        f.write(f"{format_timestamp(sub_start, vtt=True)} --> {format_timestamp(sub_end, vtt=True)}\n")
+                        f.write(f"{sub_text}\n\n")
+
+        # Generate TXT file với transcript sạch (cho RAG pipeline)
+        with open(txt_output_file, "w", encoding="utf-8") as f:
+            # Chỉ ghi transcript thuần túy, không có metadata
+            transcript_parts = []
+            for segment in valid_segments:
+                cleaned_text = clean_repetitive_text(segment.text).strip()
+                if cleaned_text:
+                    transcript_parts.append(cleaned_text)
+
+            # Ghi toàn bộ transcript thành một đoạn văn liên tục
+            f.write(" ".join(transcript_parts))
+
+        # Cleanup
+        if os.path.exists(input_file):
+            os.remove(input_file)
+
+        # Final status với thống kê - cập nhật để bao gồm file TXT
+        jobs_status[job_id].status = "completed"
+        jobs_status[job_id].progress = "Completed successfully"
+        jobs_status[job_id].result = {
+            "vtt_filename": f"{base_name}.vtt",
+            "txt_filename": f"{base_name}.txt",
+            "vtt_download_url": f"/download/{base_name}.vtt",
+            "txt_download_url": f"/download/{base_name}.txt",
+            "vtt_file_path": output_file,
+            "txt_file_path": txt_output_file,
+            "created_at": datetime.now().isoformat(),
+            "source_type": "m3u8_stream" if is_m3u8_url(video_url) else "direct_file",
+            "stats": {
+                "total_segments": len(list(segments)) if segments else 0,
+                "valid_segments": len(valid_segments),
+                "filtered_hallucinations": hallucination_count,
+                "detected_language": info.language if hasattr(info, 'language') else language,
+                "language_probability": info.language_probability if hasattr(info, 'language_probability') else None
+            }
+        }
+
+        print(f"✅ Job {job_id} completed - Generated VTT and TXT files - Filtered {hallucination_count} hallucinations")
+
+    except Exception as e:
+        jobs_status[job_id].status = "failed"
+        jobs_status[job_id].error = str(e)
+        print(f"❌ Job {job_id} failed: {e}")
+
+
 # --- Enhanced Endpoints ---
 @app.get("/health")
 async def health_check():
@@ -420,7 +600,7 @@ async def get_job_status(job_id: str):
 
 @app.get("/list")
 async def list_files():
-    vtt_dir = "File vtt"
+    vtt_dir = "../File vtt"
     if not os.path.exists(vtt_dir):
         return {"files": []}
     
@@ -446,7 +626,7 @@ async def list_files():
 
 @app.get("/download/{filename}")
 async def download_file(filename: str):
-    vtt_dir = "File vtt"
+    vtt_dir = "../File vtt"
     file_path = None
     
     for folder_name in os.listdir(vtt_dir):
@@ -477,7 +657,7 @@ async def download_file(filename: str):
 
 @app.delete("/delete/{filename}")
 async def delete_file(filename: str):
-    vtt_dir = "File vtt"
+    vtt_dir = "../File vtt"
     file_path = None
     folder_to_check = None
 

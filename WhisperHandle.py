@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import re
 import subprocess
@@ -63,33 +64,33 @@ def detect_hallucination_patterns(text: str) -> bool:
     return False
 
 
-def download_m3u8_stream(url: str) -> str:
-    print(f"⬇️ Processing M3U8 stream from {url}...")
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
-    temp_file.close()
-    try:
-        cmd = [
-            "ffmpeg",
-            "-i", url,
-            "-c", "copy",
-            "-bsf:a", "aac_adtstoasc",
-            "-avoid_negative_ts", "make_zero",  # Tránh timestamp âm
-            "-y",
-            temp_file.name
-        ]
-
-        print(f"🔧 Running ffmpeg command: {' '.join(cmd)}")
-
-        if not os.path.exists(temp_file.name) or os.path.getsize(temp_file.name) == 0:
-            raise Exception("Downloaded file is empty or doesn't exist")
-
-        print(f"✅ M3U8 stream downloaded successfully: {temp_file.name}")
-        return temp_file.name
-
-    except Exception as e:
-        if os.path.exists(temp_file.name):
-            os.remove(temp_file.name)
-        raise Exception(f"Failed to download M3U8 stream: {str(e)}")
+# def download_m3u8_stream(url: str) -> str:
+#     print(f"⬇️ Processing M3U8 stream from {url}...")
+#     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+#     temp_file.close()
+#     try:
+#         cmd = [
+#             "ffmpeg",
+#             "-i", url,
+#             "-c", "copy",
+#             "-bsf:a", "aac_adtstoasc",
+#             "-avoid_negative_ts", "make_zero",  # Tránh timestamp âm
+#             "-y",
+#             temp_file.name
+#         ]
+#
+#         print(f"🔧 Running ffmpeg command: {' '.join(cmd)}")
+#
+#         if not os.path.exists(temp_file.name) or os.path.getsize(temp_file.name) == 0:
+#             raise Exception("Downloaded file is empty or doesn't exist")
+#
+#         print(f"✅ M3U8 stream downloaded successfully: {temp_file.name}")
+#         return temp_file.name
+#
+#     except Exception as e:
+#         if os.path.exists(temp_file.name):
+#             os.remove(temp_file.name)
+#         raise Exception(f"Failed to download M3U8 stream: {str(e)}")
 
 
 def clean_repetitive_text(text: str) -> str:
@@ -246,10 +247,19 @@ Dict[str, any]:
             word_timestamps=True  # Enable để có thể phân tích tốt hơn
         )
         # Filter và clean segments
-        valid_segments = []
+        data = []
         hallucination_count = 0
         for seg in segments:
-            print("segments",seg)
+            print("id:",seg.id," Text:",seg.text," Segment:", round(seg.start, 1), round(seg.end, 1), seg.text)
+            data.append({
+                "id": seg.id,
+                "text": seg.text,
+                "start": round(seg.start, 1),
+                "end": round(seg.end, 1),
+            })
+        # Lưu ra file JSON
+        with open("output.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
         print("info", info)
 
         # for segment in segments:
@@ -294,7 +304,7 @@ Dict[str, any]:
             "txt_file_path": txt_output_file,
             "stats": {
                 "total_segments": len(list(segments)) if segments else 0,
-                "valid_segments": len(valid_segments),
+                "valid_segments": len(data),
                 "filtered_hallucinations": hallucination_count,
                 "detected_language": info.language if hasattr(info, 'language') else language,
                 "language_probability": info.language_probability if hasattr(info, 'language_probability') else None
@@ -306,22 +316,23 @@ Dict[str, any]:
             print(f"❌ Failed: {e}"))
     return None
 if __name__ == '__main__':
-    # input_file = "test.mp4"
-    # subprocess.run(["ffmpeg", "-i", input_file, "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", output_file])
-
-    output_file = "audio.wav"
-    # extract audio
-    # "-c", "copy",
-    # "-bsf:a", "aac_adtstoasc",
-    # "-avoid_negative_ts", "make_zero",  # Tránh timestamp âm
-    # "-y",
+    # # input_file = "test.mp4"
+    # # subprocess.run(["ffmpeg", "-i", input_file, "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", output_file])
+    #
+    output_file = "audio/audio.wav"
+    # # extract audio
+    # # "-c", "copy",
+    # # "-bsf:a", "aac_adtstoasc",
+    # # "-avoid_negative_ts", "make_zero",  # Tránh timestamp âm
+    # # "-y",
     config = ModelConfig()
-    # now pass the wav file
+    # # now pass the wav file
     result = process_video_transcription(
         audio=output_file,
         file_name="test",
         language="vi",
         config=config
     )
-    print(result)
+    time = 20.46
+    print(round(time, 1))
 

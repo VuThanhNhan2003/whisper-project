@@ -66,7 +66,7 @@ def get_filename_from_url(url):
     return os.path.splitext(os.path.basename(parsed.path))[0]
 
 # --- Load config ---
-with open("config.json", "r", encoding="utf-8") as f:
+with open("../config.json", "r", encoding="utf-8") as f:
     config = json.load(f)
 
 input_url = config["input_url"]
@@ -90,7 +90,7 @@ base_name = get_filename_from_url(input_url)
 
 # Tạo thư mục lưu file .vtt theo cấu trúc File vtt/<ten-file>/
 if output_format == "vtt":
-    output_dir = os.path.join("File vtt", base_name)
+    output_dir = os.path.join("../File vtt", base_name)
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, f"{base_name}.{output_format}")
 else:
