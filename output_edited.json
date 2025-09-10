@@ -1,0 +1,53 @@
+[
+    {
+        "data": [
+            {
+                "id": 1,
+                "start": 20.4,
+                "end": 29.0,
+                "origin": " Xin chào các anh chị học viên. Sau đây tôi sẽ đi tiếp về nội dung tiếp theo của phần học của chúng ta liên quan đến các bài toán thường cập trong học dữ liệu.",
+                "edit": "Xin chào các anh chị học viên. Sau đây tôi sẽ đi tiếp về nội dung tiếp theo của phần học của chúng ta liên quan đến các bài toán thường gặp trong học dữ liệu.",
+                "reason": "Sửa lỗi chính tả: 'cập' -> 'gặp'. Sửa lỗi ngữ pháp: 'thường cập' -> 'thường gặp'.",
+                "token": 223
+            },
+            {
+                "id": 2,
+                "start": 30.9,
+                "end": 34.2,
+                "origin": " Trong bài học trước chúng ta đã đi qua bài toán về hội quy.",
+                "edit": "Trong bài học trước, chúng ta đã đi qua bài toán về hồi quy.",
+                "reason": "Sửa lỗi chính tả: 'hội quy' → 'hồi quy' (lỗi chính tả).",
+                "token": 169
+            },
+            {
+                "id": 3,
+                "start": 34.4,
+                "end": 47.4,
+                "origin": " Các anh chị cũng thấy một số dụng liên quan trong việc mình có thể áp dụng bài toán hội quy trong việc dự đoán định giá căn nhà cũng như áp dụng cho bài toán làm sao dự đoán cân nặng, dựa trên chiều cao của một người.",
+                "edit": "Các anh chị cũng thấy một số dụng cụ liên quan trong việc mình có thể áp dụng bài toán hồi quy trong việc dự đoán định giá căn nhà cũng như áp dụng cho bài toán làm sao dự đoán cân nặng, dựa trên chiều cao của một người.",
+                "reason": "Sửa lỗi chính tả: 'dụng' sửa thành 'dụng cụ'. Sửa lỗi dấu câu: 'dụng liên quan' sửa thành 'dụng cụ liên quan' để phù hợp với ngữ pháp.",
+                "token": 263
+            },
+            {
+                "id": 4,
+                "start": 47.4,
+                "end": 49.8,
+                "origin": " Thì như vậy thì mặc dù cái ví dụ rất là đơn giản",
+                "edit": "Thì như vậy thì mặc dù cái ví dụ rất đơn giản.",
+                "reason": "Sửa lỗi dùng từ 'là' không cần thiết sau 'rất'. Cụm từ 'rất đơn giản' đã mang ý nghĩa tương đương.",
+                "token": 176
+            },
+            {
+                "id": 5,
+                "start": 49.8,
+                "end": 52.2,
+                "origin": " Nhưng mà cũng rất hy vọng anh chị có thể hiểu sâu hơn",
+                "edit": "Nhưng mà cũng rất hy vọng anh chị có thể hiểu sâu hơn.",
+                "reason": "Câu đã đúng ngữ pháp và chính tả.",
+                "token": 153
+            }
+        ],
+        "total_tokens": 984,
+        "model": "gemma-3n-e2b-it"
+    }
+]

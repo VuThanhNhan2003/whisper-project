@@ -1,0 +1,2408 @@
+[
+        {
+            "id": 1,
+            "text": " Xin chào các anh chị học viên. Sau đây tôi sẽ đi tiếp về nội dung tiếp theo của phần học của chúng ta liên quan đến các bài toán thường cập trong học dữ liệu.",
+            "start": 20.4,
+            "end": 29.0
+        },
+        {
+            "id": 2,
+            "text": " Trong bài học trước chúng ta đã đi qua bài toán về hội quy.",
+            "start": 30.9,
+            "end": 34.2
+        },
+        {
+            "id": 3,
+            "text": " Các anh chị cũng thấy một số dụng liên quan trong việc mình có thể áp dụng bài toán hội quy trong việc dự đoán định giá căn nhà cũng như áp dụng cho bài toán làm sao dự đoán cân nặng, dựa trên chiều cao của một người.",
+            "start": 34.4,
+            "end": 47.4
+        },
+        {
+            "id": 4,
+            "text": " Thì như vậy thì mặc dù cái ví dụ rất là đơn giản",
+            "start": 47.4,
+            "end": 49.8
+        },
+        {
+            "id": 5,
+            "text": " Nhưng mà cũng rất hy vọng anh chị có thể hiểu sâu hơn",
+            "start": 49.8,
+            "end": 52.2
+        },
+    {
+        "id": 6,
+        "text": " Về cái bài trắng về hồi quy",
+        "start": 52.9,
+        "end": 54.0
+    },
+    {
+        "id": 7,
+        "text": " Thì như vậy là khác với bài trắng về phân loại",
+        "start": 54.0,
+        "end": 56.2
+    },
+    {
+        "id": 8,
+        "text": " Thì bài trắng hồi quy là chúng ta",
+        "start": 56.2,
+        "end": 57.4
+    },
+    {
+        "id": 9,
+        "text": " Sẽ dự đoán một cái giá trị cụ thể",
+        "start": 57.4,
+        "end": 59.2
+    },
+    {
+        "id": 10,
+        "text": " Dựa trên cái thông tin",
+        "start": 59.2,
+        "end": 61.8
+    },
+    {
+        "id": 11,
+        "text": " Và những cái đặc trưng đầu vào",
+        "start": 62.3,
+        "end": 64.0
+    },
+    {
+        "id": 12,
+        "text": " Thì đó là cái sự phát biệt đó bài trắng phân loại",
+        "start": 64.0,
+        "end": 66.0
+    },
+    {
+        "id": 13,
+        "text": " Bài trắng phân loại thì chúng ta sẽ dự đoán",
+        "start": 66.0,
+        "end": 67.5
+    },
+    {
+        "id": 14,
+        "text": " Về cái nhãn, cái lớp liên quan",
+        "start": 67.5,
+        "end": 69.8
+    },
+    {
+        "id": 15,
+        "text": " Thì như vậy trong khoa học tiếp theo",
+        "start": 70.6,
+        "end": 71.9
+    },
+    {
+        "id": 16,
+        "text": " Thì chúng ta sẽ đi tiếp về những cái nội dung",
+        "start": 71.9,
+        "end": 73.8
+    },
+    {
+        "id": 17,
+        "text": " Liên quan về cái bài trắng hồi quy",
+        "start": 73.8,
+        "end": 75.1
+    },
+    {
+        "id": 18,
+        "text": " Cái phần pháp mình giải quyết nó như thế nào",
+        "start": 75.1,
+        "end": 76.8
+    },
+    {
+        "id": 19,
+        "text": " Thì như vậy thì ở đây",
+        "start": 76.8,
+        "end": 78.2
+    },
+    {
+        "id": 20,
+        "text": " Các anh chị sẽ thấy là",
+        "start": 78.2,
+        "end": 79.6
+    },
+    {
+        "id": 21,
+        "text": " Chúng ta sẽ biết rằng",
+        "start": 80.2,
+        "end": 82.6
+    },
+    {
+        "id": 22,
+        "text": " Là cái bài toán về hội quy",
+        "start": 82.6,
+        "end": 83.8
+    },
+    {
+        "id": 23,
+        "text": " Là cái bài toán là chúng ta",
+        "start": 83.8,
+        "end": 86.2
+    },
+    {
+        "id": 24,
+        "text": " Sẽ dự đoán một cái giá trị",
+        "start": 86.2,
+        "end": 88.1
+    },
+    {
+        "id": 25,
+        "text": " Dựa trên những cái",
+        "start": 88.9,
+        "end": 90.4
+    },
+    {
+        "id": 26,
+        "text": " Đặc trưng mình được cung cấp",
+        "start": 90.4,
+        "end": 91.9
+    },
+    {
+        "id": 27,
+        "text": " Tại thời điểm ban đầu",
+        "start": 93.1,
+        "end": 94.2
+    },
+    {
+        "id": 28,
+        "text": " Rồi từ đó mình đưa ra được",
+        "start": 94.2,
+        "end": 96.1
+    },
+    {
+        "id": 29,
+        "text": " Một cái công thức",
+        "start": 96.1,
+        "end": 98.5
+    },
+    {
+        "id": 30,
+        "text": " Mà trong đó là chúng ta thể hiện được",
+        "start": 98.5,
+        "end": 100.3
+    },
+    {
+        "id": 31,
+        "text": " Cái sự tương quan giữa cái giá trị",
+        "start": 100.3,
+        "end": 102.7
+    },
+    {
+        "id": 32,
+        "text": " Đầu vào",
+        "start": 103.3,
+        "end": 104.0
+    },
+    {
+        "id": 33,
+        "text": " Và cái kết quả đầu ra",
+        "start": 104.0,
+        "end": 105.4
+    },
+    {
+        "id": 34,
+        "text": " Chính là cái giá trị mà người dự đoán",
+        "start": 105.4,
+        "end": 107.1
+    },
+    {
+        "id": 35,
+        "text": " Thì như vậy là ở 2 cái ví dụ vừa rồi",
+        "start": 107.1,
+        "end": 109.6
+    },
+    {
+        "id": 36,
+        "text": " Thì chúng ta xét cái bài trắng hậu quy",
+        "start": 109.6,
+        "end": 111.5
+    },
+    {
+        "id": 37,
+        "text": " Nhưng rất là đơn giản là chưa đơn biến thôi",
+        "start": 111.5,
+        "end": 113.2
+    },
+    {
+        "id": 38,
+        "text": " Đúng không? Ví dụ bài trắng về",
+        "start": 113.2,
+        "end": 115.1
+    },
+    {
+        "id": 39,
+        "text": " Dự đoán về giá trị căn nhà",
+        "start": 115.1,
+        "end": 116.7
+    },
+    {
+        "id": 40,
+        "text": " Thì chúng ta sẽ xét là cái mối",
+        "start": 116.7,
+        "end": 118.4
+    },
+    {
+        "id": 41,
+        "text": " Tân quan hay tân quan",
+        "start": 118.4,
+        "end": 119.9
+    },
+    {
+        "id": 42,
+        "text": " Giữa cái diện tức căn nhà",
+        "start": 120.3,
+        "end": 122.7
+    },
+    {
+        "id": 43,
+        "text": " Và cái giá trị của nó",
+        "start": 122.7,
+        "end": 123.7
+    },
+    {
+        "id": 44,
+        "text": " Hay là chúng ta dự đoán cân nặng",
+        "start": 123.7,
+        "end": 125.9
+    },
+    {
+        "id": 45,
+        "text": " Vì trên chiều cao của một người",
+        "start": 125.9,
+        "end": 127.1
+    },
+    {
+        "id": 46,
+        "text": " Nhưng mà thực tế có thể là",
+        "start": 127.1,
+        "end": 129.4
+    },
+    {
+        "id": 47,
+        "text": " Cái mô hình này nó không thực sự chứng xác",
+        "start": 130.8,
+        "end": 133.1
+    },
+    {
+        "id": 48,
+        "text": " lắm đúng không",
+        "start": 133.1,
+        "end": 134.0
+    },
+    {
+        "id": 49,
+        "text": " thực tế là có rất nhiều cái thông tin khác",
+        "start": 134.0,
+        "end": 136.6
+    },
+    {
+        "id": 50,
+        "text": " có rất nhiều trình độc nhân khác",
+        "start": 136.6,
+        "end": 138.0
+    },
+    {
+        "id": 51,
+        "text": " để chúng ta cần được sử dụng",
+        "start": 138.0,
+        "end": 139.5
+    },
+    {
+        "id": 52,
+        "text": " nhưng mà ở đây chúng ta chỉ có xét là",
+        "start": 139.8,
+        "end": 141.7
+    },
+    {
+        "id": 53,
+        "text": " tính tương quan giữa một cái biến",
+        "start": 141.7,
+        "end": 143.8
+    },
+    {
+        "id": 54,
+        "text": " là giá trị cân nhà",
+        "start": 144.7,
+        "end": 145.9
+    },
+    {
+        "id": 55,
+        "text": " và trình tích cân nhà nó như thế nào",
+        "start": 145.9,
+        "end": 147.6
+    },
+    {
+        "id": 56,
+        "text": " điều chẳng đã thể hiện được một cái mẫu hệ tiến tính",
+        "start": 147.6,
+        "end": 150.5
+    },
+    {
+        "id": 57,
+        "text": " giữa sử dụng linear reaction hay không",
+        "start": 150.9,
+        "end": 152.6
+    },
+    {
+        "id": 58,
+        "text": " hay là giữa cái chiều cân nặng",
+        "start": 152.6,
+        "end": 154.4
+    },
+    {
+        "id": 59,
+        "text": " và chiều cao",
+        "start": 154.4,
+        "end": 155.1
+    },
+    {
+        "id": 60,
+        "text": " nhưng mà ở đây là bài đọc ví dụ trình thú",
+        "start": 155.1,
+        "end": 157.2
+    },
+    {
+        "id": 61,
+        "text": " nên chỉ có thể nắm thêm cái thông tin liên quan",
+        "start": 157.2,
+        "end": 159.5
+    },
+    {
+        "id": 62,
+        "text": " và như vậy",
+        "start": 160.9,
+        "end": 161.9
+    },
+    {
+        "id": 63,
+        "text": " Thì chúng ta sẽ thấy rằng",
+        "start": 161.9,
+        "end": 163.3
+    },
+    {
+        "id": 64,
+        "text": " Nếu trường hợp mà chúng ta",
+        "start": 163.3,
+        "end": 165.6
+    },
+    {
+        "id": 65,
+        "text": " Có những đặc trưng tương quan",
+        "start": 166.1,
+        "end": 167.9
+    },
+    {
+        "id": 66,
+        "text": " Nhiều hơn",
+        "start": 168.4,
+        "end": 169.2
+    },
+    {
+        "id": 67,
+        "text": " Vậy chúng ta sẽ có",
+        "start": 170.0,
+        "end": 171.2
+    },
+    {
+        "id": 68,
+        "text": " Cái bài toán là chúng ta sẽ có",
+        "start": 172.1,
+        "end": 174.0
+    },
+    {
+        "id": 69,
+        "text": " N cái thuộc tính",
+        "start": 174.0,
+        "end": 175.6
+    },
+    {
+        "id": 70,
+        "text": " N cái đặc trưng",
+        "start": 175.6,
+        "end": 176.6
+    },
+    {
+        "id": 71,
+        "text": " Sẽ mình dự đáng một cái giá trị",
+        "start": 178.2,
+        "end": 179.6
+    },
+    {
+        "id": 72,
+        "text": " Thì như vậy giống như là bài toán",
+        "start": 180.3,
+        "end": 181.7
+    },
+    {
+        "id": 73,
+        "text": " Định giá về căn nhà",
+        "start": 182.2,
+        "end": 183.9
+    },
+    {
+        "id": 74,
+        "text": " Các anh chị mở rộng thêm những thông tin khác",
+        "start": 183.9,
+        "end": 186.0
+    },
+    {
+        "id": 75,
+        "text": " Thay vì diện tích",
+        "start": 186.0,
+        "end": 187.2
+    },
+    {
+        "id": 76,
+        "text": " Mình sẽ có những thuộc tính khác như là",
+        "start": 187.2,
+        "end": 189.8
+    },
+    {
+        "id": 77,
+        "text": " Số lượng phòng ngủ",
+        "start": 189.8,
+        "end": 190.8
+    },
+    {
+        "id": 78,
+        "text": " số toilet",
+        "start": 191.6,
+        "end": 192.4
+    },
+    {
+        "id": 79,
+        "text": " nhà hướng nào",
+        "start": 192.4,
+        "end": 194.0
+    },
+    {
+        "id": 80,
+        "text": " hướng Bắc, hướng Đông, hướng Tây",
+        "start": 194.0,
+        "end": 197.1
+    },
+    {
+        "id": 81,
+        "text": " hay hướng Nam",
+        "start": 197.1,
+        "end": 198.3
+    },
+    {
+        "id": 82,
+        "text": " nhà có bao nhiêu",
+        "start": 198.3,
+        "end": 200.8
+    },
+    {
+        "id": 83,
+        "text": " có bao nhiêu lầu",
+        "start": 200.8,
+        "end": 202.0
+    },
+    {
+        "id": 84,
+        "text": " hoặc là những tiện ích xung quanh",
+        "start": 202.9,
+        "end": 205.3
+    },
+    {
+        "id": 85,
+        "text": " có gần chợ hay không",
+        "start": 205.3,
+        "end": 206.9
+    },
+    {
+        "id": 86,
+        "text": " có gần đường lớn hay không",
+        "start": 206.9,
+        "end": 208.5
+    },
+    {
+        "id": 87,
+        "text": " hay là nhà trong hẻm",
+        "start": 208.5,
+        "end": 209.9
+    },
+    {
+        "id": 88,
+        "text": " hoặc là những thông tin khác",
+        "start": 209.9,
+        "end": 211.5
+    },
+    {
+        "id": 89,
+        "text": " thực tế có nhiều thông tin",
+        "start": 212.5,
+        "end": 214.4
+    },
+    {
+        "id": 90,
+        "text": " rất nhiều biến số",
+        "start": 214.4,
+        "end": 216.0
+    },
+    {
+        "id": 91,
+        "text": " rất nhiều thuộc tính",
+        "start": 216.0,
+        "end": 217.2
+    },
+    {
+        "id": 92,
+        "text": " mà chúng ta cần phải sử dụng",
+        "start": 217.2,
+        "end": 219.9
+    },
+    {
+        "id": 93,
+        "text": " Để mình đưa ra được một cái",
+        "start": 219.9,
+        "end": 221.9
+    },
+    {
+        "id": 94,
+        "text": " Ước luận chính xác",
+        "start": 223.0,
+        "end": 224.0
+    },
+    {
+        "id": 95,
+        "text": " Về cái giá trị cân nhà",
+        "start": 224.0,
+        "end": 225.0
+    },
+    {
+        "id": 96,
+        "text": " Đồng ý chưa",
+        "start": 225.0,
+        "end": 225.6
+    },
+    {
+        "id": 97,
+        "text": " Thì nó dẫn đến bài tráng là",
+        "start": 226.6,
+        "end": 227.8
+    },
+    {
+        "id": 98,
+        "text": " Thực tế là chúng ta sẽ cặp những bài tráng",
+        "start": 227.8,
+        "end": 229.8
+    },
+    {
+        "id": 99,
+        "text": " Vì hội quy đa biến rất là nhiều",
+        "start": 229.8,
+        "end": 231.0
+    },
+    {
+        "id": 100,
+        "text": " Nó không chỉ là một biến",
+        "start": 231.0,
+        "end": 232.2
+    },
+    {
+        "id": 101,
+        "text": " Nó sẽ là đa biến",
+        "start": 232.2,
+        "end": 233.2
+    },
+    {
+        "id": 102,
+        "text": " Thì như vậy thì",
+        "start": 233.8,
+        "end": 234.6
+    },
+    {
+        "id": 103,
+        "text": " Nó dẫn đến câu chuyện của chúng ta là",
+        "start": 234.6,
+        "end": 237.1
+    },
+    {
+        "id": 104,
+        "text": " À như vậy là",
+        "start": 237.1,
+        "end": 238.4
+    },
+    {
+        "id": 105,
+        "text": " Giả sử đi",
+        "start": 238.4,
+        "end": 239.6
+    },
+    {
+        "id": 106,
+        "text": " Chúng ta cần",
+        "start": 239.6,
+        "end": 241.0
+    },
+    {
+        "id": 107,
+        "text": " Một cái ước luận",
+        "start": 241.6,
+        "end": 242.8
+    },
+    {
+        "id": 108,
+        "text": " Đúng không",
+        "start": 242.8,
+        "end": 243.2
+    },
+    {
+        "id": 109,
+        "text": " Cho một cái giá trị",
+        "start": 243.2,
+        "end": 244.4
+    },
+    {
+        "id": 110,
+        "text": " Dựa trên n",
+        "start": 244.4,
+        "end": 245.2
+    },
+    {
+        "id": 111,
+        "text": " Cái biến số đầu vào",
+        "start": 246.0,
+        "end": 247.1
+    },
+    {
+        "id": 112,
+        "text": " Thì như vậy lúc đó",
+        "start": 247.1,
+        "end": 248.0
+    },
+    {
+        "id": 113,
+        "text": " Chúng ta sẽ dựa đến như thế nào",
+        "start": 248.0,
+        "end": 249.0
+    },
+    {
+        "id": 114,
+        "text": " Thì lúc đó thì các anh chị sẽ thấy là",
+        "start": 249.0,
+        "end": 250.7
+    },
+    {
+        "id": 115,
+        "text": " Mình có thể mô hình một cái bài toán của chúng ta",
+        "start": 250.7,
+        "end": 252.9
+    },
+    {
+        "id": 116,
+        "text": " Thay vì là Y bằng AX cộng B",
+        "start": 252.9,
+        "end": 255.0
+    },
+    {
+        "id": 117,
+        "text": " Thì nó sẽ có thể là một cái mô hình như sau",
+        "start": 255.0,
+        "end": 257.4
+    },
+    {
+        "id": 118,
+        "text": " Ví dụ Y bằng W0",
+        "start": 257.4,
+        "end": 259.1
+    },
+    {
+        "id": 119,
+        "text": " Cộng W1",
+        "start": 259.1,
+        "end": 260.2
+    },
+    {
+        "id": 120,
+        "text": " X1",
+        "start": 260.6,
+        "end": 261.0
+    },
+    {
+        "id": 121,
+        "text": " Cộng W2",
+        "start": 261.0,
+        "end": 262.0
+    },
+    {
+        "id": 122,
+        "text": " X2",
+        "start": 262.4,
+        "end": 262.8
+    },
+    {
+        "id": 123,
+        "text": " Cộng",
+        "start": 262.8,
+        "end": 263.6
+    },
+    {
+        "id": 124,
+        "text": " Cộng WN",
+        "start": 265.2,
+        "end": 266.0
+    },
+    {
+        "id": 125,
+        "text": " XN",
+        "start": 266.0,
+        "end": 266.6
+    },
+    {
+        "id": 126,
+        "text": " Như vậy mình sẽ có N",
+        "start": 266.6,
+        "end": 267.7
+    },
+    {
+        "id": 127,
+        "text": " Cái biến số đầu vào",
+        "start": 267.7,
+        "end": 269.2
+    },
+    {
+        "id": 128,
+        "text": " Và mình dự đoán kết quả đầu ra",
+        "start": 269.2,
+        "end": 270.6
+    },
+    {
+        "id": 129,
+        "text": " Thì đó là cái",
+        "start": 270.6,
+        "end": 271.5
+    },
+    {
+        "id": 130,
+        "text": " Cái ví dụ cho các anh chị",
+        "start": 271.5,
+        "end": 273.1
+    },
+    {
+        "id": 131,
+        "text": " Trong bài toán hồi quyết đa biến",
+        "start": 273.1,
+        "end": 274.4
+    },
+    {
+        "id": 132,
+        "text": " Thì như vậy",
+        "start": 276.6,
+        "end": 277.3
+    },
+    {
+        "id": 133,
+        "text": " Là để mà giải quyết cái bài toán đó",
+        "start": 277.3,
+        "end": 279.4
+    },
+    {
+        "id": 134,
+        "text": " Đúng không",
+        "start": 279.4,
+        "end": 279.7
+    },
+    {
+        "id": 135,
+        "text": " Thì bây giờ chúng ta không thể nào dừng lại",
+        "start": 279.7,
+        "end": 281.7
+    },
+    {
+        "id": 136,
+        "text": " Một biến rồi đúng không",
+        "start": 281.7,
+        "end": 283.2
+    },
+    {
+        "id": 137,
+        "text": " Thì như vậy chúng ta sẽ có một cái ham",
+        "start": 283.9,
+        "end": 285.4
+    },
+    {
+        "id": 138,
+        "text": " Để mình ước lượng",
+        "start": 286.0,
+        "end": 286.9
+    },
+    {
+        "id": 139,
+        "text": " Sử dụng để mình ước lượng",
+        "start": 286.9,
+        "end": 288.7
+    },
+    {
+        "id": 140,
+        "text": " Cái giá trị",
+        "start": 290.5,
+        "end": 291.6
+    },
+    {
+        "id": 141,
+        "text": " Phù hợp cho những cái trọng số",
+        "start": 291.6,
+        "end": 293.6
+    },
+    {
+        "id": 142,
+        "text": " Ví dụ là W0, W1, W2, WN",
+        "start": 293.6,
+        "end": 296.0
+    },
+    {
+        "id": 143,
+        "text": " Thì như vậy",
+        "start": 296.8,
+        "end": 297.4
+    },
+    {
+        "id": 144,
+        "text": " Chúng ta thường sẽ sử dụng một ham mắc mát",
+        "start": 297.4,
+        "end": 299.1
+    },
+    {
+        "id": 145,
+        "text": " Nó gọi là ham loss",
+        "start": 299.1,
+        "end": 300.1
+    },
+    {
+        "id": 146,
+        "text": " Thì như vậy ham loss ở đây",
+        "start": 301.0,
+        "end": 302.9
+    },
+    {
+        "id": 147,
+        "text": " Thì nó có thể được sử dụng để mình có thể",
+        "start": 302.9,
+        "end": 305.6
+    },
+    {
+        "id": 148,
+        "text": " Mình giải quyết cái bài toán",
+        "start": 306.0,
+        "end": 307.4
+    },
+    {
+        "id": 149,
+        "text": " Là thật sao mình ước lượng",
+        "start": 307.4,
+        "end": 309.0
+    },
+    {
+        "id": 150,
+        "text": " những cái",
+        "start": 309.0,
+        "end": 309.8
+    },
+    {
+        "id": 151,
+        "text": " những cái trọng số của cái mô hình của chúng ta",
+        "start": 311.0,
+        "end": 313.4
+    },
+    {
+        "id": 152,
+        "text": " để mình đưa ra được",
+        "start": 313.9,
+        "end": 315.3
+    },
+    {
+        "id": 153,
+        "text": " cái kết quả tốt nhất về hiệu năng",
+        "start": 315.3,
+        "end": 317.4
+    },
+    {
+        "id": 154,
+        "text": " thì như vậy nó dẫn đến bài tráng là anh chị có",
+        "start": 317.4,
+        "end": 319.1
+    },
+    {
+        "id": 155,
+        "text": " một cái tập huấn luyện đúng không",
+        "start": 319.1,
+        "end": 320.2
+    },
+    {
+        "id": 156,
+        "text": " giả sử là mình có một tập huấn luyện là mình có khoảng",
+        "start": 320.2,
+        "end": 322.6
+    },
+    {
+        "id": 157,
+        "text": " một ngàn cái",
+        "start": 322.6,
+        "end": 323.7
+    },
+    {
+        "id": 158,
+        "text": " cái bất đồn sạn khác nhau",
+        "start": 324.9,
+        "end": 326.5
+    },
+    {
+        "id": 159,
+        "text": " thì như vậy cũng là rút trích được rất nhiều thông tin",
+        "start": 326.5,
+        "end": 328.4
+    },
+    {
+        "id": 160,
+        "text": " rồi sẽ mình dự đoán được cái mô hình",
+        "start": 328.4,
+        "end": 330.4
+    },
+    {
+        "id": 161,
+        "text": " dự đoán được cái giá trị cân nhà",
+        "start": 331.0,
+        "end": 332.7
+    },
+    {
+        "id": 162,
+        "text": " thì như vậy anh chị sẽ thấy là",
+        "start": 332.7,
+        "end": 333.9
+    },
+    {
+        "id": 163,
+        "text": " chúng ta sẽ giải quyết bài tráng là vẫn là bài tráng đó",
+        "start": 334.2,
+        "end": 336.8
+    },
+    {
+        "id": 164,
+        "text": " nhưng là nhiều biến số hơn",
+        "start": 337.2,
+        "end": 338.5
+    },
+    {
+        "id": 165,
+        "text": " và tôi phải dự đoán được",
+        "start": 338.5,
+        "end": 341.1
+    },
+    {
+        "id": 166,
+        "text": " cái giá trị",
+        "start": 342.1,
+        "end": 342.9
+    },
+    {
+        "id": 167,
+        "text": " càng nhanh, càng chính xác càng tốt",
+        "start": 342.9,
+        "end": 345.1
+    },
+    {
+        "id": 168,
+        "text": " chứ như vậy thì có nghĩa là sao",
+        "start": 345.1,
+        "end": 346.4
+    },
+    {
+        "id": 169,
+        "text": " xét trên toàn bộ",
+        "start": 346.4,
+        "end": 347.8
+    },
+    {
+        "id": 170,
+        "text": " những cái bất động sản chúng ta có",
+        "start": 348.8,
+        "end": 350.5
+    },
+    {
+        "id": 171,
+        "text": " thì chúng ta làm sao để đảm bảo",
+        "start": 350.5,
+        "end": 352.4
+    },
+    {
+        "id": 172,
+        "text": " xây số trung binh nó thấp nhất",
+        "start": 352.4,
+        "end": 354.3
+    },
+    {
+        "id": 173,
+        "text": " có thể nhận hàng như vậy",
+        "start": 354.3,
+        "end": 355.6
+    },
+    {
+        "id": 174,
+        "text": " thì như vậy đó là một trong những cái",
+        "start": 356.0,
+        "end": 358.4
+    },
+    {
+        "id": 175,
+        "text": " mà chúng ta có thể tiếp cận và xây dựng hàm loss",
+        "start": 358.4,
+        "end": 360.4
+    },
+    {
+        "id": 176,
+        "text": " để mình có thể ước lượng sự trên lệnh",
+        "start": 360.4,
+        "end": 362.6
+    },
+    {
+        "id": 177,
+        "text": " giữa mô hình dự đoán, mô hình thực tế là sao",
+        "start": 362.6,
+        "end": 364.2
+    },
+    {
+        "id": 178,
+        "text": " thì như vậy",
+        "start": 364.2,
+        "end": 365.0
+    },
+    {
+        "id": 179,
+        "text": " khi chúng ta đã áp dụng rồi",
+        "start": 366.5,
+        "end": 367.7
+    },
+    {
+        "id": 180,
+        "text": " Thì các anh chị sẽ thấy là",
+        "start": 367.7,
+        "end": 368.7
+    },
+    {
+        "id": 181,
+        "text": " Cái vấn đề tiếp theo là làm sao mình đưa ra",
+        "start": 369.1,
+        "end": 371.2
+    },
+    {
+        "id": 182,
+        "text": " Thực toán",
+        "start": 371.2,
+        "end": 372.1
+    },
+    {
+        "id": 183,
+        "text": " Về tối u để mình giải quyết vấn đề này",
+        "start": 372.9,
+        "end": 374.8
+    },
+    {
+        "id": 184,
+        "text": " Thì như vậy anh chị sẽ thấy là",
+        "start": 374.8,
+        "end": 376.4
+    },
+    {
+        "id": 185,
+        "text": " Chúng ta sẽ",
+        "start": 377.7,
+        "end": 378.4
+    },
+    {
+        "id": 186,
+        "text": " Làm một cái bài toán mà trong đó là một hàm loss",
+        "start": 379.4,
+        "end": 381.2
+    },
+    {
+        "id": 187,
+        "text": " Giả sử là một hàm liên tục đi",
+        "start": 381.6,
+        "end": 382.8
+    },
+    {
+        "id": 188,
+        "text": " Với những cái biến số",
+        "start": 383.5,
+        "end": 384.6
+    },
+    {
+        "id": 189,
+        "text": " Chúng ta cần quan tâm",
+        "start": 384.6,
+        "end": 386.0
+    },
+    {
+        "id": 190,
+        "text": " Làm sao chúng ta tìm được",
+        "start": 386.0,
+        "end": 387.4
+    },
+    {
+        "id": 191,
+        "text": " Một cái bộ trọng số tối u",
+        "start": 388.7,
+        "end": 390.6
+    },
+    {
+        "id": 192,
+        "text": " W0, W1, W2, WN",
+        "start": 392.3,
+        "end": 393.8
+    },
+    {
+        "id": 193,
+        "text": " Tối u",
+        "start": 393.8,
+        "end": 394.3
+    },
+    {
+        "id": 194,
+        "text": " Để làm sao mình tối hiệu hỏa cái hàm mức mát đó",
+        "start": 394.3,
+        "end": 397.5
+    },
+    {
+        "id": 195,
+        "text": " thì đó là cái tôi sẽ tiếp cận",
+        "start": 397.5,
+        "end": 399.5
+    },
+    {
+        "id": 196,
+        "text": " và dĩ nhiên thì trong cái học phần",
+        "start": 399.5,
+        "end": 401.6
+    },
+    {
+        "id": 197,
+        "text": " chúng ta thì tôi sẽ đi sâu vô",
+        "start": 401.6,
+        "end": 403.2
+    },
+    {
+        "id": 198,
+        "text": " cái vấn đề này",
+        "start": 403.9,
+        "end": 404.8
+    },
+    {
+        "id": 199,
+        "text": " tại vì nó sẽ liên quan rất nhiều",
+        "start": 404.8,
+        "end": 407.1
+    },
+    {
+        "id": 200,
+        "text": " kiến thức anh chị sẽ học trong những học phần tiếp theo",
+        "start": 407.1,
+        "end": 409.3
+    },
+    {
+        "id": 201,
+        "text": " nhưng mà ở đây chỉ nhắc lại cho anh chị",
+        "start": 409.3,
+        "end": 411.1
+    },
+    {
+        "id": 202,
+        "text": " là chúng ta hoàn toàn áp dụng những cái mô hình",
+        "start": 411.1,
+        "end": 413.1
+    },
+    {
+        "id": 203,
+        "text": " hướng tiếp cận trong lĩnh vực",
+        "start": 413.1,
+        "end": 415.0
+    },
+    {
+        "id": 204,
+        "text": " về tán ứng dụng",
+        "start": 415.0,
+        "end": 416.4
+    },
+    {
+        "id": 205,
+        "text": " và có thể sử dụng những phương pháp số",
+        "start": 416.4,
+        "end": 418.6
+    },
+    {
+        "id": 206,
+        "text": " để có thể giải quyết những bản thân này",
+        "start": 418.6,
+        "end": 420.2
+    },
+    {
+        "id": 207,
+        "text": " như vậy đó là những cái mà anh chị",
+        "start": 420.7,
+        "end": 422.3
+    },
+    {
+        "id": 208,
+        "text": " có thể xem xét",
+        "start": 422.3,
+        "end": 423.6
+    },
+    {
+        "id": 209,
+        "text": " trong cái ví dụ này",
+        "start": 423.6,
+        "end": 426.1
+    },
+    {
+        "id": 210,
+        "text": " thì ở đây thì chúng ta sẽ thấy",
+        "start": 429.0,
+        "end": 430.7
+    },
+    {
+        "id": 211,
+        "text": " là nếu mình xếp",
+        "start": 430.7,
+        "end": 432.2
+    },
+    {
+        "id": 212,
+        "text": " cái hàm mất mát trong trường hợp 1 biến đi",
+        "start": 432.2,
+        "end": 434.5
+    },
+    {
+        "id": 213,
+        "text": " cho đơn giản, thì như vậy",
+        "start": 434.5,
+        "end": 436.2
+    },
+    {
+        "id": 214,
+        "text": " là cái bức độ trên lệ chính là cái đường màu xanh",
+        "start": 436.2,
+        "end": 438.0
+    },
+    {
+        "id": 215,
+        "text": " chúng ta vẽ ở đây",
+        "start": 438.0,
+        "end": 438.8
+    },
+    {
+        "id": 216,
+        "text": " và cái hàm mất mát",
+        "start": 438.8,
+        "end": 442.2
+    },
+    {
+        "id": 217,
+        "text": " chính là tổng, chúng mình tổng các đài đường xe lệch",
+        "start": 442.2,
+        "end": 444.6
+    },
+    {
+        "id": 218,
+        "text": " ở đây, thì như vậy em chỉ thấy",
+        "start": 444.6,
+        "end": 446.3
+    },
+    {
+        "id": 219,
+        "text": " là chúng ta làm sao mà",
+        "start": 446.3,
+        "end": 447.2
+    },
+    {
+        "id": 220,
+        "text": " trên toàn bộ những cái điểm dữ liệu chúng ta có",
+        "start": 447.6,
+        "end": 450.2
+    },
+    {
+        "id": 221,
+        "text": " đúng không chứ, đó thì chúng ta",
+        "start": 450.2,
+        "end": 452.1
+    },
+    {
+        "id": 222,
+        "text": " sẽ cố gắng làm sao mình xây dựng",
+        "start": 452.1,
+        "end": 454.4
+    },
+    {
+        "id": 223,
+        "text": " một cái đường, ví dụ trường hợp 1 biến",
+        "start": 454.4,
+        "end": 456.6
+    },
+    {
+        "id": 224,
+        "text": " Thì một đường thẳng",
+        "start": 456.6,
+        "end": 457.7
+    },
+    {
+        "id": 225,
+        "text": " Đảm bảo rằng là cái hàm loss",
+        "start": 458.6,
+        "end": 460.4
+    },
+    {
+        "id": 226,
+        "text": " Hàm mất máy của chúng ta",
+        "start": 460.4,
+        "end": 461.8
+    },
+    {
+        "id": 227,
+        "text": " Thì cái độ trung bình tổng của các đại đường xe lệch",
+        "start": 461.8,
+        "end": 465.2
+    },
+    {
+        "id": 228,
+        "text": " Nó càng thấp càng tốt",
+        "start": 465.2,
+        "end": 466.4
+    },
+    {
+        "id": 229,
+        "text": " Thì như vậy tôi sẽ giúp bài tướng này",
+        "start": 466.4,
+        "end": 467.8
+    },
+    {
+        "id": 230,
+        "text": " Rồi",
+        "start": 473.3,
+        "end": 473.7
+    },
+    {
+        "id": 231,
+        "text": " Thì ngoài ra thì các anh chị sẽ thấy rằng",
+        "start": 474.2,
+        "end": 476.3
+    },
+    {
+        "id": 232,
+        "text": " Khi chúng ta làm việc với",
+        "start": 477.6,
+        "end": 479.3
+    },
+    {
+        "id": 233,
+        "text": " Với số chiều",
+        "start": 480.4,
+        "end": 481.5
+    },
+    {
+        "id": 234,
+        "text": " Nhiều hơn",
+        "start": 481.5,
+        "end": 482.1
+    },
+    {
+        "id": 235,
+        "text": " Thì cái mức độ trên lệch",
+        "start": 484.1,
+        "end": 485.2
+    },
+    {
+        "id": 236,
+        "text": " Chính là",
+        "start": 485.2,
+        "end": 485.7
+    },
+    {
+        "id": 237,
+        "text": " Ở đây cho hàm mát thì chính là đường màu xanh",
+        "start": 486.3,
+        "end": 488.2
+    },
+    {
+        "id": 238,
+        "text": " Thì chúng ta sẽ cố gắng làm sao mình mô hình hoáng",
+        "start": 488.2,
+        "end": 491.1
+    },
+    {
+        "id": 239,
+        "text": " cái độ trên lệch này thì như vậy lúc đó",
+        "start": 491.1,
+        "end": 493.1
+    },
+    {
+        "id": 240,
+        "text": " anh chị sẽ thấy là mình sẽ có một cái",
+        "start": 493.1,
+        "end": 494.9
+    },
+    {
+        "id": 241,
+        "text": " ham đúng không",
+        "start": 495.6,
+        "end": 496.5
+    },
+    {
+        "id": 242,
+        "text": " trong đó là mình đã hiện được là ham loss",
+        "start": 496.5,
+        "end": 499.1
+    },
+    {
+        "id": 243,
+        "text": " với các biến số chính là",
+        "start": 499.1,
+        "end": 500.8
+    },
+    {
+        "id": 244,
+        "text": " trọng số của cái mô hình mình xem xét",
+        "start": 500.8,
+        "end": 502.9
+    },
+    {
+        "id": 245,
+        "text": " ở đây và chúng ta sẽ làm sao",
+        "start": 502.9,
+        "end": 504.7
+    },
+    {
+        "id": 246,
+        "text": " mình tối thiệu hóa cái kết quả dự đoán của chúng ta",
+        "start": 504.7,
+        "end": 507.1
+    },
+    {
+        "id": 247,
+        "text": " thì như vậy thì chúng ta đưa ra",
+        "start": 507.1,
+        "end": 509.0
+    },
+    {
+        "id": 248,
+        "text": " một cái",
+        "start": 509.0,
+        "end": 509.7
+    },
+    {
+        "id": 249,
+        "text": " một cái ham loss",
+        "start": 510.8,
+        "end": 512.5
+    },
+    {
+        "id": 250,
+        "text": " và trong đó ax ở đây là một cái mai trận lật chân",
+        "start": 512.5,
+        "end": 514.6
+    },
+    {
+        "id": 251,
+        "text": " có kích thước m nhân n",
+        "start": 514.6,
+        "end": 516.0
+    },
+    {
+        "id": 252,
+        "text": " trong đó m là số dòng",
+        "start": 516.0,
+        "end": 517.2
+    },
+    {
+        "id": 253,
+        "text": " n là số feature",
+        "start": 517.2,
+        "end": 518.5
+    },
+    {
+        "id": 254,
+        "text": " m chính là số lượng sample",
+        "start": 518.5,
+        "end": 520.1
+    },
+    {
+        "id": 255,
+        "text": " chúng ta có, số lượng điểm chúng ta có",
+        "start": 520.1,
+        "end": 522.7
+    },
+    {
+        "id": 256,
+        "text": " để đối lượng hội quy",
+        "start": 522.7,
+        "end": 524.5
+    },
+    {
+        "id": 257,
+        "text": " N là số feature",
+        "start": 524.9,
+        "end": 526.0
+    },
+    {
+        "id": 258,
+        "text": " là số đặc trưng chúng ta sử dụng ở đây",
+        "start": 526.0,
+        "end": 528.2
+    },
+    {
+        "id": 259,
+        "text": " Y là một cái",
+        "start": 528.6,
+        "end": 529.5
+    },
+    {
+        "id": 260,
+        "text": " vector giá trị thực của kích thước M",
+        "start": 530.3,
+        "end": 531.9
+    },
+    {
+        "id": 261,
+        "text": " như vậy là nó thể hiện được",
+        "start": 531.9,
+        "end": 533.4
+    },
+    {
+        "id": 262,
+        "text": " kết quả thực",
+        "start": 533.9,
+        "end": 534.7
+    },
+    {
+        "id": 263,
+        "text": " về thực tế",
+        "start": 535.8,
+        "end": 536.9
+    },
+    {
+        "id": 264,
+        "text": " tương ứng với M sample mình có",
+        "start": 537.6,
+        "end": 540.1
+    },
+    {
+        "id": 265,
+        "text": " và cái theta này",
+        "start": 540.8,
+        "end": 542.5
+    },
+    {
+        "id": 266,
+        "text": " nếu mà xét cho",
+        "start": 542.5,
+        "end": 543.3
+    },
+    {
+        "id": 267,
+        "text": " bài tráng mình nói là hội quy đao biến",
+        "start": 543.8,
+        "end": 545.4
+    },
+    {
+        "id": 268,
+        "text": " thì theta này chính là gì",
+        "start": 545.4,
+        "end": 546.3
+    },
+    {
+        "id": 269,
+        "text": " chính là cái bộ",
+        "start": 546.3,
+        "end": 548.8
+    },
+    {
+        "id": 270,
+        "text": " W0, W1, W2",
+        "start": 548.8,
+        "end": 551.5
+    },
+    {
+        "id": 271,
+        "text": " đến WN",
+        "start": 551.5,
+        "end": 552.8
+    },
+    {
+        "id": 272,
+        "text": " mà chúng ta cần phải tìm",
+        "start": 552.8,
+        "end": 554.9
+    },
+    {
+        "id": 273,
+        "text": " để mình tối thiệu hóa",
+        "start": 554.9,
+        "end": 556.7
+    },
+    {
+        "id": 274,
+        "text": " cái hàm mất mát",
+        "start": 556.7,
+        "end": 558.6
+    },
+    {
+        "id": 275,
+        "text": " mà chúng ta thấy trên slide này",
+        "start": 558.6,
+        "end": 560.0
+    },
+    {
+        "id": 276,
+        "text": " thì đó là cái anh chị cần nắm",
+        "start": 560.0,
+        "end": 562.0
+    },
+    {
+        "id": 277,
+        "text": " trong cái ví dụ này",
+        "start": 562.0,
+        "end": 562.9
+    },
+    {
+        "id": 278,
+        "text": " và như vậy thì ở đây là bên cạnh",
+        "start": 564.8,
+        "end": 566.7
+    },
+    {
+        "id": 279,
+        "text": " cái thành phần trung bình",
+        "start": 566.7,
+        "end": 568.3
+    },
+    {
+        "id": 280,
+        "text": " tổng cái đại lượng xe lệch",
+        "start": 569.4,
+        "end": 571.0
+    },
+    {
+        "id": 281,
+        "text": " tương ứng theo từng cái điểm dữ liệu",
+        "start": 571.0,
+        "end": 572.7
+    },
+    {
+        "id": 282,
+        "text": " thì hàm mất mát",
+        "start": 572.7,
+        "end": 573.5
+    },
+    {
+        "id": 283,
+        "text": " còn chia cho cái số lượng",
+        "start": 573.5,
+        "end": 576.1
+    },
+    {
+        "id": 284,
+        "text": " điểm dữ liệu để giảm",
+        "start": 576.1,
+        "end": 577.5
+    },
+    {
+        "id": 285,
+        "text": " cái thành phần BAS",
+        "start": 577.5,
+        "end": 579.7
+    },
+    {
+        "id": 286,
+        "text": " trong cái lượng dữ liệu",
+        "start": 580.4,
+        "end": 581.8
+    },
+    {
+        "id": 287,
+        "text": " thì như vậy là cái công thức tính tổng",
+        "start": 581.8,
+        "end": 586.0
+    },
+    {
+        "id": 288,
+        "text": " ở đây thì nó sẽ là",
+        "start": 588.3,
+        "end": 590.0
+    },
+    {
+        "id": 289,
+        "text": " tổng bình phương",
+        "start": 590.0,
+        "end": 591.2
+    },
+    {
+        "id": 290,
+        "text": " sai số giữa cái giá trị dự đoán với giá trị thực tế",
+        "start": 591.2,
+        "end": 593.6
+    },
+    {
+        "id": 291,
+        "text": " và mô hình tốt nhất",
+        "start": 594.4,
+        "end": 595.6
+    },
+    {
+        "id": 292,
+        "text": " là mô hình sẽ có cái hàm mắt mắt",
+        "start": 595.6,
+        "end": 597.9
+    },
+    {
+        "id": 293,
+        "text": " bé nhất, như vậy chúng ta cần",
+        "start": 597.9,
+        "end": 599.5
+    },
+    {
+        "id": 294,
+        "text": " tìm cái theta sao, chứ là cái theta tối u",
+        "start": 599.5,
+        "end": 602.2
+    },
+    {
+        "id": 295,
+        "text": " chính là cái bộ rồng số",
+        "start": 602.2,
+        "end": 603.7
+    },
+    {
+        "id": 296,
+        "text": " W0, W1, W1, W1, W1 tối u",
+        "start": 603.7,
+        "end": 605.7
+    },
+    {
+        "id": 297,
+        "text": " để mình có thể làm sao mình cực tiểu hóa",
+        "start": 605.7,
+        "end": 607.8
+    },
+    {
+        "id": 298,
+        "text": " cái hàm mắt mắt này",
+        "start": 607.8,
+        "end": 609.1
+    },
+    {
+        "id": 299,
+        "text": " Thì như vậy là ở đây",
+        "start": 611.2,
+        "end": 612.9
+    },
+    {
+        "id": 300,
+        "text": " Đối với bài trang hồi quy",
+        "start": 612.9,
+        "end": 614.3
+    },
+    {
+        "id": 301,
+        "text": " Thì có một số cái hạn chế",
+        "start": 614.3,
+        "end": 616.7
+    },
+    {
+        "id": 302,
+        "text": " Mà tôi muốn nhấn mạnh ở đây",
+        "start": 616.7,
+        "end": 617.9
+    },
+    {
+        "id": 303,
+        "text": " Ở đây thì nó liên quan đến phần",
+        "start": 618.9,
+        "end": 620.6
+    },
+    {
+        "id": 304,
+        "text": " Gọi là hồi quy tiến tính",
+        "start": 621.1,
+        "end": 622.4
+    },
+    {
+        "id": 305,
+        "text": " Thì một cái hạn chế",
+        "start": 624.1,
+        "end": 625.4
+    },
+    {
+        "id": 306,
+        "text": " Của cái linearization ở đây",
+        "start": 625.4,
+        "end": 627.0
+    },
+    {
+        "id": 307,
+        "text": " Thì nó dễ bị ảnh hưởng bởi cái dương liệu nhiễu",
+        "start": 627.0,
+        "end": 628.9
+    },
+    {
+        "id": 308,
+        "text": " Bị noise",
+        "start": 629.3,
+        "end": 630.1
+    },
+    {
+        "id": 309,
+        "text": " Ví dụ điểm dương liệu nhiễu",
+        "start": 630.1,
+        "end": 631.8
+    },
+    {
+        "id": 310,
+        "text": " Dưới đây nè",
+        "start": 632.3,
+        "end": 633.1
+    },
+    {
+        "id": 311,
+        "text": " Thường thường sẽ làm cho mô hình xa rất nhiều",
+        "start": 633.1,
+        "end": 635.4
+    },
+    {
+        "id": 312,
+        "text": " So với cái ví dụ này",
+        "start": 635.4,
+        "end": 636.9
+    },
+    {
+        "id": 313,
+        "text": " Thì cái điểm này",
+        "start": 636.9,
+        "end": 637.8
+    },
+    {
+        "id": 314,
+        "text": " Cái điểm mà mọi người thấy ở trên cùng này nè",
+        "start": 637.8,
+        "end": 640.1
+    },
+    {
+        "id": 315,
+        "text": " Nó có thể xem như là một điểm outlayer",
+        "start": 640.1,
+        "end": 641.8
+    },
+    {
+        "id": 316,
+        "text": " Như vậy thường là nếu trường hợp chúng ta",
+        "start": 642.6,
+        "end": 644.6
+    },
+    {
+        "id": 317,
+        "text": " Khi chúng ta giải quyết bài toán về hội quy",
+        "start": 645.2,
+        "end": 646.8
+    },
+    {
+        "id": 318,
+        "text": " Chúng ta phải xem xét kỹ nếu trường hợp có những cái",
+        "start": 646.8,
+        "end": 648.7
+    },
+    {
+        "id": 319,
+        "text": " Giá trị mà outlayer đúng không",
+        "start": 648.7,
+        "end": 650.4
+    },
+    {
+        "id": 320,
+        "text": " Nó có gây sự ảnh hưởng lớn",
+        "start": 651.2,
+        "end": 653.7
+    },
+    {
+        "id": 321,
+        "text": " Đối với cái việc mình ước lượng bài toán về hội quy",
+        "start": 653.7,
+        "end": 656.5
+    },
+    {
+        "id": 322,
+        "text": " Tiết tính chúng ta thì chúng ta hãy xem xét hoặc sẵn",
+        "start": 656.5,
+        "end": 658.5
+    },
+    {
+        "id": 323,
+        "text": " Lại bỏ cái outlayer này",
+        "start": 659.0,
+        "end": 660.3
+    },
+    {
+        "id": 324,
+        "text": " Rồi cái hạn chế của cái linear regression",
+        "start": 661.3,
+        "end": 664.9
+    },
+    {
+        "id": 325,
+        "text": " Là nó sẽ không có phù hợp cho cái bài toán mô hình phức tạp",
+        "start": 664.9,
+        "end": 668.6
+    },
+    {
+        "id": 326,
+        "text": " nhất là khi outcome và",
+        "start": 669.3,
+        "end": 670.8
+    },
+    {
+        "id": 327,
+        "text": " là cái kết quả đầu ra",
+        "start": 671.3,
+        "end": 672.5
+    },
+    {
+        "id": 328,
+        "text": " và cái đầu vào nó không có quan hệ",
+        "start": 672.5,
+        "end": 674.5
+    },
+    {
+        "id": 329,
+        "text": " tuyến tính, được chứ",
+        "start": 674.5,
+        "end": 675.7
+    },
+    {
+        "id": 330,
+        "text": " chả sử là mình có một bài toán",
+        "start": 676.4,
+        "end": 678.8
+    },
+    {
+        "id": 331,
+        "text": " mà trong đó mình biết là cái kết quả đầu ra",
+        "start": 678.8,
+        "end": 680.8
+    },
+    {
+        "id": 332,
+        "text": " có mối quan hệ phi tuyến",
+        "start": 681.2,
+        "end": 682.6
+    },
+    {
+        "id": 333,
+        "text": " đối với cả đầu vào thì chắc chắn là",
+        "start": 682.6,
+        "end": 684.4
+    },
+    {
+        "id": 334,
+        "text": " nếu các anh chị ép sử dụng",
+        "start": 684.4,
+        "end": 687.0
+    },
+    {
+        "id": 335,
+        "text": " cái mô hình linearization",
+        "start": 687.0,
+        "end": 688.6
+    },
+    {
+        "id": 336,
+        "text": " thì có thể kết quả mình không đủ",
+        "start": 688.6,
+        "end": 690.1
+    },
+    {
+        "id": 337,
+        "text": " kiên xác, không cao và sai số rất là lớn",
+        "start": 690.1,
+        "end": 692.6
+    },
+    {
+        "id": 338,
+        "text": " thì còn ưu điểm ở đây là cái linearization",
+        "start": 692.6,
+        "end": 694.8
+    },
+    {
+        "id": 339,
+        "text": " thì nó có một số ưu điểm",
+        "start": 694.8,
+        "end": 696.2
+    },
+    {
+        "id": 340,
+        "text": " tôi muốn nhấn mạnh thứ nhất là",
+        "start": 696.2,
+        "end": 697.8
+    },
+    {
+        "id": 341,
+        "text": " nó đơn giản dễ triển khai đúng không",
+        "start": 697.8,
+        "end": 699.8
+    },
+    {
+        "id": 342,
+        "text": " bài tráng rất là đơn giản triển khai",
+        "start": 699.8,
+        "end": 701.5
+    },
+    {
+        "id": 343,
+        "text": " rất hiệu quả trong bài tráng quan hệ triển tính",
+        "start": 701.5,
+        "end": 703.6
+    },
+    {
+        "id": 344,
+        "text": " nếu trường hợp chúng ta thấy là chúng ta nhìn",
+        "start": 703.6,
+        "end": 705.5
+    },
+    {
+        "id": 345,
+        "text": " cái dữ liệu mà chúng ta phát hiện ra",
+        "start": 705.5,
+        "end": 707.3
+    },
+    {
+        "id": 346,
+        "text": " như vậy là với cái dữ liệu này",
+        "start": 707.3,
+        "end": 708.9
+    },
+    {
+        "id": 347,
+        "text": " có mối quan hệ triển tính chúng ta hoàn toàn hãy áp dụng được",
+        "start": 708.9,
+        "end": 711.1
+    },
+    {
+        "id": 348,
+        "text": " đó là cái phần mà tôi cũng muốn nhấn mạnh",
+        "start": 711.9,
+        "end": 714.0
+    },
+    {
+        "id": 349,
+        "text": " trong cái ví dụ này",
+        "start": 714.0,
+        "end": 715.0
+    },
+    {
+        "id": 350,
+        "text": " thì như vậy thì chúng ta đã kết thúc",
+        "start": 722.0,
+        "end": 724.1
+    },
+    {
+        "id": 351,
+        "text": " cái bài học",
+        "start": 724.1,
+        "end": 725.2
+    },
+    {
+        "id": 352,
+        "text": " ở đây",
+        "start": 727.1,
+        "end": 727.7
+    },
+    {
+        "id": 353,
+        "text": " tại video này thì",
+        "start": 727.7,
+        "end": 728.8
+    },
+    {
+        "id": 354,
+        "text": " tôi cũng rất là hy vọng",
+        "start": 730.4,
+        "end": 731.5
+    },
+    {
+        "id": 355,
+        "text": " Các anh chị có thể thấu hiểu thêm",
+        "start": 731.5,
+        "end": 733.3
+    },
+    {
+        "id": 356,
+        "text": " Thứ nhất là về cái",
+        "start": 733.3,
+        "end": 735.3
+    },
+    {
+        "id": 357,
+        "text": " Ý nghĩa của cái bài tán hồi quy",
+        "start": 735.3,
+        "end": 737.6
+    },
+    {
+        "id": 358,
+        "text": " Thì chúng ta đã đi qua",
+        "start": 737.6,
+        "end": 738.9
+    },
+    {
+        "id": 359,
+        "text": " Rất nhiều cái ví dụ liên quan bài tán hồi quy",
+        "start": 738.9,
+        "end": 741.1
+    },
+    {
+        "id": 360,
+        "text": " Kể cả trường hợp mình xem xét",
+        "start": 741.9,
+        "end": 743.3
+    },
+    {
+        "id": 361,
+        "text": " Trường hợp là đơn biến và đa biến",
+        "start": 743.3,
+        "end": 745.3
+    },
+    {
+        "id": 362,
+        "text": " Và như vậy thì",
+        "start": 745.3,
+        "end": 746.4
+    },
+    {
+        "id": 363,
+        "text": " Các anh chị cũng sẽ phải chú ý",
+        "start": 746.4,
+        "end": 749.1
+    },
+    {
+        "id": 364,
+        "text": " Trong quá trình",
+        "start": 750.4,
+        "end": 751.1
+    },
+    {
+        "id": 365,
+        "text": " Mình học hoặc mình nghe cái video này",
+        "start": 751.1,
+        "end": 753.3
+    },
+    {
+        "id": 366,
+        "text": " Anh chị cũng sẽ cố gắng làm bài tập",
+        "start": 753.3,
+        "end": 754.8
+    },
+    {
+        "id": 367,
+        "text": " Mà chúng tôi đã giao cho anh chị",
+        "start": 755.3,
+        "end": 757.2
+    },
+    {
+        "id": 368,
+        "text": " Trên cái hệ thống",
+        "start": 757.2,
+        "end": 757.9
+    },
+    {
+        "id": 369,
+        "text": " Như vậy là thông qua cái bài tập các anh chị sẽ hiểu hỏi hơn",
+        "start": 757.9,
+        "end": 761.0
+    },
+    {
+        "id": 370,
+        "text": " cho các bài tráng mà chúng ta nhắc tới",
+        "start": 761.4,
+        "end": 763.4
+    },
+    {
+        "id": 371,
+        "text": " trong cái bài học ở đây",
+        "start": 763.4,
+        "end": 765.1
+    },
+    {
+        "id": 372,
+        "text": " thì như vậy thì cũng rất hy vọng của anh chị",
+        "start": 765.1,
+        "end": 767.3
+    },
+    {
+        "id": 373,
+        "text": " sau khi mà hoàn thành",
+        "start": 767.3,
+        "end": 769.3
+    },
+    {
+        "id": 374,
+        "text": " cái phần học về lý thuyết",
+        "start": 769.3,
+        "end": 771.7
+    },
+    {
+        "id": 375,
+        "text": " thì chúng ta sẽ làm những bài tập tình huống",
+        "start": 771.7,
+        "end": 773.3
+    },
+    {
+        "id": 376,
+        "text": " thì như vậy thì chúng ta sẽ thấy",
+        "start": 774.3,
+        "end": 775.8
+    },
+    {
+        "id": 377,
+        "text": " rằng là đối với cái",
+        "start": 775.8,
+        "end": 777.2
+    },
+    {
+        "id": 378,
+        "text": " bài tráng học có giám sát thì chúng ta",
+        "start": 777.2,
+        "end": 779.5
+    },
+    {
+        "id": 379,
+        "text": " đã đi qua 2 cái bài tráng chính",
+        "start": 779.5,
+        "end": 781.7
+    },
+    {
+        "id": 380,
+        "text": " đó là bài tráng về phân loại",
+        "start": 781.7,
+        "end": 783.0
+    },
+    {
+        "id": 381,
+        "text": " và bài tráng về hồi quy",
+        "start": 783.0,
+        "end": 784.3
+    },
+    {
+        "id": 382,
+        "text": " thì ở đây thì mặc dù là",
+        "start": 784.3,
+        "end": 786.5
+    },
+    {
+        "id": 383,
+        "text": " cái bài giảng của chúng ta không đi quá sâu",
+        "start": 787.4,
+        "end": 789.7
+    },
+    {
+        "id": 384,
+        "text": " và cho từng cái hướng tiếp cận về kỹ thuật",
+        "start": 789.7,
+        "end": 792.1
+    },
+    {
+        "id": 385,
+        "text": " cho 2 bài tấn này",
+        "start": 792.1,
+        "end": 793.3
+    },
+    {
+        "id": 386,
+        "text": " nhưng cũng rất hy vọng là các anh chị",
+        "start": 793.3,
+        "end": 795.0
+    },
+    {
+        "id": 387,
+        "text": " nếu mà sự quan tâm",
+        "start": 795.0,
+        "end": 796.1
+    },
+    {
+        "id": 388,
+        "text": " về những cái mô hình học liên quan",
+        "start": 796.1,
+        "end": 798.8
+    },
+    {
+        "id": 389,
+        "text": " thì anh chị có thể làm sao mà",
+        "start": 798.8,
+        "end": 800.1
+    },
+    {
+        "id": 390,
+        "text": " có thể xem xét",
+        "start": 800.1,
+        "end": 801.4
+    },
+    {
+        "id": 391,
+        "text": " mình có thể đọc thêm những cái thức liên quan",
+        "start": 801.4,
+        "end": 803.6
+    },
+    {
+        "id": 392,
+        "text": " về những người học máy",
+        "start": 803.6,
+        "end": 804.5
+    },
+    {
+        "id": 393,
+        "text": " và có thể mình làm thêm những cái bài tập liên quan",
+        "start": 804.5,
+        "end": 807.3
+    },
+    {
+        "id": 394,
+        "text": " trong những cái mô học sau",
+        "start": 807.9,
+        "end": 809.0
+    },
+    {
+        "id": 395,
+        "text": " thì như vậy các anh chị sẽ nắm",
+        "start": 809.0,
+        "end": 810.1
+    },
+    {
+        "id": 396,
+        "text": " sẽ bẩn hơn những cái thức liên quan",
+        "start": 810.1,
+        "end": 812.2
+    },
+    {
+        "id": 397,
+        "text": " trong cái phần này",
+        "start": 812.7,
+        "end": 813.6
+    },
+    {
+        "id": 398,
+        "text": " thì như vậy thì tôi sẽ kết thúc",
+        "start": 813.6,
+        "end": 817.3
+    },
+    {
+        "id": 399,
+        "text": " cái video ở đây",
+        "start": 817.3,
+        "end": 818.6
+    },
+    {
+        "id": 400,
+        "text": " Thì tôi sẽ quay lại với anh chị trong video khác",
+        "start": 818.6,
+        "end": 820.5
+    },
+    {
+        "id": 401,
+        "text": " Cảm ơn anh chị",
+        "start": 820.5,
+        "end": 821.4
+    }
+]
