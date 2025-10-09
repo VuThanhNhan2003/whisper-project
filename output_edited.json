@@ -7,8 +7,8 @@
                 "end": 29.0,
                 "origin": " Xin chào các anh chị học viên. Sau đây tôi sẽ đi tiếp về nội dung tiếp theo của phần học của chúng ta liên quan đến các bài toán thường cập trong học dữ liệu.",
                 "edit": "Xin chào các anh chị học viên. Sau đây tôi sẽ đi tiếp về nội dung tiếp theo của phần học của chúng ta liên quan đến các bài toán thường gặp trong học dữ liệu.",
-                "reason": "Sửa lỗi chính tả: 'cập' -> 'gặp'. Sửa lỗi ngữ pháp: 'thường cập' -> 'thường gặp'.",
-                "token": 223
+                "reason": "Sửa lỗi chính tả 'cập' thành 'gặp'.",
+                "token": 205
             },
             {
                 "id": 2,
@@ -16,8 +16,8 @@
                 "end": 34.2,
                 "origin": " Trong bài học trước chúng ta đã đi qua bài toán về hội quy.",
                 "edit": "Trong bài học trước, chúng ta đã đi qua bài toán về hồi quy.",
-                "reason": "Sửa lỗi chính tả: 'hội quy' → 'hồi quy' (lỗi chính tả).",
-                "token": 169
+                "reason": "Sửa lỗi chính tả từ 'hội quy' thành 'hồi quy'.",
+                "token": 163
             },
             {
                 "id": 3,
@@ -25,8 +25,8 @@
                 "end": 47.4,
                 "origin": " Các anh chị cũng thấy một số dụng liên quan trong việc mình có thể áp dụng bài toán hội quy trong việc dự đoán định giá căn nhà cũng như áp dụng cho bài toán làm sao dự đoán cân nặng, dựa trên chiều cao của một người.",
                 "edit": "Các anh chị cũng thấy một số dụng cụ liên quan trong việc mình có thể áp dụng bài toán hồi quy trong việc dự đoán định giá căn nhà cũng như áp dụng cho bài toán làm sao dự đoán cân nặng, dựa trên chiều cao của một người.",
-                "reason": "Sửa lỗi chính tả: 'dụng' sửa thành 'dụng cụ'. Sửa lỗi dấu câu: 'dụng liên quan' sửa thành 'dụng cụ liên quan' để phù hợp với ngữ pháp.",
-                "token": 263
+                "reason": "Sửa lỗi 'dụng' thành 'dụng cụ' và sửa lỗi chính tả 'căn nhà' thành 'căn nhà'.",
+                "token": 247
             },
             {
                 "id": 4,
@@ -34,8 +34,8 @@
                 "end": 49.8,
                 "origin": " Thì như vậy thì mặc dù cái ví dụ rất là đơn giản",
                 "edit": "Thì như vậy thì mặc dù cái ví dụ rất đơn giản.",
-                "reason": "Sửa lỗi dùng từ 'là' không cần thiết sau 'rất'. Cụm từ 'rất đơn giản' đã mang ý nghĩa tương đương.",
-                "token": 176
+                "reason": "Sửa lỗi chính tả 'là' thành 'đơn giản' và sửa lỗi dấu câu 'rất là' thành 'rất đơn giản'.",
+                "token": 174
             },
             {
                 "id": 5,
@@ -43,11 +43,11 @@
                 "end": 52.2,
                 "origin": " Nhưng mà cũng rất hy vọng anh chị có thể hiểu sâu hơn",
                 "edit": "Nhưng mà cũng rất hy vọng anh chị có thể hiểu sâu hơn.",
-                "reason": "Câu đã đúng ngữ pháp và chính tả.",
-                "token": 153
+                "reason": "Câu gốc không có lỗi chính tả, dấu câu hoặc ngữ pháp. Câu văn đã đúng.",
+                "token": 163
             }
         ],
-        "total_tokens": 984,
+        "total_tokens": 952,
         "model": "gemma-3n-e2b-it"
     }
 ]

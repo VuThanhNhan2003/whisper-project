@@ -1,4 +1,3 @@
-import datetime
 import json
 import os
 import re
@@ -7,9 +6,10 @@ from typing import BinaryIO, Dict
 
 from faster_whisper import WhisperModel
 from numpy import ndarray
+from pydantic import BaseModel
 
 
-class ModelConfig():
+class ModelConfig(BaseModel):
     language: str = "vi"
     model: str = "large-v3-turbo"
     # Thêm các tùy chọn chống hallucination
@@ -53,7 +53,7 @@ def detect_hallucination_patterns(text: str) -> bool:
         r'like.*share',
         r'ghiền.*gõ',
         r'không.*bỏ.*lỡ',
-        r'video.*hấp.*dẫn'
+        r'input.*hấp.*dẫn'
     ]
 
     text_lower = text.lower()
@@ -201,15 +201,11 @@ def format_timestamp(seconds, vtt=False):
 
 
 # Handle
-def process_video_transcription(audio: str | BinaryIO | ndarray, file_name: str, language: str, config: ModelConfig) -> \
-Dict[str, any]:
+def process_video_transcription(audio: str | BinaryIO | ndarray, file_name: str, language: str, config: ModelConfig):
     """Enhanced background task với anti-hallucination"""
     try:
         output_dir = os.path.join("Output", file_name)
         os.makedirs(output_dir, exist_ok=True)
-        output_file = os.path.join(output_dir, f"{file_name}.vtt")
-        # Thêm file TXT output
-        txt_output_file = os.path.join(output_dir, f"{file_name}.txt")
         # Load model với cấu hình tối ưu cho CPU
         model = WhisperModel(
             config.model,
@@ -241,98 +237,41 @@ Dict[str, any]:
             log_prob_threshold=config.log_prob_threshold,
             no_speech_threshold=config.no_speech_threshold,
             condition_on_previous_text=config.condition_on_previous_text,
-            initial_prompt="Đây là một video học thuật tiếng Việt về khoa học." if language == "vi" else None,
+            initial_prompt="Đây là một input học thuật tiếng Việt về khoa học." if language == "vi" else None,
             vad_filter=config.enable_vad,
             vad_parameters=vad_parameters,
             word_timestamps=True  # Enable để có thể phân tích tốt hơn
         )
-        # Filter và clean segments
-        data = []
-        hallucination_count = 0
-        for seg in segments:
-            print("id:",seg.id," Text:",seg.text," Segment:", round(seg.start, 1), round(seg.end, 1), seg.text)
-            data.append({
-                "id": seg.id,
-                "text": seg.text,
-                "start": round(seg.start, 1),
-                "end": round(seg.end, 1),
-            })
-        # Lưu ra file JSON
-        with open("output.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-        print("info", info)
-
-        # for segment in segments:
-        #     if validate_segment_quality(segment):
-        #         # Clean text trước khi thêm
-        #         cleaned_text = clean_repetitive_text(segment.text)
-        #         if cleaned_text.strip():
-        #             segment.text = cleaned_text
-        #             valid_segments.append(segment)
-        #     else:
-        #         hallucination_count += 1
-        #         print(f"⚠️ Filtered hallucination: {segment.text[:50]}...")
-        #
-        # # Generate VTT với smart splitting
-        # with open(output_file, "w", encoding="utf-8") as f:
-        #     f.write("WEBVTT\n\n")
-        #     for segment in valid_segments:
-        #         sub_segments = smart_segment_split(segment, max_chars=60)
-        #         for sub_start, sub_end, sub_text in sub_segments:
-        #             if sub_text.strip():  # Chỉ ghi segment có nội dung
-        #                 f.write(f"{format_timestamp(sub_start, vtt=True)} --> {format_timestamp(sub_end, vtt=True)}\n")
-        #                 f.write(f"{sub_text}\n\n")
-        #
-        # # Generate TXT file với transcript sạch (cho RAG pipeline)
-        # with open(txt_output_file, "w", encoding="utf-8") as f:
-        #     # Chỉ ghi transcript thuần túy, không có metadata
-        #     transcript_parts = []
-        #     for segment in valid_segments:
-        #         cleaned_text = clean_repetitive_text(segment.text).strip()
-        #         if cleaned_text:
-        #             transcript_parts.append(cleaned_text)
-        #
-        #     # Ghi toàn bộ transcript thành một đoạn văn liên tục
-        #     f.write(" ".join(transcript_parts))
-        #
-        # # Cleanup
-        # if os.path.exists(input_file):
-        #     os.remove(input_file)
-        #
-        result = {
-            "vtt_file_path": output_file,
-            "txt_file_path": txt_output_file,
-            "stats": {
-                "total_segments": len(list(segments)) if segments else 0,
-                "valid_segments": len(data),
-                "filtered_hallucinations": hallucination_count,
-                "detected_language": info.language if hasattr(info, 'language') else language,
-                "language_probability": info.language_probability if hasattr(info, 'language_probability') else None
-            }
-        }
-        return result
+        return segments, info
     except Exception as e:
-        (
-            print(f"❌ Failed: {e}"))
-    return None
+        raise e
+def build_result(segments):
+    data = []
+    for seg in segments:
+        print("id:", seg.id, " Text:", seg.text, " Segment:", round(seg.start, 1), round(seg.end, 1), seg.text)
+        data.append({
+            "id": seg.id,
+            "text": seg.text,
+            "start": round(seg.start, 1),
+            "end": round(seg.end, 1),
+        })
+    return data
+
 if __name__ == '__main__':
-    # # input_file = "test.mp4"
-    # # subprocess.run(["ffmpeg", "-i", input_file, "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", output_file])
-    #
-    output_file = "audio/audio.wav"
-    # # extract audio
-    # # "-c", "copy",
-    # # "-bsf:a", "aac_adtstoasc",
-    # # "-avoid_negative_ts", "make_zero",  # Tránh timestamp âm
-    # # "-y",
+    input_file = "./input/test.mp4"
+    output_file = "./audio/audio.wav"
+    #1. Convert mp4 to wav
+    subprocess.run(["ffmpeg", "-i", input_file, "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", output_file])
     config = ModelConfig()
     # # now pass the wav file
-    result = process_video_transcription(
+    segments,info = process_video_transcription(
         audio=output_file,
         file_name="test",
         language="vi",
         config=config
     )
-    time = 20.46
-    print(round(time, 1))
+    result = build_result(segments)
+    #2. Lưu ra file JSON
+    with open("output.json", "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=4)
 
