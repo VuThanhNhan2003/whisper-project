@@ -183,7 +183,7 @@ def process_video_transcription(job_id: str, video_url: str, language: str, mode
         base_name = get_filename_from_url(video_url)
         
         # Create output directory
-        output_dir = os.path.join("File vtt", base_name)
+        output_dir = os.path.join("file_vtt", base_name)
         os.makedirs(output_dir, exist_ok=True)
         output_file = os.path.join(output_dir, f"{base_name}.vtt")
         
@@ -296,8 +296,8 @@ async def get_job_status(job_id: str):
 
 @app.get("/list")
 async def list_vtt_files():
-    """Liệt kê tất cả file VTT đã tạo"""
-    vtt_dir = "File vtt"
+    """Liệt kê tất cả file_vtt đã tạo"""
+    vtt_dir = "file_vtt"
     if not os.path.exists(vtt_dir):
         return {"files": []}
     
@@ -321,9 +321,9 @@ async def list_vtt_files():
 
 @app.get("/download/{filename}")
 async def download_vtt_file(filename: str):
-    """Tải file VTT"""
+    """Tải file_vtt"""
     # Tìm file trong các thư mục
-    vtt_dir = "File vtt"
+    vtt_dir = "file_vtt"
     file_path = None
     
     for folder_name in os.listdir(vtt_dir):

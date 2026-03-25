@@ -1,0 +1,25 @@
+services:
+  whisper-api:
+    build: .
+    container_name: whisper-api
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - type: bind
+        source: ./file_vtt
+        target: /app/file_vtt
+      - type: bind
+        source: ./models
+        target: /app/models
+      - type: volume
+        source: whisper-cache
+        target: /root/.cache
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+      - LLM_PROXY_URL=http://127.0.0.1:5000
+      - TRANSCRIPTION_WORKERS=1
+      - WHISPER_NUM_WORKERS=1
+      - JOB_QUEUE_MAXSIZE=3000
+
+volumes:
+  whisper-cache:

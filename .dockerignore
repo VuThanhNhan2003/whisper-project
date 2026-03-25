@@ -1,0 +1,14 @@
+.git
+.gitignore
+.gitattributes
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# Local runtime output and model cache are mounted as volumes
+file_vtt
+models
+chatbot
