@@ -264,7 +264,7 @@ async def root():
                 "model": "large-v3-turbo",
                 "enable_llm_refine": True,
                 "llm_proxy_url": "http://host.docker.internal:5000",
-                "llm_model": "Qwen/Qwen2.5-7B-Instruct",
+                "llm_model": "Qwen/Qwen3-8B-AWQ",
                 "txt_include_timestamps": False,
                 "enable_vad": True,
                 "temperature": 0.0,

@@ -18,14 +18,14 @@ class TranscriptionOptions(BaseModel):
     temperature: float = 0.0  # Giảm randomness
     compression_ratio_threshold: float = 2.4
     log_prob_threshold: float = -1.0
-    no_speech_threshold: float = 0.6S
+    no_speech_threshold: float = 0.6
     
     # === LLM Refinement Options (for .txt quality + RAG) ===
     enable_llm_refine: bool = True
     llm_proxy_url: str = Field(
         default_factory=lambda: os.getenv(
             "LLM_PROXY_URL", "http://host.docker.internal:5000"))
-    llm_model: str = "Qwen/Qwen2.5-7B-Instruct"
+    llm_model: str = "Qwen/Qwen3-8B-AWQ"
     llm_timeout_seconds: int = 60
     refine_batch_size: int = 20
     prompt_template: Optional[str] = None  # Custom prompt for mixed lang/code/LaTeX handling

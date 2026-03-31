@@ -669,12 +669,12 @@ def refine_transcription_batch(
     segments: list,
     language: str = "vi",
     llm_proxy_url: str = "http://localhost:5000",
-    llm_model: str = "Qwen/Qwen2.5-7B-Instruct",
+    llm_model: str = "Qwen/Qwen3-8B-AWQ",
     llm_timeout_seconds: int = 60,
     batch_size: int = 20,
     custom_prompt_template: str = None
 ) -> list:
-    """Refine transcription segments using LLM (Qwen 2.5 7B) với custom prompt template.
+    """Refine transcription segments using LLM (Qwen3 8B) với custom prompt template.
     
     Tạo batch requests tới vLLM proxy, refined segments hoặc fallback to original nếu error.
     Hỗ trợ mixed language, code, LaTeX formulas.
@@ -1085,7 +1085,7 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
 
         # === LLM Refinement Step (optional, cho RAG quality + mixed lang/code/LaTeX) ===
         if request.enable_llm_refine and valid_segments:
-            update_job_status(job_id, progress="Refining transcript with LLM (Qwen 2.5)...")
+            update_job_status(job_id, progress="Refining transcript with LLM (Qwen3)...")
             try:
                 valid_segments = refine_transcription_batch(
                     valid_segments,

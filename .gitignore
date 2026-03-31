@@ -18,3 +18,5 @@ models/.locks/
 *.sqlite
 chatbot
 *.docx
+credentials.json
+/file_vtt
