@@ -20,3 +20,6 @@ chatbot
 *.docx
 credentials.json
 /file_vtt
+/file_*
+
+

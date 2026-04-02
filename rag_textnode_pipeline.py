@@ -1,188 +1,232 @@
+"""
+rag_textnode_pipeline.py
+========================
+Chuyển đổi transcript .txt (ASR tiếng Việt) thành TextNode JSON tối ưu cho RAG.
+Domain-agnostic: hoạt động với mọi loại file .txt, không giới hạn môn học.
+
+Chạy:
+    python3 rag_textnode_pipeline.py \
+        --input-root file_transcript \
+        --output-root file_textnodes \
+        --llm-proxy-url http://127.0.0.1:5000 \
+        --llm-model Qwen/Qwen3-8B-AWQ \
+        --include-provenance \
+        --quality-min-words 28 \
+        --quality-min-overlap 0.52 \
+        --quality-min-unique-ratio 0.30
+"""
+
 import argparse
 import json
 import os
 import re
 import unicodedata
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 import requests
 
 
-ALLOWED_CATEGORIES = {"Theory", "Example", "Process"}
-DEFAULT_DEDUPE_JACCARD_THRESHOLD = 0.88
+# ---------------------------------------------------------------------------
+# CONSTANTS
+# ---------------------------------------------------------------------------
 
-FILLER_PATTERNS = [
+ALLOWED_CATEGORIES = {"Theory", "Example", "Process"}
+
+# Dedupe threshold thấp hơn (0.76 thay vì 0.88) để bắt near-duplicate
+# sau khi LLM đã rewrite — đây là nguyên nhân gây duplicate trong output cũ
+DEFAULT_DEDUPE_JACCARD_THRESHOLD = 0.76
+DEDUPE_NGRAM_THRESHOLD = 0.82   # char-ngram threshold phụ
+DEDUPE_TOKEN_SOFT = 0.65        # token threshold để kích hoạt ngram check
+
+
+# ---------------------------------------------------------------------------
+# FILTER PATTERNS — domain-agnostic, chỉ dùng cho meta-discourse / filler
+# Match trên chuỗi đã normalize_for_match (stripped accent, lowercase)
+# ---------------------------------------------------------------------------
+
+_FILLER_PATTERNS_NORM = [
     r"\bxin chao\b",
     r"\bcam on\b",
     r"\bhen gap lai\b",
     r"\bthua cac ban\b",
     r"\bnhu chung ta da biet\b",
-    r"\bv\.v\.?\b",
+    r"\bv\s*v\b",
 ]
 
-LOW_INFO_PHRASES = [
-    "sau nay co dieu kien",
+_LOW_INFO_SUBSTRINGS_NORM = [
+    "sau nay co dieu kien chung ta se",
     "chung toi dung lai o day",
-    "chung toi dung o day",
-    "hen gap lai",
-    "xin cam on",
-    "cung de cap den",
-    "noi cach khac",
-    "do la",
-    "thua cac ban",
-    "toi nho den",
-    "tu nhien toi",
-    "trong buoi trao doi",
-    "chung toi se tiep tuc",
+    "chung toi dung o day xin",
+    "hen gap lai cac ban",
+    "xin cam on cac ban",
+    "trong buoi trao doi hom nay",
+    "chung toi se tiep tuc o chuyen de",
+    "tu nhien toi lai nho den",
+    "bong chan toi lai nho",
 ]
 
-ORPHAN_PREFIXES = [
+_ORPHAN_PREFIXES_NORM = [
     "cung de cap den",
     "noi cach khac",
     "nhung ma",
-    "do la",
     "vi vay",
     "tuy nhien",
     "thua cac ban",
     "toi nho den",
 ]
 
-STOPWORDS = {
-    "la",
-    "va",
-    "cua",
-    "cho",
-    "voi",
-    "trong",
-    "nhung",
-    "duoc",
-    "mot",
-    "cac",
-    "the",
-    "this",
-    "that",
-    "with",
-    "from",
-    "into",
-    "about",
-    "your",
-    "have",
-    "will",
-    "cung",
-    "nhung",
-    "roi",
-    "theo",
-    "nay",
-    "kia",
-    "mot",
-    "cac",
-    "trong",
-    "nhieu",
-    "nhat",
-    "day",
-    "nay",
-    "kia",
-    "nhu",
-    "khi",
-    "neu",
-    "thi",
-    "do",
-    "ay",
-    "noi",
-    "chung",
-    "la",
-    "de",
-    "duoc",
-    "chi",
-    "mot",
-    "phan",
-    "nao",
-    "thoi",
-    "dang",
-    "se",
-    "da",
-    "qua",
-    "rat",
-    "van",
-    "con",
-    "nguoi",
-    "nhung",
-    "nhung",
-    "hoc",
-    "triet",
-    "dinh",
-    "cach",
-    "van",
-    "de",
-    "ve",
-    "moi",
-}
-
-TERM_NORMALIZATION = {
-    "chiet hoc": "triet hoc",
-    "mac le nin": "marx lenin",
-    "mac lennin": "marx lenin",
-    "maclenin": "marx lenin",
-    "magnin": "marx lenin",
-    "clip classroom": "flip classroom",
-    "mark denny": "marx lenin",
-    "maclean": "marx lenin",
-    "trinh the": "chinh the",
-}
-
-
-SYSTEM_PROMPT_VN = """Bạn là chuyên gia trích xuất dữ liệu RAG. Nhiệm vụ của bạn là chuyển đổi transcript bài giảng thành các TextNode JSON giàu ngữ cảnh, độc lập và không trùng lặp. Chỉ trả về JSON, không giải thích."""
-
-
-USER_PROMPT_TEMPLATE_VN = """### NHIỆM VỤ
-Trích xuất các đơn vị tri thức (TextNode) từ đoạn transcript dưới đây.
-
-### QUY TẮC TRÍCH XUẤT (BẮT BUỘC)
-1. Gom nhóm ngữ nghĩa (Semantic Chunking):
-- KHÔNG chia nhỏ các câu đơn lẻ. Gom tất cả các câu cùng giải thích cho một định nghĩa, một ví dụ hoặc một luận điểm vào MỘT node duy nhất.
-- Ưu tiên các node dài và đầy đủ (200-500 từ) hơn là các node ngắn vụn vặt.
-
-2. Tính độc lập (Self-contained context):
-- Mỗi node phải tự giải thích được nội dung mà không cần đọc node trước/sau.
-- THAY THẾ các đại từ mơ hồ (nó, vấn đề này, điều ấy, ông ấy) bằng danh từ cụ thể (ví dụ: triết học, Nietzsche, tính hệ thống) dựa vào ngữ cảnh của đoạn.
-
-3. Lọc sạch dữ liệu:
-- Loại bỏ hoàn toàn: lời chào, lời dẫn (như đã nói, thưa các bạn), câu thừa (vậy nhé, tiếp theo đây), và thông tin cá nhân của giảng viên.
-- Chỉ giữ lại: định nghĩa, lý thuyết, ví dụ minh họa và logic phân tích.
-
-4. Xử lý thuật ngữ và công thức:
-- Chuyển các công thức toán học hoặc logic sang LaTeX ($...$ hoặc $$...$$) nếu có.
-- Nếu có ví dụ (Example), phải giữ nguyên các chi tiết cụ thể để làm phong phú dữ liệu retrieval.
-
-5. Định dạng Metadata:
-- topic: tên chủ đề cụ thể (ví dụ: Tính hệ thống của tri thức triết học).
-- category: chỉ chọn một trong Theory, Example, Process.
-- keywords: 3-5 danh từ chuyên môn xuất hiện trong node.
-
-### CẤU TRÚC OUTPUT (JSON)
-[
-    {
-        "text": "Nội dung học thuật đã được làm sạch và bổ sung ngữ cảnh...",
-        "metadata": {
-            "subject": "",
-            "page": null,
-            "topic": "...",
-            "category": "...",
-            "keywords": ["...", "..."],
-            "has_code": false,
-            "file_name": ""
-        }
-    }
+_META_DISCOURSE_PATTERNS_NORM = [
+    r"\bthua cac ban\b",
+    r"\btoi nho den\b",
+    r"\btu nhien toi\b",
+    r"\bchung toi gioi thieu\b",
+    r"\bchung toi se tiep tuc\b",
+    r"\btrong buoi trao doi\b",
+    r"\bbong chan toi\b",
+    r"\bchung ta chuyen sang\b",
+    r"\bchung ta da tim hieu\b",
+    r"\btiep theo chung ta\b",
+    r"\bnhu da trinh bay\b",
+    r"\bnhu toi da noi\b",
 ]
 
-### TRANSCRIPT CHUNK CẦN XỬ LÝ:
+_INCOMPLETE_TAILS_NORM = [
+    "noi chung la", " va", " nhung", " hoac", " thi", " do la",
+]
+
+
+# ---------------------------------------------------------------------------
+# STOPWORDS — tiếng Việt + English, domain-agnostic
+# ---------------------------------------------------------------------------
+
+STOPWORDS: frozenset[str] = frozenset({
+    # Vietnamese
+    "la", "va", "cua", "cho", "voi", "trong", "nhung", "duoc", "mot", "cac",
+    "cung", "roi", "theo", "nay", "kia", "nhieu", "nhat", "nhu", "khi",
+    "neu", "thi", "do", "ay", "noi", "chung", "de", "chi", "phan", "nao",
+    "thoi", "dang", "se", "da", "qua", "rat", "van", "con", "nguoi",
+    "moi", "hay", "hoac", "them", "deu", "lieu", "tren", "duoi", "sau",
+    "truoc", "giua", "ben", "cuoi", "bat", "dau", "hai", "ba", "bon", "nam",
+    "sau", "bay", "tam", "chin", "muoi",
+    # English
+    "the", "this", "that", "with", "from", "into", "about", "your",
+    "have", "will", "been", "were", "they", "their", "there", "when",
+    "which", "would", "could", "should", "also", "more", "some", "than",
+    "then", "each", "both", "such", "only", "very", "just", "over",
+    "after", "before", "these", "those", "being", "other", "while",
+    "what", "where", "how", "why", "who", "and", "but", "for", "not",
+    "are", "was", "its", "our", "can", "all", "has", "had", "may",
+})
+
+
+# ---------------------------------------------------------------------------
+# TERM NORMALIZATION — lỗi ASR tiếng Việt phổ biến
+# Không hardcode từ khóa domain — để LLM xử lý trong prompt
+# ---------------------------------------------------------------------------
+
+TERM_NORMALIZATION: dict[str, str] = {
+    "chi thuc": "tri thuc",
+    "chiet hoc": "triet hoc",
+    "trinh the": "chinh the",
+    "clip classroom": "flip classroom",
+    "mac le nin": "marx-lenin",
+    "mac lennin": "marx-lenin",
+    "maclenin": "marx-lenin",
+    "magnin": "marx-lenin",
+    "mark denny": "marx-lenin",
+    "maclean": "marx-lenin",
+    "marx lenin": "marx-Lenin",
+}
+
+
+# ---------------------------------------------------------------------------
+# PROMPTS — domain-agnostic
+# Không đề cập môn học cụ thể trong quy tắc chunking
+# ---------------------------------------------------------------------------
+
+SYSTEM_PROMPT = (
+    "Bạn là chuyên gia trích xuất dữ liệu RAG từ transcript bài giảng tiếng Việt. "
+    "Nhiệm vụ: chuyển đổi transcript nói thành TextNode JSON học thuật, "
+    "độc lập, không trùng lặp. Chỉ trả về JSON array, không giải thích."
+)
+
+USER_PROMPT_TEMPLATE = """\
+### NHIỆM VỤ
+Trích xuất các đơn vị tri thức (TextNode) từ đoạn transcript bài giảng nói dưới đây.
+
+### BƯỚC 1 — CHUYỂN VĂN NÓI SANG VĂN VIẾT
+Transcript được tạo bằng ASR tiếng Việt nên có nhiều đặc điểm văn nói:
+- XÓA: từ lặp, filler ("ờ", "à", "thì là", "cái này là"), lời chào/kết bài.
+- XÓA: câu meta của giảng viên ("bây giờ chúng ta chuyển sang", "như tôi đã nói", "thưa các bạn").
+- CHUẨN HÓA: câu chưa hoàn chỉnh → câu hoàn chỉnh; thêm dấu câu còn thiếu.
+- THAY THẾ: đại từ mơ hồ ("nó", "điều ấy", "vấn đề này") → danh từ cụ thể theo ngữ cảnh.
+- SỬA lỗi ASR thường gặp: "chi thức"→"tri thức", "trinh thể"→"chỉnh thể".
+
+### BƯỚC 2 — ATOMIC CHUNKING (QUY TẮC QUAN TRỌNG NHẤT)
+**MỖI NODE = ĐÚNG 1 Ý CHÍNH DUY NHẤT.**
+
+Nguyên tắc tách theo đơn vị ngữ nghĩa:
+- 1 định nghĩa = 1 node. Nếu đoạn có N định nghĩa khác nhau → tạo N node riêng.
+- 1 đặc trưng / tính chất / thuộc tính = 1 node.
+- 1 ví dụ minh họa độc lập và đủ dài = 1 node riêng.
+- 1 cặp so sánh / đối lập = 1 node.
+
+KHÔNG GOM các ý khác chủ đề vào 1 node dù chúng liền kề trong transcript.
+KHÔNG TẠO node mới nếu nội dung chỉ lặp lại điều đã nói ở node trước — hãy dừng.
+KHÔNG THÊM thông tin không có trong transcript (không suy diễn, không bịa).
+
+### BƯỚC 3 — TIÊU CHUẨN CHẤT LƯỢNG NODE
+- Độ dài: 60–350 từ. Tự giải thích được khi đọc độc lập, không cần context.
+- Chỉ giữ: định nghĩa, lý thuyết, ví dụ cụ thể, logic phân tích, số liệu thực tế.
+- Bỏ: thông tin cá nhân giảng viên, lịch học, câu hỏi tu từ, hướng dẫn học tập chung.
+
+### BƯỚC 4 — QA AUGMENTATION (BẮT BUỘC cho mỗi node)
+Tạo 2–3 câu hỏi mà node đó có thể trả lời trực tiếp:
+- Đa dạng dạng: định nghĩa ("X là gì?"), giải thích ("Tại sao X?"), so sánh ("X khác Y thế nào?").
+- KHÔNG đặt câu hỏi mà node không trả lời được.
+- Câu hỏi phải tự nhiên như người học thật sự sẽ hỏi.
+
+### OUTPUT — CHỈ TRẢ VỀ JSON ARRAY THUẦN TÚY
+[
+  {{
+    "text": "Nội dung học thuật đã chuẩn hóa từ văn nói sang văn viết...",
+    "metadata": {{
+      "subject": "",
+      "page": null,
+      "topic": "Tên chủ đề ngắn gọn và cụ thể",
+      "category": "Theory",
+      "keywords": ["thuật ngữ chuyên môn 1", "thuật ngữ 2", "thuật ngữ 3"],
+      "has_code": false,
+      "file_name": "",
+      "question_templates": [
+        "Câu hỏi 1?",
+        "Câu hỏi 2?",
+        "Câu hỏi 3?"
+      ]
+    }}
+  }}
+]
+Lưu ý: category CHỈ được là Theory | Example | Process
+
+### TRANSCRIPT CẦN XỬ LÝ:
 <<<
 {CHUNK_TEXT}
 >>>
 """
 
+_FORCE_MULTI_SUFFIX = (
+    "\n\n### RÀNG BUỘC BỔ SUNG"
+    "\n- Transcript chứa nhiều luận điểm — PHẢI tách thành nhiều node riêng biệt."
+    "\n- KHÔNG gom các chủ đề khác nhau vào 1 node."
+    "\n- Ưu tiên tạo 3–6 node có chủ đề tách biệt rõ ràng."
+)
+
+
+# ---------------------------------------------------------------------------
+# CONFIG
+# ---------------------------------------------------------------------------
 
 @dataclass
 class PipelineConfig:
@@ -201,7 +245,12 @@ class PipelineConfig:
     quality_min_overlap: float
     quality_min_unique_ratio: float
     include_provenance: bool
+    dedupe_threshold: float = field(default=DEFAULT_DEDUPE_JACCARD_THRESHOLD)
 
+
+# ---------------------------------------------------------------------------
+# LLM
+# ---------------------------------------------------------------------------
 
 def resolve_llm_urls(base_url: str) -> list[str]:
     base = base_url.rstrip("/")
@@ -222,18 +271,77 @@ def extract_json_array(text: str) -> list[dict[str, Any]] | None:
 
     start = cleaned.find("[")
     end = cleaned.rfind("]")
-    if start < 0 or end < 0 or end < start:
+    if start < 0 or end < 0 or end <= start:
         return None
 
-    candidate = cleaned[start : end + 1]
-    try:
-        parsed = json.loads(candidate)
-    except json.JSONDecodeError:
-        return None
-    if isinstance(parsed, list):
-        return parsed
+    candidate = cleaned[start: end + 1]
+    for attempt in [candidate, re.sub(r",\s*([\]}])", r"\1", candidate)]:
+        try:
+            parsed = json.loads(attempt)
+            if isinstance(parsed, list):
+                return parsed
+        except json.JSONDecodeError:
+            continue
     return None
 
+
+def call_llm_for_textnodes(
+    chunk_text: str,
+    cfg: PipelineConfig,
+    *,
+    force_multi_nodes: bool = False,
+) -> list[dict[str, Any]]:
+    user_prompt = USER_PROMPT_TEMPLATE.replace("{CHUNK_TEXT}", chunk_text)
+    if force_multi_nodes:
+        user_prompt += _FORCE_MULTI_SUFFIX
+
+    last_error: str | None = None
+    for endpoint in resolve_llm_urls(cfg.llm_proxy_url):
+        try:
+            resp = requests.post(
+                endpoint,
+                json={
+                    "model": cfg.llm_model,
+                    "messages": [
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    "temperature": cfg.llm_temperature,
+                    "max_tokens": cfg.llm_max_tokens,
+                    "top_p": 0.9,
+                },
+                timeout=cfg.llm_timeout_seconds,
+            )
+            if resp.status_code != 200:
+                last_error = f"HTTP {resp.status_code}: {resp.text[:300]}"
+                continue
+
+            payload = resp.json()
+            assistant_text = ""
+            if "choices" in payload:
+                assistant_text = (
+                    payload.get("choices", [{}])[0]
+                    .get("message", {})
+                    .get("content", "")
+                )
+            elif "response" in payload:
+                assistant_text = str(payload.get("response", ""))
+            elif "text" in payload:
+                assistant_text = str(payload.get("text", ""))
+
+            parsed = extract_json_array(assistant_text)
+            if parsed is not None:
+                return parsed
+            last_error = "LLM response did not contain a valid JSON array"
+        except (requests.RequestException, ValueError) as exc:
+            last_error = str(exc)
+
+    raise RuntimeError(f"LLM call failed: {last_error or 'unknown error'}")
+
+
+# ---------------------------------------------------------------------------
+# TEXT NORMALIZATION
+# ---------------------------------------------------------------------------
 
 def normalize_spaces(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
@@ -248,8 +356,8 @@ def normalize_punctuation(text: str) -> str:
 
 
 def strip_accents(text: str) -> str:
-    normalized = unicodedata.normalize("NFD", text)
-    return "".join(ch for ch in normalized if unicodedata.category(ch) != "Mn")
+    nfd = unicodedata.normalize("NFD", text)
+    return "".join(ch for ch in nfd if unicodedata.category(ch) != "Mn")
 
 
 def normalize_terms(text: str) -> str:
@@ -260,11 +368,92 @@ def normalize_terms(text: str) -> str:
 
 
 def normalize_for_match(text: str) -> str:
-    lowered = normalize_terms(text.lower())
-    lowered = strip_accents(lowered)
-    lowered = re.sub(r"[^a-z0-9\s]", " ", lowered)
-    return normalize_spaces(lowered)
+    """Chuẩn hóa để so sánh: lowercase, bỏ dấu, giữ alphanumeric + space."""
+    s = normalize_terms(text.lower())
+    s = strip_accents(s)
+    s = re.sub(r"[^a-z0-9\s]", " ", s)
+    return normalize_spaces(s)
 
+
+# ---------------------------------------------------------------------------
+# KEYWORD EXTRACTION — bigram-aware cho tiếng Việt compound words
+# ---------------------------------------------------------------------------
+
+def _extract_bigrams(tokens: list[str]) -> list[str]:
+    """
+    Tạo bigram từ list token.
+    Bỏ bigram nếu bất kỳ token nào là stopword hoặc quá ngắn.
+    """
+    result = []
+    for i in range(len(tokens) - 1):
+        a, b = tokens[i], tokens[i + 1]
+        if (
+            a not in STOPWORDS and b not in STOPWORDS
+            and len(a) >= 2 and len(b) >= 2
+        ):
+            result.append(f"{a} {b}")
+    return result
+
+
+def infer_keywords(text: str, min_count: int = 3, max_count: int = 5) -> list[str]:
+    """
+    Trích từ khóa domain-agnostic từ text.
+    Ưu tiên bigram (compound words) trước unigram.
+    Giải quyết vấn đề cũ: "tri thức" bị split thành "tri" và "thức".
+    """
+    norm = normalize_for_match(text)
+    tokens = [
+        t for t in norm.split()
+        if len(t) >= 2 and t not in STOPWORDS and not t.isdigit()
+    ]
+
+    # Đếm bigram
+    bigram_freq: dict[str, int] = {}
+    for bg in _extract_bigrams(tokens):
+        bigram_freq[bg] = bigram_freq.get(bg, 0) + 1
+
+    # Đếm unigram (chỉ >= 3 chars để tránh fragment)
+    unigram_freq: dict[str, int] = {}
+    for t in tokens:
+        if len(t) >= 3:
+            unigram_freq[t] = unigram_freq.get(t, 0) + 1
+
+    picked: list[str] = []
+    seen: set[str] = set()
+
+    # Bigram trước
+    for bg, _ in sorted(bigram_freq.items(), key=lambda x: -x[1]):
+        if len(picked) >= max_count:
+            break
+        parts = bg.split()
+        if any(p in seen for p in parts):
+            continue
+        picked.append(bg)
+        seen.update(parts)
+
+    # Unigram bổ sung
+    for t, _ in sorted(unigram_freq.items(), key=lambda x: (-x[1], x[0])):
+        if len(picked) >= max_count:
+            break
+        if t not in seen:
+            picked.append(t)
+            seen.add(t)
+
+    # Fallback
+    if len(picked) < min_count:
+        for t in tokens:
+            if len(picked) >= min_count:
+                break
+            if t not in seen and len(t) >= 3:
+                picked.append(t)
+                seen.add(t)
+
+    return picked[:max_count]
+
+
+# ---------------------------------------------------------------------------
+# TOKEN / SIMILARITY
+# ---------------------------------------------------------------------------
 
 def token_set(text: str) -> set[str]:
     return set(normalize_for_match(text).split())
@@ -277,102 +466,140 @@ def unique_token_ratio(text: str) -> float:
     return len(set(words)) / len(words)
 
 
-def lexical_overlap_ratio(text: str, source_text: str) -> float:
-    a = token_set(text)
-    b = token_set(source_text)
+def jaccard_similarity(a: set[str], b: set[str]) -> float:
     if not a or not b:
         return 0.0
     inter = len(a & b)
-    return inter / max(1, len(a))
+    union = len(a | b)
+    return inter / union if union else 0.0
 
 
-def best_source_quote(node_text: str, source_text: str, top_k: int = 2) -> str:
-    source_sentences = split_sentences(source_text)
-    if not source_sentences:
-        return ""
+def lexical_overlap_ratio(text: str, source: str) -> float:
+    a = token_set(text)
+    b = token_set(source)
+    if not a or not b:
+        return 0.0
+    return len(a & b) / max(1, len(a))
 
-    node_tokens = token_set(node_text)
-    scored: list[tuple[float, str]] = []
-    for sent in source_sentences:
-        sent_tokens = token_set(sent)
-        if not sent_tokens:
-            continue
-        score = len(node_tokens & sent_tokens) / max(1, len(node_tokens))
-        if score > 0:
-            scored.append((score, sent))
 
-    if not scored:
-        return ""
+def char_ngram_set(text: str, n: int = 4) -> set[str]:
+    s = normalize_for_match(text).replace(" ", "")
+    if len(s) < n:
+        return {s} if s else set()
+    return {s[i: i + n] for i in range(len(s) - n + 1)}
 
-    scored.sort(key=lambda x: x[0], reverse=True)
-    quote = " ".join([s for _, s in scored[:top_k]])
-    return normalize_spaces(quote)[:700]
 
+# ---------------------------------------------------------------------------
+# SENTENCE SPLITTING
+# ---------------------------------------------------------------------------
 
 def split_sentences(text: str) -> list[str]:
     normalized = normalize_spaces(text)
     if not normalized:
         return []
-
     parts = re.split(r"(?<=[.!?])\s+", normalized)
     results = [p.strip() for p in parts if p.strip()]
-
-    # Whisper TXT often lacks punctuation; split by long comma/semicolon clauses as fallback.
+    # Fallback cho transcript không có dấu chấm câu
     if len(results) <= 1 and len(normalized.split()) > 80:
         parts = re.split(r"[,;:]\s+", normalized)
         results = [p.strip() for p in parts if p.strip()]
-
-    if not results:
-        return [normalized]
-    return results
+    return results or [normalized]
 
 
-def is_low_information_sentence(sentence: str) -> bool:
-    cleaned = normalize_for_match(sentence)
-    if not cleaned:
+# ---------------------------------------------------------------------------
+# FILTERING
+# ---------------------------------------------------------------------------
+
+def is_low_info_sentence(sentence: str) -> bool:
+    norm = normalize_for_match(sentence)
+    if not norm:
         return True
-
-    low_info_patterns = [
-        r"\bxin chao\b",
-        r"\bchao mung\b",
-        r"\bcam on\b",
-        r"\bhen gap lai\b",
-        r"\bxin tam biet\b",
-        r"\bthua cac ban\b",
-        r"\bv\s*v\b",
-        r"\bsau nay co dieu kien\b",
-        r"\bchung toi dung lai o day\b",
-        r"\b(phn|phan ket)\b",
-    ]
-    for pattern in low_info_patterns:
-        if re.search(pattern, cleaned):
+    for pattern in _FILLER_PATTERNS_NORM:
+        if re.search(pattern, norm):
+            return True
+    for sub in _LOW_INFO_SUBSTRINGS_NORM:
+        if sub in norm:
             return True
     return False
 
 
 def remove_repeated_sentences(sentences: list[str]) -> list[str]:
-    seen = set()
-    output = []
-    for sentence in sentences:
-        key = normalize_for_match(sentence)
-        if not key or key in seen:
-            continue
-        seen.add(key)
-        output.append(sentence)
-    return output
+    seen: set[str] = set()
+    out = []
+    for s in sentences:
+        key = normalize_for_match(s)
+        if key and key not in seen:
+            seen.add(key)
+            out.append(s)
+    return out
 
 
 def clean_node_text(text: str) -> str:
     text = normalize_terms(normalize_spaces(text))
-    sentences = split_sentences(text)
-    filtered = [s for s in sentences if not is_low_information_sentence(s)]
-    if not filtered:
-        filtered = sentences
+    sents = split_sentences(text)
+    filtered = [s for s in sents if not is_low_info_sentence(s)] or sents
     filtered = remove_repeated_sentences(filtered)
-    cleaned = normalize_spaces(". ".join(filtered))
-    cleaned = normalize_punctuation(cleaned)
-    return cleaned
+    return normalize_punctuation(normalize_spaces(" ".join(filtered)))
 
+
+def repetition_ratio(text: str) -> float:
+    words = normalize_for_match(text).split()
+    if len(words) < 12:
+        return 0.0
+    return 1.0 - len(set(words)) / len(words)
+
+
+def is_incomplete_ending(text: str) -> bool:
+    norm = normalize_for_match(text)
+    return any(norm.endswith(t) for t in _INCOMPLETE_TAILS_NORM)
+
+
+def is_orphan_phrase(text: str) -> bool:
+    norm = normalize_for_match(text)
+    if len(norm.split()) < 30 and any(norm.startswith(p) for p in _ORPHAN_PREFIXES_NORM):
+        return True
+    return norm.endswith("trong") or norm.endswith("nhu the")
+
+
+def is_meta_discourse(text: str) -> bool:
+    norm = normalize_for_match(text)
+    return any(re.search(p, norm) for p in _META_DISCOURSE_PATTERNS_NORM)
+
+
+def should_drop_node(text: str) -> bool:
+    norm = normalize_for_match(text)
+    if not norm:
+        return True
+    words = norm.split()
+    if len(words) <= 10:
+        return True
+    if len(words) <= 18 and not re.search(r"[.!?]", text):
+        return True
+    if repetition_ratio(text) > 0.42:
+        return True
+    if is_incomplete_ending(text):
+        return True
+    if is_orphan_phrase(text):
+        return True
+    if is_meta_discourse(text):
+        return True
+    for pattern in _FILLER_PATTERNS_NORM:
+        if re.search(pattern, norm) and len(words) < 20:
+            return True
+    return False
+
+
+def contains_code(text: str) -> bool:
+    if re.search(r"\b(def|class|return|for\s+\w+\s+in|if\s+\w+|import)\b", text):
+        return True
+    if re.search(r"[{}<>]=?|==|!=", text) and re.search(r"\b[A-Za-z_]\w*\s*\(", text):
+        return True
+    return False
+
+
+# ---------------------------------------------------------------------------
+# QUALITY GATE
+# ---------------------------------------------------------------------------
 
 def quality_gate_node(
     node_text: str,
@@ -384,292 +611,199 @@ def quality_gate_node(
     min_unique_ratio: float,
 ) -> bool:
     words = node_text.split()
-    word_count = len(words)
-    if word_count < min_words or word_count > max_words:
+    if len(words) < min_words or len(words) > max_words:
         return False
-
     if unique_token_ratio(node_text) < min_unique_ratio:
         return False
-
-    overlap = lexical_overlap_ratio(node_text, source_chunk)
-    if overlap < min_overlap:
+    if lexical_overlap_ratio(node_text, source_chunk) < min_overlap:
         return False
-
     return True
 
 
-def repetition_ratio(text: str) -> float:
-    words = normalize_for_match(text).split()
-    if len(words) < 12:
-        return 0.0
-    unique = len(set(words))
-    return 1.0 - (unique / len(words))
+# ---------------------------------------------------------------------------
+# PROVENANCE
+# ---------------------------------------------------------------------------
+
+def best_source_quote(node_text: str, source_text: str, top_k: int = 3) -> str:
+    """
+    Tìm đoạn trong source_text khớp nhất với node_text.
+
+    Dùng sliding window (cửa sổ top_k câu liên tiếp) thay vì
+    chọn các câu rời rạc — tránh trường hợp mọi node trong cùng
+    chunk đều kéo về cùng 1 đoạn phổ biến.
+
+    Score = precision (token node xuất hiện trong cửa sổ)
+            * idf_boost (thưởng token hiếm, phạt token phổ biến)
+    """
+    sents = split_sentences(source_text)
+    if not sents:
+        return ""
+
+    node_tokens = token_set(node_text) - STOPWORDS
+    if not node_tokens:
+        return ""
+
+    # Tính IDF đơn giản: token xuất hiện trong ít câu hơn → weight cao hơn
+    doc_freq: dict[str, int] = {}
+    for s in sents:
+        for t in token_set(s) - STOPWORDS:
+            doc_freq[t] = doc_freq.get(t, 0) + 1
+    total = max(1, len(sents))
+
+    def idf(t: str) -> float:
+        return 1.0 / (doc_freq.get(t, 1) ** 0.5)
+
+    node_weight = sum(idf(t) for t in node_tokens)
+    if node_weight == 0:
+        return ""
+
+    # Sliding window: score mỗi cửa sổ top_k câu liên tiếp
+    best_score = 0.0
+    best_window: list[str] = []
+
+    window_size = min(top_k, len(sents))
+    for i in range(len(sents) - window_size + 1):
+        window = sents[i: i + window_size]
+        window_tokens = set()
+        for s in window:
+            window_tokens |= token_set(s) - STOPWORDS
+
+        # Weighted precision: tỷ lệ token node có IDF cao xuất hiện trong window
+        hit_weight = sum(idf(t) for t in node_tokens if t in window_tokens)
+        score = hit_weight / node_weight
+
+        if score > best_score:
+            best_score = score
+            best_window = window
+
+    if not best_window or best_score < 0.1:
+        return ""
+
+    return normalize_spaces(" ".join(best_window))[:700]
 
 
-def contains_low_info_phrase(text: str) -> bool:
-    normalized = normalize_for_match(text)
-    return any(phrase in normalized for phrase in LOW_INFO_PHRASES)
+# ---------------------------------------------------------------------------
+# VALIDATION — QA templates
+# ---------------------------------------------------------------------------
 
-
-def is_incomplete_ending(text: str) -> bool:
-    normalized = normalize_for_match(text)
-    incomplete_tails = [
-        "do la ve thu nhat trong",
-        "noi chung la",
-        "va",
-        "nhung",
-        "hoac",
-    ]
-    return any(normalized.endswith(tail) for tail in incomplete_tails)
-
-
-def is_orphan_phrase(text: str) -> bool:
-    normalized = normalize_for_match(text)
-    words = normalized.split()
-    if len(words) < 35 and any(normalized.startswith(prefix) for prefix in ORPHAN_PREFIXES):
-        return True
-    if normalized.endswith("trong") or normalized.endswith("nhu the"):
-        return True
-    return False
-
-
-def is_question_fragment(text: str) -> bool:
-    normalized = normalize_spaces(text)
-    word_count = len(normalized.split())
-    if "?" in normalized and word_count <= 40:
-        return True
-    if normalized.endswith("?") and word_count <= 60:
-        return True
-    return False
-
-
-def is_conversational_style(text: str) -> bool:
-    normalized = normalize_for_match(text)
-    bad_patterns = [
-        r"\bthua cac ban\b",
-        r"\btoi nho den\b",
-        r"\btu nhien toi\b",
-        r"\bchung toi gioi thieu\b",
-        r"\bchung toi se tiep tuc\b",
-        r"\btrong buoi trao doi nay\b",
-        r"\bbong chan toi\b",
-    ]
-    return any(re.search(pattern, normalized) for pattern in bad_patterns)
-
-
-def split_transcript_for_llm(text: str, min_words: int, max_words: int, overlap_words: int) -> list[str]:
-    sentences = split_sentences(text)
-    if not sentences:
+def validate_question_templates(questions: Any, node_text: str) -> list[str]:
+    if not isinstance(questions, list):
         return []
-
-    chunks: list[str] = []
-    current: list[str] = []
-    current_words = 0
-
-    for sentence in sentences:
-        words = sentence.split()
-        wcount = len(words)
-
-        if wcount > max_words:
-            if current:
-                chunks.append(" ".join(current))
-                current = []
-                current_words = 0
-            for i in range(0, wcount, max_words):
-                piece_words = words[i : i + max_words]
-                piece = " ".join(piece_words).strip()
-                if piece:
-                    chunks.append(piece)
+    node_tokens = token_set(node_text) - STOPWORDS
+    valid: list[str] = []
+    seen_q: set[str] = set()
+    for q in questions:
+        if not isinstance(q, str):
             continue
-
-        projected = current_words + wcount
-        if current and projected > max_words and current_words >= min_words:
-            chunks.append(" ".join(current))
-
-            # Keep a semantic tail overlap to preserve cross-boundary context.
-            overlap: list[str] = []
-            overlap_count = 0
-            for prev in reversed(current):
-                overlap.insert(0, prev)
-                overlap_count += len(prev.split())
-                if overlap_count >= overlap_words:
-                    break
-
-            current = overlap + [sentence]
-            current_words = sum(len(s.split()) for s in current)
-        else:
-            current.append(sentence)
-            current_words = projected
-
-    if current:
-        chunks.append(" ".join(current))
-
-    return [normalize_spaces(c) for c in chunks if c.strip()]
-
-
-def call_llm_for_textnodes(
-    chunk_text: str,
-    cfg: PipelineConfig,
-    *,
-    force_multi_nodes: bool = False,
-) -> list[dict[str, Any]]:
-    user_prompt_VN = USER_PROMPT_TEMPLATE_VN.replace("{CHUNK_TEXT}", chunk_text)
-    if force_multi_nodes:
-        user_prompt_VN += (
-            "\n\n### RÀNG BUỘC BỔ SUNG"
-            "\n- Nếu transcript chứa nhiều luận điểm, phải tách thành nhiều node theo từng luận điểm."
-            "\n- KHÔNG gom các chủ đề xa nhau vào một node duy nhất."
-            "\n- Với chunk dài, ưu tiên 3-6 node có chủ đề tách biệt rõ."
-        )
-    last_error = None
-
-    for endpoint in resolve_llm_urls(cfg.llm_proxy_url):
-        try:
-            response = requests.post(
-                endpoint,
-                json={
-                    "model": cfg.llm_model,
-                    "messages": [
-                        {"role": "system", "content": SYSTEM_PROMPT_VN},
-                        {"role": "user", "content": user_prompt_VN},
-                    ],
-                    "temperature": cfg.llm_temperature,
-                    "max_tokens": cfg.llm_max_tokens,
-                    "top_p": 0.9,
-                },
-                timeout=cfg.llm_timeout_seconds,
-            )
-            if response.status_code != 200:
-                last_error = f"HTTP {response.status_code}: {response.text[:300]}"
-                continue
-
-            payload = response.json()
-            assistant_text = ""
-            if "choices" in payload:
-                assistant_text = payload.get("choices", [{}])[0].get("message", {}).get("content", "")
-            elif "response" in payload:
-                assistant_text = str(payload.get("response", ""))
-            elif "text" in payload:
-                assistant_text = str(payload.get("text", ""))
-
-            parsed = extract_json_array(assistant_text)
-            if parsed is not None:
-                return parsed
-
-            last_error = "LLM response did not contain a valid JSON array"
-        except (requests.RequestException, ValueError) as exc:
-            last_error = str(exc)
-
-    raise RuntimeError(f"LLM call failed: {last_error or 'unknown error'}")
-
-
-def infer_keywords(text: str, min_count: int = 3, max_count: int = 5) -> list[str]:
-    tokens = re.findall(r"\b\w{2,}\b", text.lower(), flags=re.UNICODE)
-    freq: dict[str, int] = {}
-    for token in tokens:
-        base = normalize_for_match(token)
-        if not base or base in STOPWORDS:
+        q = normalize_spaces(q).strip()
+        if not q.endswith("?"):
+            q = q.rstrip(".!") + "?"
+        if len(q) < 10 or len(q) > 250:
             continue
-        if len(base) < 3:
+        q_norm = normalize_for_match(q)
+        if q_norm in seen_q:
             continue
-        if base.isdigit():
+        seen_q.add(q_norm)
+        q_tokens = token_set(q) - STOPWORDS
+        if not (q_tokens & node_tokens):
             continue
-        freq[token] = freq.get(token, 0) + 1
+        valid.append(q)
+        if len(valid) >= 3:
+            break
+    return valid
 
-    ranked = sorted(freq.items(), key=lambda item: (-item[1], item[0]))
-    picked = [k for k, _ in ranked[:max_count]]
-    if len(picked) < min_count:
-        for token in tokens:
-            if token in STOPWORDS or token in picked:
-                continue
-            picked.append(token)
-            if len(picked) >= min_count:
+
+# ---------------------------------------------------------------------------
+# VALIDATION — keywords (bigram-aware)
+# ---------------------------------------------------------------------------
+
+def validate_keywords(
+    keywords_raw: list[Any],
+    text: str,
+    topic: str,
+) -> list[str]:
+    text_norm = normalize_for_match(text)
+    keywords: list[str] = []
+
+    def kw_valid(kw: str) -> bool:
+        k = normalize_for_match(kw)
+        # Phải có ít nhất 3 chars sau normalize
+        if not k or len(k.replace(" ", "")) < 3:
+            return False
+        # Loại pure stopword (kể cả bigram toàn stopword)
+        parts = k.split()
+        if all(p in STOPWORDS for p in parts):
+            return False
+        # Phải xuất hiện trong text
+        return k in text_norm
+
+    if isinstance(keywords_raw, list):
+        for item in keywords_raw:
+            token = normalize_spaces(str(item)).strip()
+            if token and token not in keywords and kw_valid(token):
+                keywords.append(token)
+
+    if len(keywords) < 3:
+        for t in infer_keywords(text):
+            if t not in keywords:
+                keywords.append(t)
+            if len(keywords) >= 5:
                 break
-    return picked[:max_count]
+
+    if len(keywords) < 3:
+        for t in infer_keywords(topic, min_count=1, max_count=3):
+            if t not in keywords:
+                keywords.append(t)
+            if len(keywords) >= 3:
+                break
+
+    keywords = [normalize_terms(k) for k in keywords]
+    keywords = [
+        k for k in keywords
+        if len(normalize_for_match(k).replace(" ", "")) >= 3
+        and not all(p in STOPWORDS for p in normalize_for_match(k).split())
+    ]
+    return keywords[:5]
 
 
-def should_drop_node(text: str) -> bool:
-    cleaned = normalize_for_match(text)
-    if not cleaned:
-        return True
-
-    words = cleaned.split()
-    if len(words) <= 10:
-        return True
-
-    if len(words) <= 18 and not re.search(r"[.!?]", text):
-        return True
-
-    if repetition_ratio(text) > 0.42:
-        return True
-
-    if contains_low_info_phrase(text):
-        return True
-
-    if is_incomplete_ending(text):
-        return True
-
-    if is_orphan_phrase(text):
-        return True
-
-    if is_question_fragment(text):
-        return True
-
-    if is_conversational_style(text):
-        return True
-
-    for pattern in FILLER_PATTERNS:
-        if re.search(pattern, cleaned):
-            if len(words) < 20:
-                return True
-
-    return False
-
-
-def contains_code(text: str) -> bool:
-    if re.search(r"\b(def|class|return|for\s+\w+\s+in|if\s+\w+|import)\b", text):
-        return True
-    if re.search(r"[{}<>]=?|==|!=|\(|\)", text) and re.search(r"\b[A-Za-z_][A-Za-z0-9_]*\b", text):
-        return True
-    return False
-
-
-def split_oversized_node(text: str, max_words: int = 500) -> list[str]:
-    words = text.split()
-    if len(words) <= max_words:
-        return [text]
-
-    sentences = split_sentences(text)
-    chunks: list[str] = []
-    current: list[str] = []
-    count = 0
-
-    for sentence in sentences:
-        wcount = len(sentence.split())
-        if current and count + wcount > max_words:
-            chunks.append(" ".join(current).strip())
-            current = [sentence]
-            count = wcount
-        else:
-            current.append(sentence)
-            count += wcount
-
-    if current:
-        chunks.append(" ".join(current).strip())
-
-    return [c for c in chunks if c]
-
+# ---------------------------------------------------------------------------
+# CATEGORY NORMALIZATION — domain-agnostic
+# ---------------------------------------------------------------------------
 
 def normalize_category(value: Any) -> str:
     raw = str(value or "").strip()
     if raw in ALLOWED_CATEGORIES:
         return raw
     lowered = raw.lower()
-    if "example" in lowered:
+    if any(w in lowered for w in ("example", "vi du", "minh hoa", "instance", "case")):
         return "Example"
-    if "process" in lowered or "step" in lowered:
+    if any(w in lowered for w in ("process", "step", "quy trinh", "buoc", "procedure")):
         return "Process"
     return "Theory"
+
+
+# ---------------------------------------------------------------------------
+# NODE SANITIZATION
+# ---------------------------------------------------------------------------
+
+def _split_oversized(text: str, max_words: int = 500) -> list[str]:
+    if len(text.split()) <= max_words:
+        return [text]
+    sents = split_sentences(text)
+    chunks: list[str] = []
+    current: list[str] = []
+    count = 0
+    for s in sents:
+        w = len(s.split())
+        if current and count + w > max_words:
+            chunks.append(" ".join(current).strip())
+            current, count = [s], w
+        else:
+            current.append(s)
+            count += w
+    if current:
+        chunks.append(" ".join(current).strip())
+    return [c for c in chunks if c]
 
 
 def sanitize_node(
@@ -685,10 +819,8 @@ def sanitize_node(
     text = clean_node_text(str(raw_node.get("text", "")))
     if should_drop_node(text):
         return []
-
     if not quality_gate_node(
-        text,
-        source_chunk,
+        text, source_chunk,
         min_words=cfg.quality_min_words,
         max_words=cfg.quality_max_words,
         min_overlap=cfg.quality_min_overlap,
@@ -696,66 +828,25 @@ def sanitize_node(
     ):
         return []
 
-    metadata = raw_node.get("metadata", {})
-    if not isinstance(metadata, dict):
-        metadata = {}
+    meta = raw_node.get("metadata", {})
+    if not isinstance(meta, dict):
+        meta = {}
 
-    topic = normalize_spaces(str(metadata.get("topic", "")))
+    topic = normalize_terms(normalize_spaces(str(meta.get("topic", ""))))
     if not topic:
-        topic = normalize_spaces(split_sentences(text)[0])[:120]
-    topic = normalize_terms(topic)
+        topic = split_sentences(text)[0][:120]
 
-    category = normalize_category(metadata.get("category"))
+    category = normalize_category(meta.get("category"))
+    keywords = validate_keywords(meta.get("keywords", []), text, topic)
+    has_code = meta.get("has_code") if isinstance(meta.get("has_code"), bool) else contains_code(text)
+    question_templates = validate_question_templates(meta.get("question_templates", []), text)
 
-    keywords_raw = metadata.get("keywords", [])
-    keywords: list[str] = []
-    text_match_norm = normalize_for_match(text)
-
-    def keyword_in_text(keyword: str) -> bool:
-        k = normalize_for_match(keyword)
-        if not k:
-            return False
-        if len(k) < 3:
-            return False
-        if k in STOPWORDS:
-            return False
-        return re.search(rf"\b{re.escape(k)}\b", text_match_norm) is not None
-
-    if isinstance(keywords_raw, list):
-        for item in keywords_raw:
-            token = normalize_spaces(str(item))
-            if token and token not in keywords and keyword_in_text(token):
-                keywords.append(token)
-    if len(keywords) < 3:
-        inferred = infer_keywords(text)
-        for token in inferred:
-            if token not in keywords:
-                keywords.append(token)
-            if len(keywords) >= 5:
-                break
-    if len(keywords) < 3:
-        fallback = infer_keywords(topic, min_count=1, max_count=3)
-        for token in fallback:
-            if token not in keywords:
-                keywords.append(token)
-            if len(keywords) >= 3:
-                break
-    keywords = [normalize_terms(k) for k in keywords]
-    keywords = [k for k in keywords if len(normalize_for_match(k)) >= 3 and normalize_for_match(k) not in STOPWORDS]
-    keywords = keywords[:5]
-
-    has_code = metadata.get("has_code")
-    if not isinstance(has_code, bool):
-        has_code = contains_code(text)
-
-    finalized_nodes = []
-    for part in split_oversized_node(text, max_words=500):
+    finalized: list[dict[str, Any]] = []
+    for part in _split_oversized(text):
         if should_drop_node(part):
             continue
-
         if not quality_gate_node(
-            part,
-            source_chunk,
+            part, source_chunk,
             min_words=cfg.quality_min_words,
             max_words=cfg.quality_max_words,
             min_overlap=cfg.quality_min_overlap,
@@ -763,7 +854,7 @@ def sanitize_node(
         ):
             continue
 
-        metadata_out = {
+        meta_out: dict[str, Any] = {
             "subject": subject,
             "page": None,
             "topic": topic,
@@ -771,95 +862,103 @@ def sanitize_node(
             "keywords": keywords,
             "has_code": has_code,
             "file_name": file_name,
+            "question_templates": question_templates,
         }
-
         if cfg.include_provenance:
-            metadata_out["source_coverage"] = round(lexical_overlap_ratio(part, source_chunk), 4)
-            metadata_out["source_quote"] = best_source_quote(part, source_chunk)
+            meta_out["source_coverage"] = round(lexical_overlap_ratio(part, source_chunk), 4)
+            meta_out["source_quote"] = best_source_quote(part, source_chunk)
 
-        finalized_nodes.append(
-            {
-                "text": part,
-                "metadata": metadata_out,
-            }
-        )
+        finalized.append({"text": part, "metadata": meta_out})
 
-    return finalized_nodes
+    return finalized
 
+
+# ---------------------------------------------------------------------------
+# DEDUPLICATION — threshold thấp hơn để bắt near-duplicate post-rewrite
+# ---------------------------------------------------------------------------
 
 def dedupe_nodes(
     nodes: list[dict[str, Any]],
     *,
     threshold: float = DEFAULT_DEDUPE_JACCARD_THRESHOLD,
 ) -> list[dict[str, Any]]:
-    def jaccard_similarity(a: set[str], b: set[str]) -> float:
-        if not a or not b:
-            return 0.0
-        inter = len(a & b)
-        union = len(a | b)
-        return inter / union if union else 0.0
+    """
+    Loại near-duplicate bằng 3 signal kết hợp:
+    1. Token Jaccard >= threshold → duplicate
+    2. Token Jaccard >= DEDUPE_TOKEN_SOFT AND char-4gram Jaccard >= DEDUPE_NGRAM_THRESHOLD → duplicate
+    3. Topic Jaccard >= 0.85 AND token Jaccard >= 0.55 → duplicate
+       (bắt trường hợp LLM rewrite nội dung giống nhau nhưng wording khác)
+    """
+    seen_exact: set[str] = set()
+    deduped: list[dict[str, Any]] = []
+    tok_sets: list[set[str]] = []
+    ngram_sets: list[set[str]] = []
+    topic_sets: list[set[str]] = []
 
-    def char_ngram_set(text: str, n: int = 5) -> set[str]:
-        s = normalize_for_match(text).replace(" ", "")
-        if len(s) < n:
-            return {s} if s else set()
-        return {s[i : i + n] for i in range(0, len(s) - n + 1)}
-
-    seen = set()
-    deduped = []
-    token_sets: list[set[str]] = []
     for node in nodes:
         text = str(node.get("text", ""))
         key = normalize_for_match(text)
-        if not key or key in seen:
+        if not key or key in seen_exact:
             continue
 
-        current_tokens = set(key.split())
-        current_ngrams = char_ngram_set(text)
-        is_duplicate = False
-        for i, prev in enumerate(token_sets):
-            token_sim = jaccard_similarity(current_tokens, prev)
-            if token_sim >= threshold:
-                is_duplicate = True
+        cur_tok = set(key.split())
+        cur_ng = char_ngram_set(text, n=4)
+        meta = node.get("metadata", {}) or {}
+        cur_topic = set(normalize_for_match(str(meta.get("topic", ""))).split()) - STOPWORDS
+
+        is_dup = False
+        for i in range(len(deduped)):
+            tok_sim = jaccard_similarity(cur_tok, tok_sets[i])
+
+            # Signal 1: token Jaccard cao
+            if tok_sim >= threshold:
+                is_dup = True
                 break
 
-            prev_ngrams = char_ngram_set(deduped[i].get("text", ""))
-            ngram_sim = jaccard_similarity(current_ngrams, prev_ngrams)
-            if token_sim >= 0.72 and ngram_sim >= 0.86:
-                is_duplicate = True
-                break
+            # Signal 2: token moderate + char ngram cao
+            if tok_sim >= DEDUPE_TOKEN_SOFT:
+                if jaccard_similarity(cur_ng, ngram_sets[i]) >= DEDUPE_NGRAM_THRESHOLD:
+                    is_dup = True
+                    break
 
-        if is_duplicate:
+            # Signal 3: cùng topic + token moderate
+            # Bắt near-duplicate sau LLM rewrite khéo (ví dụ: node 5 vs node 8)
+            if tok_sim >= 0.50 and cur_topic and topic_sets[i]:
+                topic_sim = jaccard_similarity(cur_topic, topic_sets[i])
+                if topic_sim >= 0.80:
+                    is_dup = True
+                    break
+
+        if is_dup:
             continue
 
-        seen.add(key)
-        token_sets.append(current_tokens)
+        seen_exact.add(key)
+        tok_sets.append(cur_tok)
+        ngram_sets.append(cur_ng)
+        topic_sets.append(cur_topic)
         deduped.append(node)
+
     return deduped
 
+
+# ---------------------------------------------------------------------------
+# MERGE SHORT NODES
+# ---------------------------------------------------------------------------
 
 def merge_short_nodes_by_topic(
     nodes: list[dict[str, Any]],
     min_words: int = 28,
     max_words: int = 220,
 ) -> list[dict[str, Any]]:
-    # Avoid over-merging when node count is already low.
     if len(nodes) <= 3:
         return nodes
 
-    if not nodes:
-        return nodes
+    def topic_sim(a: str, b: str) -> float:
+        sa = set(normalize_for_match(a).split()) - STOPWORDS
+        sb = set(normalize_for_match(b).split()) - STOPWORDS
+        return jaccard_similarity(sa, sb)
 
     merged: list[dict[str, Any]] = []
-    def topic_similarity(a: str, b: str) -> float:
-        set_a = set(normalize_for_match(a).split())
-        set_b = set(normalize_for_match(b).split())
-        if not set_a or not set_b:
-            return 0.0
-        inter = len(set_a & set_b)
-        union = len(set_a | set_b)
-        return inter / union if union else 0.0
-
     for node in nodes:
         text = str(node.get("text", "")).strip()
         if not merged:
@@ -868,23 +967,19 @@ def merge_short_nodes_by_topic(
 
         prev = merged[-1]
         prev_text = str(prev.get("text", "")).strip()
-        prev_words = len(prev_text.split())
-        curr_words = len(text.split())
+        pm = prev.get("metadata", {}) or {}
+        cm = node.get("metadata", {}) or {}
 
-        prev_meta = prev.get("metadata", {}) if isinstance(prev.get("metadata"), dict) else {}
-        curr_meta = node.get("metadata", {}) if isinstance(node.get("metadata"), dict) else {}
-        prev_topic_raw = str(prev_meta.get("topic", ""))
-        curr_topic_raw = str(curr_meta.get("topic", ""))
-        prev_topic = normalize_for_match(prev_topic_raw)
-        curr_topic = normalize_for_match(curr_topic_raw)
-        same_category = str(prev_meta.get("category", "")) == str(curr_meta.get("category", ""))
-        same_topic = prev_topic and curr_topic and (
-            prev_topic == curr_topic or topic_similarity(prev_topic_raw, curr_topic_raw) >= 0.55
-        )
+        same_cat = str(pm.get("category", "")) == str(cm.get("category", ""))
+        same_top = topic_sim(str(pm.get("topic", "")), str(cm.get("topic", ""))) >= 0.50
+        pw, cw = len(prev_text.split()), len(text.split())
 
-        can_merge = same_category and same_topic and (prev_words < min_words or curr_words < min_words)
-        if can_merge and (prev_words + curr_words) <= max_words:
+        if same_cat and same_top and (pw < min_words or cw < min_words) and (pw + cw) <= max_words:
             prev["text"] = normalize_punctuation(f"{prev_text}. {text}")
+            merged_qt = list(dict.fromkeys(
+                pm.get("question_templates", []) + cm.get("question_templates", [])
+            ))[:3]
+            pm["question_templates"] = merged_qt
             continue
 
         merged.append(node)
@@ -892,11 +987,73 @@ def merge_short_nodes_by_topic(
     return merged
 
 
+# ---------------------------------------------------------------------------
+# TRANSCRIPT CHUNKING
+# ---------------------------------------------------------------------------
+
+def split_transcript_for_llm(
+    text: str,
+    min_words: int,
+    max_words: int,
+    overlap_words: int,
+) -> list[str]:
+    sentences = split_sentences(text)
+    if not sentences:
+        return []
+
+    chunks: list[str] = []
+    current: list[str] = []
+    current_words = 0
+
+    for sentence in sentences:
+        words = sentence.split()
+        wcount = len(words)
+
+        if wcount > max_words:
+            if current:
+                chunks.append(" ".join(current))
+                current, current_words = [], 0
+            for i in range(0, wcount, max_words):
+                piece = " ".join(words[i: i + max_words]).strip()
+                if piece:
+                    chunks.append(piece)
+            continue
+
+        projected = current_words + wcount
+        if current and projected > max_words and current_words >= min_words:
+            chunks.append(" ".join(current))
+            # Overlap
+            overlap: list[str] = []
+            oc = 0
+            for prev in reversed(current):
+                overlap.insert(0, prev)
+                oc += len(prev.split())
+                if oc >= overlap_words:
+                    break
+            current = overlap + [sentence]
+            current_words = sum(len(s.split()) for s in current)
+        else:
+            current.append(sentence)
+            current_words = projected
+
+    if current:
+        chunks.append(" ".join(current))
+
+    return [normalize_spaces(c) for c in chunks if c.strip()]
+
+
+# ---------------------------------------------------------------------------
+# FILE PROCESSING
+# ---------------------------------------------------------------------------
+
 def detect_subject(input_root: Path, txt_path: Path) -> str:
-    rel = txt_path.relative_to(input_root)
-    if len(rel.parts) >= 2:
-        return rel.parts[0]
-    return txt_path.parent.name
+    try:
+        rel = txt_path.relative_to(input_root)
+        if len(rel.parts) >= 2:
+            return rel.parts[0]
+    except ValueError:
+        pass
+    return txt_path.stem
 
 
 def process_transcript_file(txt_path: Path, cfg: PipelineConfig) -> list[dict[str, Any]]:
@@ -907,6 +1064,7 @@ def process_transcript_file(txt_path: Path, cfg: PipelineConfig) -> list[dict[st
 
     subject = detect_subject(cfg.input_root, txt_path)
     file_name = txt_path.name
+
     input_chunks = split_transcript_for_llm(
         content,
         min_words=cfg.input_chunk_min_words,
@@ -916,59 +1074,55 @@ def process_transcript_file(txt_path: Path, cfg: PipelineConfig) -> list[dict[st
 
     all_nodes: list[dict[str, Any]] = []
     for idx, chunk in enumerate(input_chunks, start=1):
-        print(f"  - LLM semantic chunk {idx}/{len(input_chunks)}")
-        raw_nodes = call_llm_for_textnodes(chunk, cfg)
-        for raw_node in raw_nodes:
-            all_nodes.extend(
-                sanitize_node(
-                    raw_node,
-                    subject=subject,
-                    file_name=file_name,
-                    source_chunk=chunk,
-                    cfg=cfg,
-                )
-            )
+        print(f"  - Chunk {idx}/{len(input_chunks)} ({len(chunk.split())} words)")
+        try:
+            raw_nodes = call_llm_for_textnodes(chunk, cfg)
+        except RuntimeError as e:
+            print(f"    WARNING: {e}")
+            continue
+        for rn in raw_nodes:
+            all_nodes.extend(sanitize_node(rn, subject, file_name, chunk, cfg))
 
-    nodes = dedupe_nodes(all_nodes)
+    nodes = dedupe_nodes(all_nodes, threshold=cfg.dedupe_threshold)
     nodes = merge_short_nodes_by_topic(nodes)
-    nodes = dedupe_nodes(nodes)
+    nodes = dedupe_nodes(nodes, threshold=cfg.dedupe_threshold)
 
-    # Fallback pass: if long transcript collapses to <=1 node, force a multi-node extraction.
+    # Fallback nếu transcript dài nhưng collapse về ≤1 node
     if len(nodes) <= 1 and len(content.split()) >= 500:
-        fallback_chunks = split_transcript_for_llm(
+        print("  - Fallback: smaller chunks + force_multi_nodes")
+        fb_chunks = split_transcript_for_llm(
             content,
-            min_words=max(260, cfg.input_chunk_min_words // 3),
-            max_words=max(520, cfg.input_chunk_max_words // 2),
-            overlap_words=max(60, cfg.input_chunk_overlap_words),
+            min_words=max(200, cfg.input_chunk_min_words // 3),
+            max_words=max(450, cfg.input_chunk_max_words // 2),
+            overlap_words=max(50, cfg.input_chunk_overlap_words),
         )
-        rescue_nodes: list[dict[str, Any]] = []
-        for idx, chunk in enumerate(fallback_chunks, start=1):
-            print(f"  - Fallback semantic chunk {idx}/{len(fallback_chunks)}")
-            raw_nodes = call_llm_for_textnodes(chunk, cfg, force_multi_nodes=True)
-            for raw_node in raw_nodes:
-                rescue_nodes.extend(
-                    sanitize_node(
-                        raw_node,
-                        subject=subject,
-                        file_name=file_name,
-                        source_chunk=chunk,
-                        cfg=cfg,
-                    )
-                )
+        rescue: list[dict[str, Any]] = []
+        for idx, chunk in enumerate(fb_chunks, start=1):
+            print(f"    - Fallback chunk {idx}/{len(fb_chunks)}")
+            try:
+                raw_nodes = call_llm_for_textnodes(chunk, cfg, force_multi_nodes=True)
+            except RuntimeError as e:
+                print(f"      WARNING: {e}")
+                continue
+            for rn in raw_nodes:
+                rescue.extend(sanitize_node(rn, subject, file_name, chunk, cfg))
 
-        rescue_nodes = dedupe_nodes(rescue_nodes, threshold=0.92)
-        rescue_nodes = merge_short_nodes_by_topic(rescue_nodes)
-        rescue_nodes = dedupe_nodes(rescue_nodes, threshold=0.90)
-        if len(rescue_nodes) > len(nodes):
-            nodes = rescue_nodes
+        hi_thr = min(0.92, cfg.dedupe_threshold + 0.12)
+        rescue = dedupe_nodes(rescue, threshold=hi_thr)
+        rescue = merge_short_nodes_by_topic(rescue)
+        rescue = dedupe_nodes(rescue, threshold=min(0.90, cfg.dedupe_threshold + 0.10))
+        if len(rescue) > len(nodes):
+            nodes = rescue
 
     return nodes
 
 
 def output_path_for_file(input_root: Path, output_root: Path, txt_path: Path) -> Path:
-    rel = txt_path.relative_to(input_root)
-    out_rel = rel.with_suffix(".textnodes.json")
-    return output_root / out_rel
+    try:
+        rel = txt_path.relative_to(input_root)
+    except ValueError:
+        rel = Path(txt_path.name)
+    return output_root / rel.with_suffix(".textnodes.json")
 
 
 def write_nodes_json(path: Path, nodes: list[dict[str, Any]]) -> None:
@@ -980,43 +1134,71 @@ def write_nodes_json(path: Path, nodes: list[dict[str, Any]]) -> None:
 def run_pipeline(cfg: PipelineConfig) -> None:
     txt_files = sorted(cfg.input_root.rglob("*.txt"))
     if not txt_files:
-        print(f"No .txt transcript found under: {cfg.input_root}")
+        print(f"No .txt files found under: {cfg.input_root}")
         return
 
+    print(f"Found {len(txt_files)} file(s). Dedupe threshold: {cfg.dedupe_threshold}")
     total_nodes = 0
     for txt_path in txt_files:
-        print(f"Processing: {txt_path}")
+        print(f"\nProcessing: {txt_path}")
         try:
             nodes = process_transcript_file(txt_path, cfg)
             out_path = output_path_for_file(cfg.input_root, cfg.output_root, txt_path)
             write_nodes_json(out_path, nodes)
             total_nodes += len(nodes)
-            print(f"  -> {len(nodes)} node(s) written to {out_path}")
+            print(f"  -> {len(nodes)} node(s) → {out_path}")
         except Exception as exc:
             print(f"  -> FAILED: {exc}")
 
-    print(f"Done. Total nodes: {total_nodes}")
+    print(f"\nDone. Total nodes: {total_nodes}")
 
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Convert transcript TXT files to high-quality TextNode JSON for RAG retrieval."
+        description=(
+            "Convert transcript .txt files (Vietnamese ASR) "
+            "to high-quality TextNode JSON for RAG. Domain-agnostic."
+        )
     )
-    parser.add_argument("--input-root", default="file_vtt", help="Root folder containing transcript .txt files")
-    parser.add_argument("--output-root", default="file_textnodes", help="Output root folder for TextNode JSON")
-    parser.add_argument("--llm-proxy-url", default=os.getenv("LLM_PROXY_URL", "http://127.0.0.1:5000"))
+    parser.add_argument("--input-root", default="file_transcript",
+                        help="Root folder containing .txt files")
+    parser.add_argument("--output-root", default="file_textnodes",
+                        help="Output root for TextNode JSON")
+    parser.add_argument("--llm-proxy-url",
+                        default=os.getenv("LLM_PROXY_URL", "http://127.0.0.1:5000"),
+                        help="LLM server URL (vLLM/Ollama/OpenAI-compatible)")
     parser.add_argument("--llm-model", default="Qwen/Qwen3-8B-AWQ")
     parser.add_argument("--llm-timeout-seconds", type=int, default=180)
-    parser.add_argument("--llm-max-tokens", type=int, default=3500)
+    parser.add_argument("--llm-max-tokens", type=int, default=4096)
     parser.add_argument("--llm-temperature", type=float, default=0.1)
-    parser.add_argument("--input-chunk-min-words", type=int, default=900)
-    parser.add_argument("--input-chunk-max-words", type=int, default=1400)
-    parser.add_argument("--input-chunk-overlap-words", type=int, default=70)
-    parser.add_argument("--quality-min-words", type=int, default=35)
-    parser.add_argument("--quality-max-words", type=int, default=500)
-    parser.add_argument("--quality-min-overlap", type=float, default=0.62)
-    parser.add_argument("--quality-min-unique-ratio", type=float, default=0.36)
-    parser.add_argument("--include-provenance", action="store_true")
+    parser.add_argument("--input-chunk-min-words", type=int, default=900,
+                        help="Min words per chunk sent to LLM")
+    parser.add_argument("--input-chunk-max-words", type=int, default=1400,
+                        help="Max words per chunk sent to LLM")
+    parser.add_argument("--input-chunk-overlap-words", type=int, default=70,
+                        help="Overlap words between consecutive chunks")
+    parser.add_argument("--quality-min-words", type=int, default=28,
+                        help="Min words for a node to pass quality gate")
+    parser.add_argument("--quality-max-words", type=int, default=500,
+                        help="Max words for a node to pass quality gate")
+    parser.add_argument("--quality-min-overlap", type=float, default=0.52,
+                        help="Min lexical overlap ratio node↔source chunk")
+    parser.add_argument("--quality-min-unique-ratio", type=float, default=0.30,
+                        help="Min unique token ratio to filter repetitive nodes")
+    parser.add_argument(
+        "--dedupe-threshold", type=float, default=DEFAULT_DEDUPE_JACCARD_THRESHOLD,
+        help=(
+            f"Jaccard threshold for deduplication "
+            f"(default: {DEFAULT_DEDUPE_JACCARD_THRESHOLD}). "
+            "Lower = more aggressive. Recommended range: 0.70–0.85."
+        ),
+    )
+    parser.add_argument("--include-provenance", action="store_true",
+                        help="Add source_coverage + source_quote to metadata")
     return parser.parse_args()
 
 
@@ -1038,6 +1220,7 @@ def main() -> None:
         quality_min_overlap=args.quality_min_overlap,
         quality_min_unique_ratio=args.quality_min_unique_ratio,
         include_provenance=args.include_provenance,
+        dedupe_threshold=args.dedupe_threshold,
     )
     run_pipeline(cfg)
 
