@@ -19,7 +19,13 @@ models/.locks/
 chatbot
 *.docx
 credentials.json
+.env
+.env.*
 /file_vtt
 /file_*
+/Triết_*
+log*
+
+
 
 

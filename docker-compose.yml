@@ -17,6 +17,8 @@ services:
     environment:
       - TZ=Asia/Ho_Chi_Minh
       - LLM_PROXY_URL=http://127.0.0.1:5000
+      - LLM_MODEL=${LLM_MODEL:-gemini-2.5-flash}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
       - TRANSCRIPTION_WORKERS=1
       - WHISPER_NUM_WORKERS=1
       - JOB_QUEUE_MAXSIZE=3000

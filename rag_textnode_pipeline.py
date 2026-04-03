@@ -20,7 +20,10 @@ import argparse
 import json
 import os
 import re
+import time
 import unicodedata
+import uuid
+from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -73,6 +76,10 @@ _ORPHAN_PREFIXES_NORM = [
     "nhung ma",
     "vi vay",
     "tuy nhien",
+    "nhu vay",
+    "do do",
+    "nhu da noi",
+    "nhu toi da",
     "thua cac ban",
     "toi nho den",
 ]
@@ -90,6 +97,14 @@ _META_DISCOURSE_PATTERNS_NORM = [
     r"\btiep theo chung ta\b",
     r"\bnhu da trinh bay\b",
     r"\bnhu toi da noi\b",
+    # Bổ sung: pattern lịch học / hướng dẫn học tập
+    r"\btrong qua trinh hoc tap co mot chuyen de\b",
+    r"\bkhi den chuyen de do\b",
+    r"\bchung ta se trao doi ky\b",
+    r"\bvoi tu gio den het chuong trinh\b",
+    r"\bchung ta trao doi voi nhau o cap do\b",
+    r"\bhen gap lai\b",
+    r"\bxin cam on\b",
 ]
 
 _INCOMPLETE_TAILS_NORM = [
@@ -246,6 +261,8 @@ class PipelineConfig:
     quality_min_unique_ratio: float
     include_provenance: bool
     dedupe_threshold: float = field(default=DEFAULT_DEDUPE_JACCARD_THRESHOLD)
+    file_max_retries: int = field(default=2)
+    file_retry_backoff_seconds: float = field(default=2.0)
 
 
 # ---------------------------------------------------------------------------
@@ -714,6 +731,107 @@ def validate_question_templates(questions: Any, node_text: str) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
+# KEYWORD FRAGMENT DETECTION — loại ASR noise như "oi tuong", "no khong"
+# ---------------------------------------------------------------------------
+
+# Tiếng Việt: từ hợp lệ thường có cấu trúc CV hoặc CVC với nguyên âm dài
+# ASR noise thường là: ghép ngẫu nhiên syllable không thành từ thật
+# Approach: token stripped-accent phải khớp pattern từ tiếng Việt/Anh hợp lệ
+
+# Pattern từ tiếng Anh hợp lệ (>= 3 chars, có trong tập từ phổ biến)
+_EN_VALID_PREFIXES = frozenset({
+    "abs", "acc", "act", "add", "adm", "ago", "aid", "aim", "air", "all",
+    "ana", "and", "app", "arc", "are", "art", "ask", "ass", "aud", "aug",
+    "bas", "beh", "bio", "bus", "cap", "cat", "cen", "cha", "che", "chi",
+    "cla", "col", "com", "con", "cor", "cri", "cul", "dat", "def", "dep",
+    "des", "dev", "dia", "dif", "dir", "dis", "doc", "dom", "dyn", "eco",
+    "edu", "ele", "emp", "eng", "env", "est", "eth", "eve", "evo", "exa",
+    "exc", "exp", "ext", "fac", "far", "fie", "fin", "for", "fra", "fun",
+    "gen", "geo", "gov", "gro", "gui", "hab", "hea", "his", "hum", "hyp",
+    "ide", "ima", "imp", "inc", "ind", "inf", "ins", "int", "inv", "iso",
+    "jus", "kno", "lan", "law", "lea", "leg", "lib", "lin", "log", "man",
+    "mar", "mat", "mea", "mec", "med", "met", "mig", "mod", "mol", "mon",
+    "mor", "mot", "mul", "nat", "net", "neu", "nor", "obj", "obs", "off",
+    "ont", "opt", "ord", "org", "ori", "out", "par", "pat", "per", "phi",
+    "pho", "phy", "pla", "pol", "pos", "pre", "pri", "pro", "psy", "pub",
+    "qua", "ran", "rat", "rec", "red", "ref", "rel", "rep", "res", "rev",
+    "sci", "sec", "sel", "sem", "ser", "soc", "sol", "spe", "sta", "str",
+    "sub", "sys", "tax", "tec", "the", "the", "thr", "tra", "tri", "typ",
+    "und", "uni", "use", "val", "var", "ver", "vis", "voc", "war", "wor",
+})
+
+# Tiếng Việt: syllable hợp lệ sau khi strip accent phải match pattern này
+# [phụ âm đầu tùy chọn] + [nguyên âm] + [phụ âm cuối tùy chọn]
+_VN_SYLLABLE_RE = re.compile(
+    r'^(b|c|ch|d|đ|g|gh|gi|h|k|kh|l|m|n|ng|ngh|nh|p|ph|qu|r|s|t|th|tr|v|x|z)?'
+    r'(a|ă|â|e|ê|i|o|ô|ơ|u|ư|y|ai|ao|au|ay|âu|âi|eo|eu|ia|ie|io|iu|oa|oe|oi|ôi|ơi|ua|ue|ui|uo|uô|ươ|uy|ya|ye)'
+    r'(c|ch|m|n|ng|nh|p|t)?$'
+)
+
+def _is_asr_noise_token(token: str) -> bool:
+    """
+    Phát hiện token là ASR noise sau khi đã strip accent.
+    Token hợp lệ phải là syllable tiếng Việt hoặc prefix tiếng Anh nhận ra được.
+    """
+    t = token.strip().lower()
+    if len(t) <= 1:
+        return True
+    # Không có nguyên âm → không phải từ
+    if not re.search(r'[aeiouaăâêôơư]', t):
+        return True
+    # Tiếng Anh: prefix phổ biến
+    if len(t) >= 3 and t[:3] in _EN_VALID_PREFIXES:
+        return False
+    # Tiếng Việt: kiểm tra từng syllable
+    syllables = t.split()
+    for syl in syllables:
+        if _VN_SYLLABLE_RE.match(syl):
+            return False
+    # Nếu ngắn và không match pattern nào → nghi noise
+    if len(t) <= 6:
+        return True
+    return False
+
+
+def _is_valid_keyword(kw: str) -> bool:
+    """
+    Keyword hợp lệ: từ/cụm từ tiếng Việt hoặc tiếng Anh thật sự.
+    Loại ASR noise như "oi tuong", "hoc vao", "gioi xa".
+    """
+    # Check trên text gốc (giữ dấu)
+    kw_stripped = kw.strip()
+    if not kw_stripped or len(kw_stripped.replace(" ", "")) < 2:
+        return False
+
+    norm = normalize_for_match(kw_stripped)  # strip accent
+    if not norm or len(norm.replace(" ", "")) < 3:
+        return False
+
+    parts = norm.split()
+
+    # Loại pure stopword
+    if all(p in STOPWORDS for p in parts):
+        return False
+
+    # Phải có ít nhất 1 part không phải stopword và không phải noise
+    meaningful = [p for p in parts if p not in STOPWORDS]
+    if not meaningful:
+        return False
+
+    # Mỗi part có nghĩa phải pass noise check
+    noise_count = sum(1 for p in meaningful if _is_asr_noise_token(p))
+    # Nếu tất cả part có nghĩa đều là noise → loại
+    if noise_count == len(meaningful):
+        return False
+    # Với bigram: cho phép 1 part là noise nếu part kia hợp lệ
+    # Nhưng với unigram: phải pass hoàn toàn
+    if len(parts) == 1 and noise_count > 0:
+        return False
+
+    return True
+
+
+# ---------------------------------------------------------------------------
 # VALIDATION — keywords (bigram-aware)
 # ---------------------------------------------------------------------------
 
@@ -727,12 +845,12 @@ def validate_keywords(
 
     def kw_valid(kw: str) -> bool:
         k = normalize_for_match(kw)
-        # Phải có ít nhất 3 chars sau normalize
         if not k or len(k.replace(" ", "")) < 3:
             return False
-        # Loại pure stopword (kể cả bigram toàn stopword)
-        parts = k.split()
-        if all(p in STOPWORDS for p in parts):
+        if all(p in STOPWORDS for p in k.split()):
+            return False
+        # Kiểm tra hợp lệ (loại ASR noise)
+        if not _is_valid_keyword(kw):
             return False
         # Phải xuất hiện trong text
         return k in text_norm
@@ -760,7 +878,8 @@ def validate_keywords(
     keywords = [normalize_terms(k) for k in keywords]
     keywords = [
         k for k in keywords
-        if len(normalize_for_match(k).replace(" ", "")) >= 3
+        if _is_valid_keyword(k)
+        and len(normalize_for_match(k).replace(" ", "")) >= 3
         and not all(p in STOPWORDS for p in normalize_for_match(k).split())
     ]
     return keywords[:5]
@@ -868,7 +987,7 @@ def sanitize_node(
             meta_out["source_coverage"] = round(lexical_overlap_ratio(part, source_chunk), 4)
             meta_out["source_quote"] = best_source_quote(part, source_chunk)
 
-        finalized.append({"text": part, "metadata": meta_out})
+        finalized.append({"id": str(uuid.uuid4()), "text": part, "metadata": meta_out})
 
     return finalized
 
@@ -1056,14 +1175,18 @@ def detect_subject(input_root: Path, txt_path: Path) -> str:
     return txt_path.stem
 
 
-def process_transcript_file(txt_path: Path, cfg: PipelineConfig) -> list[dict[str, Any]]:
+def process_transcript_file(
+    txt_path: Path,
+    cfg: PipelineConfig,
+) -> tuple[list[dict[str, Any]], bool]:
     content = txt_path.read_text(encoding="utf-8", errors="ignore")
     content = normalize_spaces(content)
     if not content:
-        return []
+        return [], False
 
     subject = detect_subject(cfg.input_root, txt_path)
     file_name = txt_path.name
+    had_errors = False
 
     input_chunks = split_transcript_for_llm(
         content,
@@ -1078,6 +1201,7 @@ def process_transcript_file(txt_path: Path, cfg: PipelineConfig) -> list[dict[st
         try:
             raw_nodes = call_llm_for_textnodes(chunk, cfg)
         except RuntimeError as e:
+            had_errors = True
             print(f"    WARNING: {e}")
             continue
         for rn in raw_nodes:
@@ -1102,6 +1226,7 @@ def process_transcript_file(txt_path: Path, cfg: PipelineConfig) -> list[dict[st
             try:
                 raw_nodes = call_llm_for_textnodes(chunk, cfg, force_multi_nodes=True)
             except RuntimeError as e:
+                had_errors = True
                 print(f"      WARNING: {e}")
                 continue
             for rn in raw_nodes:
@@ -1114,15 +1239,30 @@ def process_transcript_file(txt_path: Path, cfg: PipelineConfig) -> list[dict[st
         if len(rescue) > len(nodes):
             nodes = rescue
 
-    return nodes
+    return nodes, had_errors
 
 
-def output_path_for_file(input_root: Path, output_root: Path, txt_path: Path) -> Path:
+def detect_course_folder(input_root: Path, txt_path: Path) -> str:
+    """
+    Lấy tên thư mục môn học (level 1 dưới input_root).
+    Ví dụ: file_transcript/Môn Triết học Mác-Lênin/Video_2/...txt
+           → "Môn Triết học Mác-Lênin"
+    Nếu file nằm trực tiếp trong input_root → dùng "_root"
+    """
     try:
         rel = txt_path.relative_to(input_root)
     except ValueError:
-        rel = Path(txt_path.name)
-    return output_root / rel.with_suffix(".textnodes.json")
+        return "_root"
+    return rel.parts[0] if len(rel.parts) >= 2 else "_root"
+
+
+def course_output_path(output_root: Path, course_folder: str) -> Path:
+    """
+    Trả về path của file JSON tổng hợp cho 1 môn học.
+    Ví dụ: file_textnodes4/Môn Triết học Mác-Lênin.textnodes.json
+    """
+    safe_name = re.sub(r'[\\/:*?"<>|]', "_", course_folder)
+    return output_root / f"{safe_name}.textnodes.json"
 
 
 def write_nodes_json(path: Path, nodes: list[dict[str, Any]]) -> None:
@@ -1138,19 +1278,65 @@ def run_pipeline(cfg: PipelineConfig) -> None:
         return
 
     print(f"Found {len(txt_files)} file(s). Dedupe threshold: {cfg.dedupe_threshold}")
-    total_nodes = 0
-    for txt_path in txt_files:
-        print(f"\nProcessing: {txt_path}")
-        try:
-            nodes = process_transcript_file(txt_path, cfg)
-            out_path = output_path_for_file(cfg.input_root, cfg.output_root, txt_path)
-            write_nodes_json(out_path, nodes)
-            total_nodes += len(nodes)
-            print(f"  -> {len(nodes)} node(s) → {out_path}")
-        except Exception as exc:
-            print(f"  -> FAILED: {exc}")
 
-    print(f"\nDone. Total nodes: {total_nodes}")
+    # Gom file theo môn học (level-1 subfolder)
+    course_files: dict[str, list[Path]] = defaultdict(list)
+    for txt_path in txt_files:
+        course = detect_course_folder(cfg.input_root, txt_path)
+        course_files[course].append(txt_path)
+
+    total_nodes = 0
+    for course, files in sorted(course_files.items()):
+        print(f"\n{'='*60}")
+        print(f"Course: {course} ({len(files)} file(s))")
+        print(f"{'='*60}")
+
+        course_nodes: list[dict[str, Any]] = []
+        pending_files = sorted(files)
+        attempts: dict[Path, int] = defaultdict(int)
+
+        while pending_files:
+            txt_path = pending_files.pop(0)
+            attempts[txt_path] += 1
+            current_attempt = attempts[txt_path]
+
+            print(
+                f"\nProcessing: {txt_path} "
+                f"(attempt {current_attempt}/{cfg.file_max_retries + 1})"
+            )
+            try:
+                nodes, had_errors = process_transcript_file(txt_path, cfg)
+            except Exception as exc:
+                had_errors = True
+                nodes = []
+                print(f"  -> FAILED: {exc}")
+
+            if had_errors:
+                print("  -> File had LLM errors; discarding nodes from this attempt")
+                if current_attempt <= cfg.file_max_retries:
+                    if cfg.file_retry_backoff_seconds > 0:
+                        time.sleep(cfg.file_retry_backoff_seconds)
+                    pending_files.append(txt_path)
+                    print("  -> Requeued file for full retry")
+                else:
+                    print("  -> Reached max retries; skipping file (no partial nodes kept)")
+                continue
+
+            course_nodes.extend(nodes)
+            print(f"  -> {len(nodes)} node(s)")
+
+        # Dedupe lần cuối toàn bộ môn (bắt duplicate giữa các file khác nhau)
+        before = len(course_nodes)
+        course_nodes = dedupe_nodes(course_nodes, threshold=cfg.dedupe_threshold)
+        if len(course_nodes) < before:
+            print(f"  [cross-file dedupe] {before} → {len(course_nodes)} nodes")
+
+        out_path = course_output_path(cfg.output_root, course)
+        write_nodes_json(out_path, course_nodes)
+        total_nodes += len(course_nodes)
+        print(f"\n  Course total: {len(course_nodes)} node(s) → {out_path}")
+
+    print(f"\nDone. Total nodes across all courses: {total_nodes}")
 
 
 # ---------------------------------------------------------------------------
@@ -1197,6 +1383,17 @@ def parse_args() -> argparse.Namespace:
             "Lower = more aggressive. Recommended range: 0.70–0.85."
         ),
     )
+    parser.add_argument(
+        "--file-max-retries", type=int, default=2,
+        help=(
+            "Max number of full-file retries when any LLM error occurs in that file. "
+            "Total attempts = file-max-retries + 1."
+        ),
+    )
+    parser.add_argument(
+        "--file-retry-backoff-seconds", type=float, default=2.0,
+        help="Wait time (seconds) before requeueing a failed file",
+    )
     parser.add_argument("--include-provenance", action="store_true",
                         help="Add source_coverage + source_quote to metadata")
     return parser.parse_args()
@@ -1221,6 +1418,8 @@ def main() -> None:
         quality_min_unique_ratio=args.quality_min_unique_ratio,
         include_provenance=args.include_provenance,
         dedupe_threshold=args.dedupe_threshold,
+        file_max_retries=max(0, args.file_max_retries),
+        file_retry_backoff_seconds=max(0.0, args.file_retry_backoff_seconds),
     )
     run_pipeline(cfg)
 

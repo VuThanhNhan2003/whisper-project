@@ -19,7 +19,7 @@ class TranscriptionOptions(BaseModel):
     compression_ratio_threshold: float = 2.4
     log_prob_threshold: float = -1.0
     no_speech_threshold: float = 0.6
-    
+
     # === LLM Refinement Options (for .txt quality + RAG) ===
     enable_llm_refine: bool = True
     llm_proxy_url: str = Field(
@@ -30,6 +30,16 @@ class TranscriptionOptions(BaseModel):
     refine_batch_size: int = 20
     prompt_template: Optional[str] = None  # Custom prompt for mixed lang/code/LaTeX handling
     txt_include_timestamps: bool = False
+
+    # === RAG Context Options ===
+    # Môn học để query RAG đúng subject (vd: "Môn Triết học Mác-Lênin")
+    subject: Optional[str] = None
+    # URL của RAG API service (vd: "http://127.0.0.1:9100")
+    rag_api_url: Optional[str] = Field(
+        default_factory=lambda: os.getenv("RAG_API_URL", "")
+    )
+    # Số segment trước dùng làm query context (CB-RAG style)
+    rag_context_window: int = 5
 
 
 class VideoConvertRequest(TranscriptionOptions):

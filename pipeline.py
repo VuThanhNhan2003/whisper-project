@@ -239,7 +239,6 @@ def _recover_jobs_after_restart() -> None:
 
 def _default_worker_count() -> int:
     cpu = os.cpu_count() or 2
-    # Keep conservative default for CPU-only workloads.
     return max(1, min(2, cpu // 2 if cpu > 1 else 1))
 
 
@@ -513,20 +512,17 @@ def download_google_drive_file(file_id: str) -> str:
 
 def detect_hallucination_patterns(text: str) -> bool:
     """Phát hiện các pattern hallucination phổ biến"""
-    # Pattern 1: Lặp ký tự hoặc số quá nhiều
-    if re.search(r'(.)\1{10,}', text):  # Ký tự lặp > 10 lần
+    if re.search(r'(.)\1{10,}', text):
         return True
 
-    # Pattern 2: Lặp từ quá nhiều
     words = text.split()
     if len(words) > 5:
         word_counts = {}
         for word in words:
             word_counts[word] = word_counts.get(word, 0) + 1
-            if word_counts[word] > len(words) * 0.3:  # Từ chiếm >30% câu
+            if word_counts[word] > len(words) * 0.3:
                 return True
 
-    # Pattern 3: Các cụm từ promotional phổ biến (Vietnamese)
     spam_patterns = [
         r'subscribe.*kênh',
         r'đăng ký.*kênh',
@@ -546,10 +542,8 @@ def detect_hallucination_patterns(text: str) -> bool:
 
 def clean_repetitive_text(text: str) -> str:
     """Làm sạch text bị lặp"""
-    # Loại bỏ ký tự lặp
     text = re.sub(r'(.)\1{5,}', r'\1', text)
 
-    # Loại bỏ từ lặp liên tiếp
     words = text.split()
     cleaned_words = []
     prev_word = ""
@@ -558,7 +552,7 @@ def clean_repetitive_text(text: str) -> str:
     for word in words:
         if word.lower() == prev_word.lower():
             repeat_count += 1
-            if repeat_count < 2:  # Cho phép lặp tối đa 1 lần
+            if repeat_count < 2:
                 cleaned_words.append(word)
         else:
             cleaned_words.append(word)
@@ -572,15 +566,12 @@ def validate_segment_quality(segment, min_duration=0.5, max_duration=30.0) -> bo
     """Kiểm tra chất lượng segment"""
     duration = segment.end - segment.start
 
-    # Segment quá ngắn hoặc quá dài
     if duration < min_duration or duration > max_duration:
         return False
 
-    # Text quá ngắn cho segment dài
     if duration > 8 and len(segment.text.strip()) < 10:
         return False
 
-    # Kiểm tra hallucination
     if detect_hallucination_patterns(segment.text):
         return False
 
@@ -665,6 +656,63 @@ def _resolve_llm_urls(llm_proxy_url: str) -> list[str]:
     ]
 
 
+# =============================================================================
+# RAG Context Query
+# =============================================================================
+
+def query_rag_context(
+    text_window: str,
+    subject: Optional[str],
+    rag_api_url: str,
+    timeout: int = 20,
+) -> str:
+    """
+    Dùng transcript của các segment trước để query RAG lấy thuật ngữ/khái niệm
+    liên quan từ slide bài giảng đã được index (CB-RAG style).
+
+    Args:
+        text_window: Transcript ghép từ k segment trước làm câu query.
+        subject:     Môn học để filter đúng subject trong RAG (vd: "Môn Triết học Mác-Lênin").
+        rag_api_url: URL của RAG API service (vd: "http://127.0.0.1:9100").
+        timeout:     Timeout tính bằng giây (mặc định 20s).
+
+    Returns:
+        Chuỗi context (~400 ký tự) từ RAG, hoặc chuỗi rỗng nếu lỗi/timeout.
+    """
+    if not rag_api_url or not text_window.strip():
+        return ""
+
+    try:
+        resp = requests.post(
+            f"{rag_api_url.rstrip('/')}/query",
+            json={
+                "question": text_window[:300],
+                "subject": subject,
+                "model_key": "qwen3-8b",
+                "use_history": False,
+            },
+            timeout=timeout,
+        )
+        if resp.status_code == 200:
+            answer = resp.json().get("answer", "")
+            # Cắt bớt để không làm phình system prompt quá lớn
+            return answer[:400].strip()
+        else:
+            print(f"⚠️ RAG API returned status {resp.status_code}, skipping context")
+    except requests.exceptions.Timeout:
+        print(f"⚠️ RAG context query timed out after {timeout}s, continuing without context")
+    except requests.exceptions.ConnectionError:
+        print(f"⚠️ RAG API unreachable at {rag_api_url}, continuing without context")
+    except Exception as e:
+        print(f"⚠️ RAG context query failed: {e}")
+
+    return ""
+
+
+# =============================================================================
+# LLM Refinement
+# =============================================================================
+
 def refine_transcription_batch(
     segments: list,
     language: str = "vi",
@@ -672,38 +720,74 @@ def refine_transcription_batch(
     llm_model: str = "Qwen/Qwen3-8B-AWQ",
     llm_timeout_seconds: int = 60,
     batch_size: int = 20,
-    custom_prompt_template: str = None
+    custom_prompt_template: str = None,
+    subject: str = None,
+    rag_api_url: str = "",
+    rag_context_window: int = 5,
 ) -> list:
-    """Refine transcription segments using LLM (Qwen3 8B) với custom prompt template.
-    
-    Tạo batch requests tới vLLM proxy, refined segments hoặc fallback to original nếu error.
-    Hỗ trợ mixed language, code, LaTeX formulas.
+    """
+    Refine transcription segments bằng LLM (Qwen3 8B) với RAG context injection.
+
+    Với mỗi batch:
+      1. Lấy transcript của `rag_context_window` segment TRƯỚC batch hiện tại làm query.
+      2. Query RAG API để lấy thuật ngữ/khái niệm liên quan từ slide đã index.
+      3. Inject context đó vào system prompt của Qwen3 để sửa đúng thuật ngữ.
+
+    Batch đầu tiên (i=0) sẽ không có prev_text → RAG trả rỗng → Qwen3 vẫn chạy
+    bình thường với default prompt, không ảnh hưởng pipeline.
+
+    Fallback về segment gốc nếu LLM lỗi hoặc RAG timeout.
     """
     if not segments:
         return []
-    
-    prompt_template = custom_prompt_template or get_default_prompt_template(language)
+
     refined_segments = []
-    
-    # Batch segments thành groups
+
     for i in range(0, len(segments), batch_size):
         batch = segments[i:i + batch_size]
-        
-        # Prepare batch JSON
+
+        # ── CB-RAG style: dùng transcript các segment TRƯỚC làm query ──────────
+        prev_segments = segments[max(0, i - rag_context_window):i]
+        prev_text = " ".join(s.text.strip() for s in prev_segments)
+
+        rag_context = ""
+        if rag_api_url and prev_text:
+            print(f"🔍 Querying RAG for batch {i // batch_size + 1} context (subject: {subject})...")
+            rag_context = query_rag_context(
+                prev_text,
+                subject=subject,
+                rag_api_url=rag_api_url,
+                timeout=20,
+            )
+            if rag_context:
+                print(f"✅ RAG context retrieved ({len(rag_context)} chars) for batch {i // batch_size + 1}")
+            else:
+                print(f"ℹ️ No RAG context for batch {i // batch_size + 1}, using default prompt")
+
+        # ── Build system prompt, inject RAG context nếu có ───────────────────
+        system_prompt = custom_prompt_template or get_default_prompt_template(language)
+        if rag_context:
+            system_prompt = (
+                system_prompt
+                + "\n\nNGỮ CẢNH TÀI LIỆU (thuật ngữ và khái niệm liên quan từ slide bài giảng):\n"
+                + rag_context
+                + "\nƯu tiên dùng đúng các thuật ngữ này khi sửa chính tả transcript."
+            )
+
+        # ── Prepare batch JSON ─────────────────────────────────────────────────
         batch_data = [
             {
                 "id": i + j,
                 "text": segment.text.strip(),
                 "start": segment.start,
-                "end": segment.end
+                "end": segment.end,
             }
             for j, segment in enumerate(batch)
         ]
-        
-        # Build refined prompt
+
         batch_json_str = json.dumps(batch_data, ensure_ascii=False)
-        user_message = f"""Refine these transcription segments:\n\n{batch_json_str}"""
-        
+        user_message = f"Refine these transcription segments:\n\n{batch_json_str}"
+
         try:
             assistant_message = None
             for endpoint in _resolve_llm_urls(llm_proxy_url):
@@ -712,8 +796,8 @@ def refine_transcription_batch(
                     json={
                         "model": llm_model,
                         "messages": [
-                            {"role": "system", "content": prompt_template},
-                            {"role": "user", "content": user_message}
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_message},
                         ],
                         "temperature": 0.1,
                         "max_tokens": 2500,
@@ -763,11 +847,11 @@ def refine_transcription_batch(
                     seg.text = clean_repetitive_text(refined_text)
 
             refined_segments.extend(batch)
-        
+
         except (requests.RequestException, requests.Timeout) as e:
             print(f"⚠️ LLM refinement timeout/error: {e}, fallback to original")
             refined_segments.extend(batch)
-    
+
     return refined_segments
 
 
@@ -785,7 +869,6 @@ def smart_segment_split(seg, min_chars=50, max_chars=70, min_duration=1.0):
     for word in words:
         candidate = f"{current} {word}".strip()
 
-        # Nếu vượt max_chars thì chốt phần hiện tại và bắt đầu phần mới
         if len(candidate) > max_chars and current:
             parts.append(current.strip())
             current = word
@@ -793,7 +876,6 @@ def smart_segment_split(seg, min_chars=50, max_chars=70, min_duration=1.0):
 
         current = candidate
 
-        # Ưu tiên ngắt khi đã đủ min_chars và kết thúc bằng dấu câu
         if len(current) >= min_chars and re.search(r"[.!?;:,]$", current):
             parts.append(current.strip())
             current = ""
@@ -801,7 +883,6 @@ def smart_segment_split(seg, min_chars=50, max_chars=70, min_duration=1.0):
     if current:
         parts.append(current.strip())
 
-    # Gộp các phần quá ngắn vào phần liền trước/liền sau để tránh subtitle cụt
     normalized_parts = []
     for part in parts:
         if not normalized_parts:
@@ -829,7 +910,7 @@ def smart_segment_split(seg, min_chars=50, max_chars=70, min_duration=1.0):
     for i, part in enumerate(parts):
         part_start = seg.start + i * duration_per_part
         part_end = min(seg.start + (i + 1) * duration_per_part, seg.end)
-        if part.strip():  # Chỉ thêm phần có nội dung
+        if part.strip():
             result.append((part_start, part_end, part.strip()))
 
     return result
@@ -859,7 +940,7 @@ def download_m3u8_stream(url: str) -> str:
             "-i", url,
             "-c", "copy",
             "-bsf:a", "aac_adtstoasc",
-            "-avoid_negative_ts", "make_zero",  # Tránh timestamp âm
+            "-avoid_negative_ts", "make_zero",
             "-y",
             temp_file.name
         ]
@@ -1006,8 +1087,24 @@ def get_filename_from_url(url: str) -> str:
     return sanitize_filename(base_name or f"video_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
 
 
+def build_initial_prompt(language: str, subject: Optional[str] = None) -> Optional[str]:
+    """
+    Build initial_prompt cho Whisper để bias nhận dạng đúng ngữ cảnh bài giảng.
+    Subject được dùng để gợi ý domain, không cần liệt kê từng thuật ngữ thủ công.
+    """
+    if language != "vi":
+        if subject:
+            return f"Academic lecture on {subject}. Technical terminology expected."
+        return None
+
+    base = "Đây là bài giảng học thuật tiếng Việt"
+    if subject:
+        base += f" môn {subject}"
+    return base + ". Nội dung mang tính học thuật, chuyên ngành."
+
+
 def process_video_transcription(job_id: str, video_url: str, language: str, request: TranscriptionOptions):
-    """Enhanced background task với anti-hallucination"""
+    """Enhanced background task với anti-hallucination và RAG context injection"""
     input_file = None
     try:
         update_job_status(job_id, status="processing")
@@ -1023,15 +1120,12 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
         output_dir = os.path.join("file_vtt", base_name)
         os.makedirs(output_dir, exist_ok=True)
         output_file = os.path.join(output_dir, f"{base_name}.vtt")
-        # Thêm file TXT output
         txt_output_file = os.path.join(output_dir, f"{base_name}.txt")
 
         update_job_status(job_id, progress="Loading Whisper model...")
 
-        # Reuse model theo từng worker thread để tăng tốc batch processing.
         model = _get_thread_model(request.model)
 
-        # Cấu hình VAD nếu được bật
         vad_parameters = None
         if request.enable_vad:
             vad_parameters = {
@@ -1043,7 +1137,6 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
 
         update_job_status(job_id, progress="Transcribing audio with anti-hallucination...")
 
-        # Transcribe với các tham số chống hallucination
         segments, info = model.transcribe(
             input_file,
             language=language,
@@ -1058,15 +1151,15 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
             log_prob_threshold=request.log_prob_threshold,
             no_speech_threshold=request.no_speech_threshold,
             condition_on_previous_text=request.condition_on_previous_text,
-            initial_prompt="Đây là một video học thuật tiếng Việt về khoa học." if language == "vi" else None,
+            # initial_prompt giờ dùng subject thay vì hardcode
+            initial_prompt=build_initial_prompt(language, request.subject),
             vad_filter=request.enable_vad,
             vad_parameters=vad_parameters,
-            word_timestamps=True  # Enable để có thể phân tích tốt hơn
+            word_timestamps=True,
         )
 
         update_job_status(job_id, progress="Processing and filtering segments...")
 
-        # Filter và clean segments
         valid_segments = []
         hallucination_count = 0
         total_segments_count = 0
@@ -1074,7 +1167,6 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
         for segment in segments:
             total_segments_count += 1
             if validate_segment_quality(segment):
-                # Clean text trước khi thêm
                 cleaned_text = clean_repetitive_text(segment.text)
                 if cleaned_text.strip():
                     segment.text = cleaned_text
@@ -1083,9 +1175,15 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
                 hallucination_count += 1
                 print(f"⚠️ Filtered hallucination: {segment.text[:50]}...")
 
-        # === LLM Refinement Step (optional, cho RAG quality + mixed lang/code/LaTeX) ===
+        # === LLM Refinement + RAG Context Injection ===
         if request.enable_llm_refine and valid_segments:
-            update_job_status(job_id, progress="Refining transcript with LLM (Qwen3)...")
+            rag_enabled = bool(request.rag_api_url)
+            progress_msg = "Refining transcript with LLM + RAG context..." if rag_enabled else "Refining transcript with LLM (Qwen3)..."
+            update_job_status(job_id, progress=progress_msg)
+
+            if rag_enabled:
+                print(f"🔗 RAG integration enabled — API: {request.rag_api_url}, subject: {request.subject}")
+
             try:
                 valid_segments = refine_transcription_batch(
                     valid_segments,
@@ -1094,26 +1192,26 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
                     llm_model=request.llm_model,
                     llm_timeout_seconds=request.llm_timeout_seconds,
                     batch_size=request.refine_batch_size,
-                    custom_prompt_template=request.prompt_template
+                    custom_prompt_template=request.prompt_template,
+                    subject=request.subject,
+                    rag_api_url=request.rag_api_url or "",
+                    rag_context_window=request.rag_context_window,
                 )
                 print(f"✅ LLM refinement completed for {len(valid_segments)} segments")
             except Exception as e:
                 print(f"⚠️ LLM refinement failed, continuing with unrefined segments: {e}")
-                # Continue with unrefined segments, don't fail entire job
 
         update_job_status(job_id, progress="Generating optimized VTT and TXT files...")
 
-        # Generate VTT với smart splitting
         with open(output_file, "w", encoding="utf-8") as f:
             f.write("WEBVTT\n\n")
             for segment in valid_segments:
                 sub_segments = smart_segment_split(segment, min_chars=50, max_chars=70)
                 for sub_start, sub_end, sub_text in sub_segments:
-                    if sub_text.strip():  # Chỉ ghi segment có nội dung
+                    if sub_text.strip():
                         f.write(f"{format_timestamp(sub_start, vtt=True)} --> {format_timestamp(sub_end, vtt=True)}\n")
                         f.write(f"{sub_text}\n\n")
 
-        # Generate TXT file cho RAG: mặc định sạch, có thể bật timestamps nếu cần
         with open(txt_output_file, "w", encoding="utf-8") as f:
             transcript_parts = []
             for segment in valid_segments:
@@ -1130,7 +1228,6 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
             else:
                 f.write(" ".join(transcript_parts))
 
-        # Final status với thống kê - cập nhật để bao gồm file TXT
         result_payload = {
             "vtt_filename": f"{base_name}.vtt",
             "txt_filename": f"{base_name}.txt",
@@ -1141,14 +1238,16 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
             "created_at": datetime.now().isoformat(),
             "source_type": "m3u8_stream" if is_m3u8_url(video_url) else "direct_file",
             "llm_refined": request.enable_llm_refine,
+            "rag_context_used": bool(request.rag_api_url and request.enable_llm_refine),
+            "rag_subject": request.subject,
             "llm_prompt_template": "custom" if request.prompt_template else "default",
             "stats": {
                 "total_segments": total_segments_count,
                 "valid_segments": len(valid_segments),
                 "filtered_hallucinations": hallucination_count,
                 "detected_language": info.language if hasattr(info, 'language') else request.language,
-                "language_probability": info.language_probability if hasattr(info, 'language_probability') else None
-            }
+                "language_probability": info.language_probability if hasattr(info, 'language_probability') else None,
+            },
         }
         update_job_status(
             job_id,
@@ -1159,8 +1258,14 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
         )
         remove_job_payload(job_id)
 
-        print(f"✅ Job {job_id} completed - Generated VTT and TXT files - Filtered {hallucination_count} hallucinations" + 
-              (f" - LLM refined: {request.enable_llm_refine}" if request.enable_llm_refine else ""))
+        rag_note = f" — RAG context: {request.rag_api_url}" if request.rag_api_url else ""
+        print(
+            f"✅ Job {job_id} completed"
+            f" — VTT + TXT generated"
+            f" — Filtered {hallucination_count} hallucinations"
+            + (f" — LLM refined" if request.enable_llm_refine else "")
+            + rag_note
+        )
 
     except Exception as e:
         update_job_status(job_id, status="failed", error=str(e))
