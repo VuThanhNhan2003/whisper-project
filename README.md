@@ -1,133 +1,77 @@
-# Whisper API
+# Whisper API + RAG TextNode Pipeline
 
-API chuyển video thành phụ đề `VTT` và transcript `TXT` bằng Faster-Whisper, hỗ trợ:
+This repository contains two main pipelines:
 
-- Link media trực tiếp (`.mp4`, `.m3u8`, ...)
-- Google Drive file/folder
-- LLM refine (Qwen2.5 qua proxy) để tăng chất lượng transcript
-- Output `TXT` tối ưu cho RAG chatbot
+1. ASR pipeline: video -> subtitle `.vtt` + transcript `.txt`
+2. TextNode pipeline: transcript `.txt` -> `.textnodes.json` for RAG
 
-## 1) Tính năng chính
+The current codebase is designed for production stability: worker queue, job recovery after restart, download retries, hallucination filtering, and quality gates for TextNode generation.
 
-- Transcribe tiếng Việt/Anh với cấu hình chống hallucination.
-- Subtitle segmentation tối ưu hiển thị video (mục tiêu 50-70 ký tự/segment).
-- Sinh đồng thời:
-  - `*.vtt` để gắn video
-  - `*.txt` để ingest RAG
-- Hỗ trợ Google Drive:
-  - `/convert`: Drive file link
-  - `/convert-drive-folder`: quét toàn bộ video trong folder
-- Tùy chọn refine text qua LLM proxy (Qwen2.5-7B).
+## 1) Architecture Overview
 
-## 2) Cấu trúc thư mục
+- API server: FastAPI (`api.py`, `main.py`)
+- Core ASR pipeline: `pipeline.py`
+- Request/response schemas: `schemas.py`
+- TextNode pipeline for RAG: `rag_textnode_pipeline.py`
+- ASR output folder: `file_vtt/<video_name>/...`
+- Default TextNode input folder: `file_transcript/...`
 
-```text
-whisper-api/
-├── api.py
-├── pipeline.py
-├── schemas.py
-├── main.py
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-├── credentials.json
-├── file_vtt/
-└── models/
-```
+Note: the ASR pipeline and the TextNode pipeline are separated. ASR writes `.txt` into `file_vtt/...`, while the TextNode pipeline reads `.txt` from `file_transcript/...` (you can copy/sync transcripts there, or change `--input-root`).
 
-## 3) Chạy bằng Docker
+## 2) ASR Pipeline (video -> VTT/TXT)
 
-Yêu cầu:
+### 2.1 Supported Inputs
 
-- Docker + Docker Compose
-- Host có ffmpeg (trong image đã cài)
+- Direct media URL (`.mp4`, `.avi`, `.mov`, ...)
+- M3U8/HLS stream
+- Google Drive file link
+- Google Drive folder link (batch endpoint only: `/convert-drive-folder`)
 
-Chạy:
+### 2.2 Execution Flow in `process_video_transcription`
 
-```bash
-docker compose up -d --build
-```
+1. A worker pulls a job from `_job_queue`.
+2. Media download:
+   - Direct link: `requests.get(..., stream=True)` with retries
+   - M3U8: `ffmpeg -i ... -c copy ...`
+   - Google Drive: Drive API + `MediaIoBaseDownload`
+3. Load Faster-Whisper from thread-local model cache (`_get_thread_model`).
+4. Transcribe with anti-hallucination parameters and optional VAD.
+5. Filter low-quality segments (`validate_segment_quality`) and clean repetition (`clean_repetitive_text`).
+6. Optional LLM refinement (`enable_llm_refine=true`):
+   - Split into segment batches
+   - Call LLM proxy (`/v1/chat/completions` + fallback endpoints)
+   - If `rag_api_url` exists: query RAG context from previous segment window and inject into system prompt
+7. Generate outputs:
+   - `.vtt`: smart split around 50-70 chars/segment (`smart_segment_split`)
+   - `.txt`: clean transcript (with/without timestamps via `txt_include_timestamps`)
+8. Update `jobs_status` and persist result stores.
 
-Xem logs:
+### 2.3 API Endpoints
 
-```bash
-docker compose logs -f whisper-api
-```
+#### `GET /health`
 
-Kiểm tra health:
+Returns server status + ffmpeg availability + queue/worker metrics.
 
-```bash
-curl http://127.0.0.1:8000/health
-```
+#### `POST /convert`
 
-## 4) Dùng với Nginx
+Queue one video conversion job.
 
-Ví dụ reverse proxy:
+Minimal request:
 
-```nginx
-location / {
-    proxy_pass http://127.0.0.1:8000;
-    proxy_http_version 1.1;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    client_max_body_size 1000m;
+```json
+{
+  "video_url": "https://example.com/video.mp4",
+  "language": "vi"
 }
 ```
 
-## 5) Google Drive credentials
-
-Đặt `credentials.json` tại root project.
-
-Hỗ trợ:
-
-- Service account JSON (khuyến nghị)
-- Hoặc JSON có trường `api_key` (dùng cho tài nguyên public)
-
-Có thể dùng env thay thế:
-
-- `GOOGLE_DRIVE_API_KEY`
-
-Lưu ý:
-
-- Nếu dùng service account, cần share folder/file Drive cho email service account.
-
-## 6) LLM refine (Qwen2.5 qua proxy)
-
-Mặc định app bật refine (`enable_llm_refine=true`).
-
-Trong `docker-compose.yml` đã set:
-
-- `LLM_PROXY_URL=http://127.0.0.1:5000`
-
-Bạn có thể override theo request hoặc env.
-
-## 7) API Endpoints
-
-### `GET /health`
-
-Health check.
-
-### `POST /convert`
-
-Convert 1 video link (direct link hoặc Drive file).
-
-Request mẫu:
+Full request (main fields):
 
 ```json
 {
   "video_url": "https://example.com/video.mp4",
   "language": "vi",
   "model": "large-v3-turbo",
-  "enable_llm_refine": true,
-  "llm_proxy_url": "http://127.0.0.1:5000",
-  "llm_model": "Qwen/Qwen2.5-7B-Instruct",
-  "llm_timeout_seconds": 60,
-  "refine_batch_size": 20,
-  "txt_include_timestamps": false,
-  "prompt_template": null,
-
   "enable_vad": true,
   "condition_on_previous_text": false,
   "beam_size": 5,
@@ -138,146 +82,248 @@ Request mẫu:
   "temperature": 0.0,
   "compression_ratio_threshold": 2.4,
   "log_prob_threshold": -1.0,
-  "no_speech_threshold": 0.6
+  "no_speech_threshold": 0.6,
+  "enable_llm_refine": true,
+  "llm_proxy_url": "http://127.0.0.1:5000",
+  "llm_model": "Qwen/Qwen3-8B-AWQ",
+  "llm_timeout_seconds": 60,
+  "refine_batch_size": 20,
+  "prompt_template": null,
+  "txt_include_timestamps": false,
+  "subject": "Marxist-Leninist Philosophy",
+  "rag_api_url": "http://127.0.0.1:9100",
+  "rag_context_window": 5
 }
 ```
 
-Drive file ví dụ:
+#### `POST /convert-drive-folder`
+
+Queue all video files from a Google Drive folder.
 
 ```json
 {
-  "video_url": "https://drive.google.com/file/d/FILE_ID/view?usp=sharing",
-  "language": "vi"
-}
-```
-
-### `POST /convert-drive-folder`
-
-Queue toàn bộ video trong folder Drive.
-
-```json
-{
-  "folder_url": "https://drive.google.com/drive/folders/1g-ZDze6jVI_Y418_O7vHh7QPqI0JXOjq",
+  "folder_url": "https://drive.google.com/drive/folders/<FOLDER_ID>",
   "language": "vi",
   "enable_llm_refine": true
 }
 ```
 
-### `GET /status/{job_id}`
+#### `GET /status/{job_id}`
 
-Xem trạng thái job.
+Get job status and result payload.
 
-### `GET /list`
+#### `GET /list`
 
-Liệt kê file output (`VTT`, `TXT`).
+List generated `.vtt`/`.txt` files in `file_vtt`.
 
-### `GET /download/{filename}`
+#### `GET /download/{filename}`
 
-Tải file output.
+Download generated output files.
 
-### `DELETE /jobs/{job_id}`
+#### `DELETE /jobs/{job_id}`
 
-Xóa job khỏi memory.
+Remove a job from memory store.
 
-## 8) Prompt template cho mixed content (VI + EN + code + LaTeX)
+### 2.4 Job Store and Queue Behavior
 
-Bạn có thể truyền `prompt_template` để kiểm soát refine chặt hơn theo domain.
+- Job status is persisted in `file_vtt/.jobs_status.json`
+- Job payload is persisted in `file_vtt/.job_payloads.json`
+- On server restart:
+  - `queued/processing` jobs are marked failed if payload recovery is impossible
+  - recoverable jobs are re-queued automatically
+- Queue capacity: `JOB_QUEUE_MAXSIZE` (default `max(100, env_or_2000)`)
 
-Ví dụ template ngắn:
+## 3) TextNode Pipeline (transcript -> textnodes for RAG)
 
-```text
-Bạn là bộ hậu xử lý transcript.
-- Chỉ sửa chính tả, dấu câu, chữ hoa/thường.
-- Giữ nguyên thuật ngữ tiếng Anh, code, biểu thức LaTeX.
-- Không dịch ngôn ngữ.
-- Không thêm bớt ý.
-- Trả về JSON array [{"id":int,"text":"..."}] duy nhất.
+Script: `rag_textnode_pipeline.py`
+
+### 3.1 Goal
+
+Convert transcript `.txt` files into high-quality TextNode JSON for RAG:
+
+- atomic node granularity (one main idea per node)
+- remove fillers/meta-discourse/ASR noise
+- valid keywords/topics/question templates
+- aggressive deduplication
+
+### 3.2 Execution Flow
+
+1. Scan all `.txt` under `--input-root`.
+2. Group files by course folder (first-level directory).
+3. For each file:
+   - Chunk transcript (`split_transcript_for_llm`)
+   - Call LLM for JSON node extraction (`call_llm_for_textnodes`)
+   - Run `sanitize_node`:
+     - text cleaning
+     - quality gate (length, source overlap, unique ratio)
+     - normalize category/keywords/questions
+     - optional provenance (`source_coverage`, `source_quote`)
+4. Deduplicate per file + merge short nodes + deduplicate again.
+5. Fallback mode for long transcripts that collapse to too few nodes (smaller chunks + force multi-node).
+6. If any LLM error happens in a file: retry whole file via `--file-max-retries`.
+7. Cross-file dedupe at course level.
+8. Write one aggregated output per course:
+   - `output_root/<course>.textnodes.json`
+
+### 3.3 Run the Script
+
+Basic example:
+
+```bash
+python3 rag_textnode_pipeline.py \
+  --input-root file_transcript \
+  --output-root file_textnodes \
+  --llm-proxy-url http://127.0.0.1:5000 \
+  --llm-model Qwen/Qwen3-8B-AWQ
 ```
 
-Khuyến nghị:
+Recommended quality-oriented run:
 
-- Video thiên về coding/math: luôn set `prompt_template` custom.
-- Video thường: có thể dùng default template.
+```bash
+python3 rag_textnode_pipeline.py \
+  --input-root file_transcript \
+  --output-root file_textnodes \
+  --llm-proxy-url http://127.0.0.1:5000 \
+  --llm-model Qwen/Qwen3-8B-AWQ \
+  --include-provenance \
+  --quality-min-words 28 \
+  --quality-min-overlap 0.52 \
+  --quality-min-unique-ratio 0.30 \
+  --dedupe-threshold 0.76 \
+  --file-max-retries 2
+```
 
-## 9) TXT cho RAG
+### 3.4 TextNode Output Format
 
-Mặc định `txt_include_timestamps=false` để tạo transcript sạch, dễ chunking cho RAG.
+Each node looks like:
 
-Khi cần giữ ngữ cảnh thời gian, set:
+```json
+{
+  "id": "uuid",
+  "text": "Cleaned academic content",
+  "metadata": {
+    "subject": "...",
+    "page": null,
+    "topic": "...",
+    "category": "Theory",
+    "keywords": ["..."],
+    "has_code": false,
+    "file_name": "...txt",
+    "question_templates": ["..."],
+    "source_coverage": 0.63,
+    "source_quote": "..."
+  }
+}
+```
 
-- `txt_include_timestamps=true`
+`source_coverage` and `source_quote` are included only when `--include-provenance` is enabled.
 
-## 10) Vận hành nhanh
+## 4) Complete Diagram: Video -> TextNodes for RAG
 
-Redeploy sau khi sửa code:
+```mermaid
+flowchart TD
+    A[Video URL or Drive Input] --> B{API Endpoint}
+    B -->|POST /convert| C[Create single job]
+    B -->|POST /convert-drive-folder| D[List Drive videos and create many jobs]
+    D --> E[Job Queue]
+    C --> E
+
+    E --> F[Worker thread picks job]
+    F --> G{Input source}
+    G -->|Direct media URL| H[Download by requests with retry]
+    G -->|M3U8/HLS| I[ffmpeg capture to temp mp4]
+    G -->|Google Drive file| J[Drive API download]
+
+    H --> K[Load Faster-Whisper model cache per thread]
+    I --> K
+    J --> K
+
+    K --> L[Transcribe with anti-hallucination params and optional VAD]
+    L --> M[Filter low-quality or hallucinated segments]
+    M --> N{enable_llm_refine}
+    N -->|No| O[Keep cleaned ASR segments]
+    N -->|Yes| P[Batch segments for LLM refinement]
+
+    P --> Q{rag_api_url provided}
+    Q -->|No| R[Use default or custom refine prompt]
+    Q -->|Yes| S[Query RAG context from previous transcript window]
+    S --> T[Inject RAG context into system prompt]
+    T --> U[LLM refines segment text]
+    R --> U
+
+    U --> O
+    O --> V[Generate VTT by smart segment split 50-70 chars]
+    O --> W[Generate TXT transcript plain or timestamped]
+
+    V --> X[file_vtt/video_name/video_name.vtt]
+    W --> Y[file_vtt/video_name/video_name.txt]
+
+    Y --> Z[Prepare transcript corpus for textnode pipeline]
+    Z --> AA[rag_textnode_pipeline.py reads *.txt from input-root]
+    AA --> AB[Chunk transcript by word windows with overlap]
+    AB --> AC[LLM extracts atomic nodes JSON]
+    AC --> AD[Sanitize node + quality gate + keyword and QA validation]
+    AD --> AE[Dedupe + merge short nodes + fallback if too few nodes]
+    AE --> AF[Cross-file dedupe per course]
+    AF --> AG[Write output_root/course.textnodes.json]
+    AG --> AH[RAG indexing and retrieval]
+```
+
+## 5) Quick Start with Docker
+
+Build and run API:
 
 ```bash
 docker compose up -d --build
 ```
 
-Restart service:
+Check logs:
 
 ```bash
-docker compose restart whisper-api
+docker compose logs -f whisper-api
 ```
 
-Dừng service:
+Health check:
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+Stop:
 
 ```bash
 docker compose down
 ```
 
----
+## 6) Important Environment Variables
 
-```mermaid
-flowchart TD
-    A[Client App or Frontend] --> B{API Endpoint}
+- `LLM_PROXY_URL` (schema/code default: `http://host.docker.internal:5000`)
+- `RAG_API_URL` (default: empty)
+- `TRANSCRIPTION_WORKERS`
+- `WHISPER_NUM_WORKERS`
+- `JOB_QUEUE_MAXSIZE`
+- `DOWNLOAD_MAX_RETRIES`
+- `DOWNLOAD_RETRY_DELAY_SECONDS`
+- `DIRECT_DOWNLOAD_CONNECT_TIMEOUT`
+- `DIRECT_DOWNLOAD_READ_TIMEOUT`
+- `GOOGLE_API_RETRIES`
+- `GOOGLE_DRIVE_API_KEY` (if you do not use service account JSON)
 
-    B -->|POST /convert| C[Single Job Queue]
-    B -->|POST /convert-drive-folder| D[List Drive Videos and Queue Many Jobs]
+## 7) Google Drive Credentials
 
-    D --> C
-    C --> E[Background Task Worker]
+Place `credentials.json` in project root.
 
-    E --> F{Input Source Type}
-    F -->|Direct media URL| G[Download media file]
-    F -->|M3U8| H[ffmpeg stream capture to temp mp4]
-    F -->|Google Drive file| I[Drive API download to temp file]
+Supported modes:
 
-    G --> J[Load Faster-Whisper model on CPU]
-    H --> J
-    I --> J
+- Service account JSON (recommended)
+- JSON with `api_key`/`key`
+- Environment variable `GOOGLE_DRIVE_API_KEY`
 
-    J --> K[Transcribe with anti-hallucination params and VAD]
-    K --> L[Filter bad segments and clean repetitive text]
-    L --> M[Subtitle segmentation target 50-70 chars]
+If you use a service account, share Drive files/folders with the service account email.
 
-    M --> N{LLM refine enabled}
-    N -->|No| O[Keep Whisper text]
-    N -->|Yes| P[Batch segments -> LLM Proxy Qwen2.5]
-    P --> Q{LLM response valid JSON}
-    Q -->|Yes| R[Apply refined text]
-    Q -->|No or timeout| O
+## 8) Recommended Operational Sequence for RAG Data
 
-    R --> S[Generate VTT file]
-    O --> S
-
-    R --> T[Generate TXT for RAG]
-    O --> T
-
-    S --> U[Save outputs in file_vtt folder]
-    T --> U
-
-    U --> V[Update job status completed with stats]
-
-    A --> W[GET /status job_id]
-    A --> X[GET /list files]
-    A --> Y[GET /download filename]
-    A --> Z[GET /health]
-
-    V --> W
-    U --> X
-    U --> Y
-```
-
-Nếu bạn muốn, mình có thể bổ sung thêm phần "preset prompt theo loại video" (lecture/coding/math) ngay trong API để gọi tiện hơn, không cần gửi `prompt_template` mỗi lần.
+1. Call `/convert` or `/convert-drive-folder` to generate transcript `.txt`.
+2. Move/sync transcripts into the folder consumed by `rag_textnode_pipeline.py` (`file_transcript` or custom `--input-root`).
+3. Run `rag_textnode_pipeline.py` to generate `.textnodes.json`.
+4. Index generated textnodes in your RAG system.
