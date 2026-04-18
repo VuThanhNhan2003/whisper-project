@@ -25,6 +25,8 @@ credentials.json
 /file_*
 /Triết_*
 log*
+*.json
+*.tex
 
 
 

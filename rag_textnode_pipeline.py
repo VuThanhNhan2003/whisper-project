@@ -197,7 +197,15 @@ KHÔNG THÊM thông tin không có trong transcript (không suy diễn, không b
 - Chỉ giữ: định nghĩa, lý thuyết, ví dụ cụ thể, logic phân tích, số liệu thực tế.
 - Bỏ: thông tin cá nhân giảng viên, lịch học, câu hỏi tu từ, hướng dẫn học tập chung.
 
-### BƯỚC 4 — QA AUGMENTATION (BẮT BUỘC cho mỗi node)
+### BƯỚC 4 — CHUẨN HÓA CÔNG THỨC VẬT LÝ SANG LATEX (BẮT BUỘC NẾU CÓ CÔNG THỨC)
+- Nếu transcript có công thức/toán học, hãy chuẩn hóa về ký hiệu chuẩn và ghi ở dạng LaTeX.
+- Ví dụ: "omega bình phương" -> "\\omega^2", "căn k trên m" -> "\\sqrt{k/m}",
+  "v bằng trừ omega a sin" -> "v = -\\omega A\\sin(\\omega t + \\varphi)".
+- Chỉ chuẩn hóa những công thức thực sự có trong transcript, KHÔNG tự bịa hoặc suy diễn thêm.
+- Nếu không chắc ký hiệu, giữ nguyên diễn giải bằng chữ trong `formula_text` và để `formula_latex` là chuỗi rỗng.
+- Không dùng markdown code fence cho công thức; chỉ ghi chuỗi LaTeX thuần.
+
+### BƯỚC 5 — QA AUGMENTATION (BẮT BUỘC cho mỗi node)
 Tạo 2–3 câu hỏi mà node đó có thể trả lời trực tiếp:
 - Đa dạng dạng: định nghĩa ("X là gì?"), giải thích ("Tại sao X?"), so sánh ("X khác Y thế nào?").
 - KHÔNG đặt câu hỏi mà node không trả lời được.
@@ -215,6 +223,13 @@ Tạo 2–3 câu hỏi mà node đó có thể trả lời trực tiếp:
       "keywords": ["thuật ngữ chuyên môn 1", "thuật ngữ 2", "thuật ngữ 3"],
       "has_code": false,
       "file_name": "",
+            "formulas": [
+                {{
+                    "formula_text": "Mô tả công thức bằng chữ",
+                    "formula_latex": "\\omega = \\sqrt{k/m}",
+                    "symbols": ["\\omega: tần số góc", "k: độ cứng lò xo", "m: khối lượng"]
+                }}
+            ],
       "question_templates": [
         "Câu hỏi 1?",
         "Câu hỏi 2?",

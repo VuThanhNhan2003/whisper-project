@@ -133,6 +133,40 @@ Remove a job from memory store.
   - recoverable jobs are re-queued automatically
 - Queue capacity: `JOB_QUEUE_MAXSIZE` (default `max(100, env_or_2000)`)
 
+### 2.5 How CB-RAG Is Applied During Refinement
+
+CB-RAG in this project is implemented as contextual prompt injection for transcript refinement.
+
+It works as follows for each LLM refinement batch:
+
+1. Build a context query from previous transcript segments.
+  - The system takes a sliding window of prior segments (`rag_context_window`) before the current batch.
+2. Call your external RAG API.
+  - The API request is sent to: `POST {rag_api_url}/query`
+  - Payload includes:
+    - `question`: concatenated text from previous segments (truncated)
+    - `subject`: course/domain filter
+    - `model_key`, `use_history`
+3. Receive RAG answer and trim to a safe size.
+  - Returned `answer` is shortened before prompt injection to avoid oversized prompts.
+4. Inject retrieved context into the system prompt.
+  - The LLM is then asked to refine transcript text while preserving meaning and terminology.
+5. Fallback behavior is safe.
+  - If RAG API timeout/fails, refinement continues with default prompt (no hard failure).
+
+Important scope note:
+
+- This repository does not directly query Qdrant.
+- Qdrant is expected to be used inside your external RAG service behind `rag_api_url`.
+- Therefore, if your RAG API already retrieves from Qdrant by `subject`, this ASR refine flow will automatically benefit from that retrieval.
+
+Recommended request pattern for course-aware refinement:
+
+- Set `subject` to match your indexed course namespace in RAG (for example: `Môn Triết học Mác-Lênin`).
+- Set `rag_api_url` to your running RAG endpoint.
+- Keep `enable_llm_refine=true`.
+- Tune `rag_context_window` (commonly 4-8 for lecture videos).
+
 ## 3) TextNode Pipeline (transcript -> textnodes for RAG)
 
 Script: `rag_textnode_pipeline.py`
