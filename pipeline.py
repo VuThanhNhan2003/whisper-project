@@ -667,26 +667,34 @@ def query_rag_context(
     timeout: int = 20,
 ) -> str:
     """
-    Dùng transcript của các segment trước để query RAG lấy thuật ngữ/khái niệm
-    liên quan từ slide bài giảng đã được index (CB-RAG style).
+    Gửi transcript ASR bị lỗi đến RAG với instruction sửa lỗi rõ ràng.
+    RAG sẽ retrieve chunks liên quan và dùng LLM để correction thay vì chỉ summarize.
 
     Args:
         text_window: Transcript ghép từ k segment trước làm câu query.
-        subject:     Môn học để filter đúng subject trong RAG (vd: "Môn Triết học Mác-Lênin").
-        rag_api_url: URL của RAG API service (vd: "http://127.0.0.1:9100").
+        subject:     Môn học để filter đúng subject trong RAG.
+        rag_api_url: URL của RAG API service.
         timeout:     Timeout tính bằng giây (mặc định 20s).
 
     Returns:
-        Chuỗi context (~400 ký tự) từ RAG, hoặc chuỗi rỗng nếu lỗi/timeout.
+        Chuỗi context đã được correction (~400 ký tự), hoặc rỗng nếu lỗi/timeout.
     """
     if not rag_api_url or not text_window.strip():
         return ""
+
+    # Gửi với instruction correction rõ ràng thay vì raw transcript
+    # Giúp LLM trong RAG hiểu nhiệm vụ là sửa lỗi, không phải tìm kiếm
+    domain_label = f"môn {subject}" if subject else "học thuật"
+    correction_query = (
+        f"Đây là transcript ASR tiếng Việt {domain_label} bị lỗi chính tả và thuật ngữ. "
+        f"Hãy sửa lại các thuật ngữ chuyên ngành cho đúng:\n\n{text_window[:300]}"
+    )
 
     try:
         resp = requests.post(
             f"{rag_api_url.rstrip('/')}/query",
             json={
-                "question": text_window[:300],
+                "question": correction_query,
                 "subject": subject,
                 "model_key": "qwen3-8b",
                 "use_history": False,
@@ -695,6 +703,8 @@ def query_rag_context(
         )
         if resp.status_code == 200:
             answer = resp.json().get("answer", "")
+            # Strip phần nguồn tham khảo RAG tự thêm vào cuối
+            answer = re.sub(r'\n\n📚.*$', '', answer, flags=re.DOTALL).strip()
             # Cắt bớt để không làm phình system prompt quá lớn
             return answer[:400].strip()
         else:
@@ -730,7 +740,7 @@ def refine_transcription_batch(
 
     Với mỗi batch:
       1. Lấy transcript của `rag_context_window` segment TRƯỚC batch hiện tại làm query.
-      2. Query RAG API để lấy thuật ngữ/khái niệm liên quan từ slide đã index.
+      2. Query RAG API với instruction correction rõ ràng để lấy thuật ngữ đúng.
       3. Inject context đó vào system prompt của Qwen3 để sửa đúng thuật ngữ.
 
     Batch đầu tiên (i=0) sẽ không có prev_text → RAG trả rỗng → Qwen3 vẫn chạy
@@ -769,7 +779,7 @@ def refine_transcription_batch(
         if rag_context:
             system_prompt = (
                 system_prompt
-                + "\n\nNGỮ CẢNH TÀI LIỆU (thuật ngữ và khái niệm liên quan từ slide bài giảng):\n"
+                + "\n\nNGỮ CẢNH TÀI LIỆU (thuật ngữ và khái niệm đúng từ slide bài giảng):\n"
                 + rag_context
                 + "\nƯu tiên dùng đúng các thuật ngữ này khi sửa chính tả transcript."
             )
@@ -1151,7 +1161,6 @@ def process_video_transcription(job_id: str, video_url: str, language: str, requ
             log_prob_threshold=request.log_prob_threshold,
             no_speech_threshold=request.no_speech_threshold,
             condition_on_previous_text=request.condition_on_previous_text,
-            # initial_prompt giờ dùng subject thay vì hardcode
             initial_prompt=build_initial_prompt(language, request.subject),
             vad_filter=request.enable_vad,
             vad_parameters=vad_parameters,

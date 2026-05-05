@@ -1,0 +1,28 @@
+flowchart LR
+    subgraph A["A. ASR Conversion Pipeline"]
+      S["Video sources\n(Direct URL / M3U8 / Google Drive)"] --> Q["FastAPI queue + worker"]
+      Q --> M["Acquire media and normalize input"]
+      M --> W["Whisper ASR + segment filtering"]
+      W --> G{"Enable LLM refine?"}
+      G -- "No" --> O["Export outputs: VTT + TXT"]
+      G -- "Yes" --> C["Build context query\n(from previous segment window)"]
+      C --> R["Subject-aware RAG API query"]
+      R --> P["Inject retrieved context into refine prompt"]
+      P --> L["LLM segment refinement"]
+      L --> O
+    end
+
+    subgraph B["B. TextNode Construction"]
+      O --> T["Transcript TXT corpus"]
+      T --> H["Chunking"]
+      H --> X["LLM textnode extraction"]
+      X --> Y["Sanitize + quality gate + dedupe"]
+      Y --> J["Course-level TextNodes JSON"]
+    end
+
+    subgraph C["C. Embedding and Vector Index"]
+      J --> E["Embedding model (e.g., Nomic)"]
+      E --> V["Qdrant vector store"]
+    end
+
+    V -. "retrieval context by subject" .-> R

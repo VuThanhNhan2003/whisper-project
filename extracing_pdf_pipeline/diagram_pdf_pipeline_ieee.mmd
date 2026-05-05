@@ -1,0 +1,17 @@
+flowchart TB
+    subgraph S1["Stage 1: Document Normalization (Colab)"]
+        A["Drive source folder\n(mixed formats)"] --> B["Recursive crawl\n(+ shortcut resolution)"]
+        B --> C["Convert or export to PDF"]
+        C --> D["PDF repository folder"]
+    end
+
+    subgraph S2["Stage 2: Knowledge Extraction (GPU server)"]
+        D --> E["Detect subject from folder hierarchy"]
+        E --> F["List files + resume check\n(skip processed files)"]
+        F --> G["Acquire local PDF\n(download or convert)"]
+        G --> H["Page-level extraction\nPDF -> image -> Qwen3-VL"]
+        H --> I["Repair JSON + enrich metadata\n(id, subject, page, file_name)"]
+        I --> J["Incremental checkpoint save"]
+        J --> K["Knowledge base JSON\n<subject>_<folder>.json"]
+        J -. "resume state" .-> F
+    end

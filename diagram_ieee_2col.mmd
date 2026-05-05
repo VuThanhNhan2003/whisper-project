@@ -1,0 +1,13 @@
+flowchart TB
+    A[Media Inputs] --> B[ASR Transcription]
+    B --> C{Contextual Refinement\n(CB-RAG)}
+    C -- No --> D[Subtitle and Transcript Outputs]
+    C -- Yes --> E[RAG Context Retrieval\n(by Subject)]
+    E --> F[LLM Refinement]
+    F --> D
+
+    D --> G[TextNode Construction]
+    G --> H[Embedding and Vector Indexing]
+    H --> I[Qdrant Vector Store]
+
+    I -. retrieval context .-> E
